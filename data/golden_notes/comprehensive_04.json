@@ -1,0 +1,135 @@
+{
+  "transcript_id": "comprehensive_04",
+  "visit_type": "comprehensive_exam",
+  "synthetic": true,
+  "soap": {
+    "S": [
+      {
+        "text": "Established patient, age 34, routine comprehensive exam; no specific complaint. Soft contact lens wearer wishing to renew CL Rx.",
+        "spans": [
+          [
+            102,
+            221
+          ],
+          [
+            483,
+            570
+          ]
+        ]
+      },
+      {
+        "text": "Mild end-of-day contact lens dryness, right lens slightly drier than left; long wearing time ~7am to 10-11pm.",
+        "spans": [
+          [
+            734,
+            789
+          ],
+          [
+            884,
+            957
+          ]
+        ]
+      },
+      {
+        "text": "Denies flashes and floaters; no medical conditions or medications.",
+        "spans": [
+          [
+            1112,
+            1142
+          ]
+        ]
+      }
+    ],
+    "O": [
+      {
+        "text": "Pupils equal, round, reactive, no afferent pupillary defect.",
+        "spans": [
+          [
+            223,
+            272
+          ]
+        ]
+      },
+      {
+        "text": "Manifest refraction OD -2.00 -0.50 x 175, VA 20/20; OS -2.25 sphere, VA 20/20; stable, essentially unchanged from prior year.",
+        "spans": [
+          [
+            1349,
+            1565
+          ]
+        ]
+      },
+      {
+        "text": "Slit lamp: lids/lashes clean, conjunctiva quiet, no CL-related injection; corneas clear without neovascularization or staining; anterior chambers deep and quiet; crystalline lenses clear OU.",
+        "spans": [
+          [
+            1631,
+            1762
+          ],
+          [
+            1806,
+            1874
+          ]
+        ]
+      },
+      {
+        "text": "Non-dilated wide-field fundus imaging: optic nerves healthy C/D 0.2 OU; maculae flat and clear; vessels normal; no peripheral concerns.",
+        "spans": [
+          [
+            2075,
+            2212
+          ]
+        ]
+      }
+    ],
+    "A": [
+      {
+        "text": "Myopia with mild astigmatism OU, stable.",
+        "spans": [
+          [
+            1503,
+            1565
+          ]
+        ]
+      },
+      {
+        "text": "Healthy contact-lens-wearing corneas; ocular health unremarkable OU.",
+        "spans": [
+          [
+            1935,
+            1973
+          ]
+        ]
+      }
+    ],
+    "P": [
+      {
+        "text": "Maintain current spectacle Rx (stable); continue current contact lens (same base curve and power).",
+        "spans": [
+          [
+            2277,
+            2408
+          ]
+        ]
+      },
+      {
+        "text": "Finalize contact lens Rx after fit check of lenses in situ.",
+        "spans": [
+          [
+            2410,
+            2503
+          ]
+        ]
+      },
+      {
+        "text": "RTC 1 year for next comprehensive; reorder contacts as needed.",
+        "spans": [
+          [
+            2505,
+            2585
+          ]
+        ]
+      }
+    ]
+  }
+}

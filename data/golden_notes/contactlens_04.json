@@ -1,0 +1,143 @@
+{
+  "transcript_id": "contactlens_04",
+  "visit_type": "contact_lens_fitting",
+  "synthetic": true,
+  "soap": {
+    "S": [
+      {
+        "text": "Presbyopic CL wearer: good distance vision but near difficulty (holding phone at arm's length); multifocal CL fitting.",
+        "spans": [
+          [
+            203,
+            279
+          ],
+          [
+            94,
+            135
+          ]
+        ]
+      }
+    ],
+    "O": [
+      {
+        "text": "Distance Rx OD: -1.00 sphere; OS: -1.25 sphere; minimal cylinder OU.",
+        "spans": [
+          [
+            453,
+            562
+          ]
+        ]
+      },
+      {
+        "text": "Near add: +2.00 (initial 'plus two hundred' clarified to +2.00).",
+        "spans": [
+          [
+            619,
+            678
+          ]
+        ]
+      },
+      {
+        "text": "Trial multifocal: base curve 8.6 mm, diameter 14.3 mm, medium add profile (chosen over low given +2.00 add).",
+        "spans": [
+          [
+            771,
+            937
+          ]
+        ]
+      },
+      {
+        "text": "Fit OD: good centration, complete coverage, ~0.3 mm movement.",
+        "spans": [
+          [
+            1122,
+            1200
+          ]
+        ]
+      },
+      {
+        "text": "Fit OS: well centered, good coverage.",
+        "spans": [
+          [
+            1303,
+            1345
+          ]
+        ]
+      },
+      {
+        "text": "Distance over-refraction OD: -0.25 improves to 20/20; OS 20/20 already. Near: ~20/25 equivalent middle row read.",
+        "spans": [
+          [
+            1617,
+            1718
+          ],
+          [
+            1970,
+            2006
+          ]
+        ]
+      }
+    ],
+    "A": [
+      {
+        "text": "Presbyopia; successful first multifocal CL fit OU with good distance and adequate near (expected to improve with neuro-adaptation).",
+        "spans": [
+          [
+            1020,
+            1063
+          ],
+          [
+            1926,
+            1967
+          ]
+        ]
+      }
+    ],
+    "P": [
+      {
+        "text": "Prescribe multifocal soft CL: OD -1.25 (over-refraction moved -1.00 -> -1.25) with +2.00 add; OS -1.25 with +2.00 add.",
+        "spans": [
+          [
+            2051,
+            2182
+          ],
+          [
+            2240,
+            2304
+          ]
+        ]
+      },
+      {
+        "text": "Base curve 8.6 mm, diameter 14.3 mm, medium add OU.",
+        "spans": [
+          [
+            2381,
+            2438
+          ]
+        ]
+      },
+      {
+        "text": "Counsel on 1-2 week neuro-adaptation; consistent wear; do not abandon early.",
+        "spans": [
+          [
+            2487,
+            2530
+          ],
+          [
+            2606,
+            2641
+          ]
+        ]
+      },
+      {
+        "text": "One-week follow-up to fine-tune add/balance.",
+        "spans": [
+          [
+            2532,
+            2604
+          ]
+        ]
+      }
+    ]
+  }
+}

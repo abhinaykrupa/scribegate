@@ -1,0 +1,152 @@
+{
+  "transcript_id": "contactlens_05",
+  "visit_type": "contact_lens_fitting",
+  "synthetic": true,
+  "soap": {
+    "S": [
+      {
+        "text": "Referred for RGP fitting for keratoconus OD; soft lenses gave unstable/fluctuating vision.",
+        "spans": [
+          [
+            131,
+            172
+          ],
+          [
+            230,
+            273
+          ]
+        ]
+      }
+    ],
+    "O": [
+      {
+        "text": "Topography: steep/irregular cornea OD (keratoconus), OS near-normal.",
+        "spans": [
+          [
+            537,
+            562
+          ],
+          [
+            603,
+            630
+          ]
+        ]
+      },
+      {
+        "text": "Refraction OD: -6.50 -3.00 (spoken '-3 hundred') sphere/cyl; OS: -2.00 -0.75.",
+        "spans": [
+          [
+            702,
+            854
+          ]
+        ]
+      },
+      {
+        "text": "Trial RGP OD: base curve 7.1 mm (steep, to vault the cone), diameter 9.6 mm (initial '9.point-' corrected to 9.6).",
+        "spans": [
+          [
+            987,
+            1103
+          ]
+        ]
+      },
+      {
+        "text": "Trial RGP OS: base curve 7.8 mm, diameter 9.6 mm (standard).",
+        "spans": [
+          [
+            1105,
+            1191
+          ]
+        ]
+      },
+      {
+        "text": "Fluorescein OD: light apical touch with surrounding pooling (near-ideal three-point-touch vault); ~1 mm movement, acceptable centration.",
+        "spans": [
+          [
+            1442,
+            1563
+          ],
+          [
+            1565,
+            1662
+          ]
+        ]
+      },
+      {
+        "text": "Fluorescein OS: even pattern, well centered, good edge clearance, ~1 mm movement.",
+        "spans": [
+          [
+            1730,
+            1839
+          ]
+        ]
+      },
+      {
+        "text": "Over-refraction OD: +0.50 yields 20/25 (masking corneal irregularity); OS 20/20.",
+        "spans": [
+          [
+            2059,
+            2158
+          ],
+          [
+            2200,
+            2239
+          ]
+        ]
+      }
+    ],
+    "A": [
+      {
+        "text": "Keratoconus OD; successful RGP fit vaulting the cone with markedly improved best acuity vs prior soft lenses; standard RGP fit OS.",
+        "spans": [
+          [
+            1706,
+            1728
+          ],
+          [
+            2244,
+            2294
+          ]
+        ]
+      }
+    ],
+    "P": [
+      {
+        "text": "Prescribe RGP: OD base curve 7.1 mm, diameter 9.6 mm; OS base curve 7.8 mm, diameter 9.6 mm; power incorporating over-refraction.",
+        "spans": [
+          [
+            2418,
+            2560
+          ]
+        ]
+      },
+      {
+        "text": "Rigid-lens adaptation schedule: few hours day one, add ~1 hour daily.",
+        "spans": [
+          [
+            2613,
+            2665
+          ]
+        ]
+      },
+      {
+        "text": "Early follow-up in a few days to recheck fit/corneal surface, then again at one week.",
+        "spans": [
+          [
+            2719,
+            2817
+          ]
+        ]
+      },
+      {
+        "text": "Rigid-lens insertion training with tech.",
+        "spans": [
+          [
+            2911,
+            2955
+          ]
+        ]
+      }
+    ]
+  }
+}

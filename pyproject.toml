@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "scribegate"
+version = "0.1.0"
+description = "Eval-gated note-quality harness for AI-generated eye-care SOAP notes (synthetic data only)"
+requires-python = ">=3.10"
+
+[tool.setuptools]
+packages = ["scribegate"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -1,0 +1,19 @@
+# SYNTHETIC TRANSCRIPT — no PHI. Visit type: cataract post-op (ophthalmology). ID: cataract_03
+TECH: Post-op day one, right eye. This is the gentleman who had surgery yesterday afternoon. He mentioned the eye feels more uncomfortable than he expected.
+PATIENT: Yeah, there's a real pressure feeling behind the eye, and it's been aching since I woke up. A dull throb.
+TECH: Let me get your vision. Uncorrected distance is 20/80 in the right eye today, 20/30 in the left.
+DOCTOR: Good morning, Dr. Osei here. An aching, pressure sensation on day one is something I want to check carefully — it can mean the eye pressure is up. Let me measure that first before the exam.
+TECH: Goldmann applanation: IOP 32 mmHg OD, 16 mmHg OS.
+DOCTOR: There it is. The pressure in the right eye is 32, which is markedly elevated — that explains the ache. This is a known post-op issue, sometimes from retained viscoelastic gel from surgery. We'll treat it today.
+PATIENT: Is that dangerous?
+DOCTOR: We're catching it early, which is exactly why we do the day-one check. Let me look at the eye. The cornea has mild edema, a little more than average, consistent with the high pressure. The IOL is well-centered in the bag, position is good. Anterior chamber shows 2+ cell, 1+ flare — expected inflammation.
+PATIENT: So the lens itself is fine?
+DOCTOR: The lens is perfectly placed. Our job today is the pressure. I'm going to start you on timolol twice a day in the right eye to bring the pressure down, and I'll add brimonidine twice daily as well.
+PATIENT: On top of the other drops?
+DOCTOR: Yes. Continue the prednisolone acetate 1% four times daily and the moxifloxacin four times daily as planned. Add the two pressure drops. I want to recheck the pressure here in about two hours before you go home.
+PATIENT: And if it's still high?
+DOCTOR: If it hasn't come down enough, we have an oral option and, rarely, we can release a tiny bit of fluid at the slit lamp to normalize it quickly. But most of these respond well to drops within hours.
+PATIENT: Okay. The throbbing is the pressure then.
+DOCTOR: Correct, and it should ease as the pressure falls. Keep the shield on at night. No bending or lifting. We'll see you tomorrow for a pressure recheck rather than waiting for week one.
+PATIENT: Thank you, Doctor. That's reassuring.
+DOCTOR: Of course. Elevated pressure on day one is manageable — we'll stay on top of it.

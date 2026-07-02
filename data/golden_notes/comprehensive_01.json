@@ -1,0 +1,171 @@
+{
+  "transcript_id": "comprehensive_01",
+  "visit_type": "comprehensive_exam",
+  "synthetic": true,
+  "soap": {
+    "S": [
+      {
+        "text": "Established patient presents for annual comprehensive eye exam; also due for updated spectacles.",
+        "spans": [
+          [
+            128,
+            166
+          ],
+          [
+            185,
+            221
+          ]
+        ]
+      },
+      {
+        "text": "Reports gradual distance blur over ~2 years, worse driving at night with difficulty reading road signs.",
+        "spans": [
+          [
+            286,
+            389
+          ]
+        ]
+      },
+      {
+        "text": "Mild end-of-day eyestrain with ~8 hours of computer use; denies headaches.",
+        "spans": [
+          [
+            455,
+            545
+          ]
+        ]
+      },
+      {
+        "text": "Denies flashes, floaters, and diplopia.",
+        "spans": [
+          [
+            608,
+            629
+          ]
+        ]
+      },
+      {
+        "text": "Family history: mother with dry eye; no known serious ocular disease.",
+        "spans": [
+          [
+            711,
+            771
+          ]
+        ]
+      }
+    ],
+    "O": [
+      {
+        "text": "Pupils equal and reactive, no afferent pupillary defect. Confrontation fields full OU.",
+        "spans": [
+          [
+            834,
+            916
+          ]
+        ]
+      },
+      {
+        "text": "Manifest refraction OD -3.75 -0.75 x 170, VA cc 20/20 OD.",
+        "spans": [
+          [
+            1082,
+            1216
+          ]
+        ]
+      },
+      {
+        "text": "Manifest refraction OS -4.25 -1.00 x 010, VA cc 20/20 OS. Mild myopic shift (~0.50 D) since prior.",
+        "spans": [
+          [
+            1218,
+            1311
+          ],
+          [
+            1326,
+            1381
+          ]
+        ]
+      },
+      {
+        "text": "Slit lamp: lids/lashes clean, conjunctiva white and quiet, corneas clear, anterior chambers deep and quiet, lenses clear OU with no cataract.",
+        "spans": [
+          [
+            1622,
+            1763
+          ]
+        ]
+      },
+      {
+        "text": "Dilated fundus exam: optic nerves healthy, C/D 0.3 OU with healthy pink rim tissue.",
+        "spans": [
+          [
+            1796,
+            1831
+          ],
+          [
+            1860,
+            1955
+          ]
+        ]
+      },
+      {
+        "text": "Maculae flat and healthy without drusen, vessels normal caliber, peripheral retina intact 360 OU without tears or holes.",
+        "spans": [
+          [
+            1957,
+            2083
+          ]
+        ]
+      }
+    ],
+    "A": [
+      {
+        "text": "Myopia with astigmatism OU; mild myopic progression since prior exam.",
+        "spans": [
+          [
+            1313,
+            1381
+          ]
+        ]
+      },
+      {
+        "text": "Ocular health otherwise unremarkable; anterior and posterior segments healthy OU.",
+        "spans": [
+          [
+            2127,
+            2190
+          ]
+        ]
+      }
+    ],
+    "P": [
+      {
+        "text": "Update spectacle Rx with new refraction; retain anti-reflective coating for night driving.",
+        "spans": [
+          [
+            2192,
+            2308
+          ]
+        ]
+      },
+      {
+        "text": "Discussed likely future reading add given age 48; deferred at this time as patient managing at near.",
+        "spans": [
+          [
+            1471,
+            1565
+          ]
+        ]
+      },
+      {
+        "text": "RTC 1 year for next comprehensive exam; return sooner for sudden flashes or a visual field curtain.",
+        "spans": [
+          [
+            2335,
+            2474
+          ]
+        ]
+      }
+    ]
+  }
+}

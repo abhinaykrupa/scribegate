@@ -1,0 +1,162 @@
+{
+  "transcript_id": "comprehensive_05",
+  "visit_type": "comprehensive_exam",
+  "synthetic": true,
+  "soap": {
+    "S": [
+      {
+        "text": "Comprehensive exam in a patient with type 2 diabetes ~9 years, per PCP referral for annual diabetic eye exam.",
+        "spans": [
+          [
+            231,
+            325
+          ]
+        ]
+      },
+      {
+        "text": "Reported glycemic control: last A1C ~7.8; on metformin.",
+        "spans": [
+          [
+            399,
+            470
+          ]
+        ]
+      },
+      {
+        "text": "Intermittent transient blur associated with elevated blood sugar; denies floaters, flashes, dark spots.",
+        "spans": [
+          [
+            541,
+            618
+          ],
+          [
+            713,
+            730
+          ]
+        ]
+      }
+    ],
+    "O": [
+      {
+        "text": "Pupils equal and reactive, no afferent pupillary defect; confrontation fields full OU.",
+        "spans": [
+          [
+            765,
+            857
+          ]
+        ]
+      },
+      {
+        "text": "Manifest refraction OD +1.25 -0.50 x 090, VA cc 20/25; OS +1.00 -0.75 x 085, VA cc 20/25; mild hyperopia with astigmatism; +2.00 near add.",
+        "spans": [
+          [
+            978,
+            1279
+          ]
+        ]
+      },
+      {
+        "text": "Slit lamp: lids and conjunctiva quiet, corneas clear, anterior chambers deep; mild nuclear sclerotic cataract OU, not visually significant.",
+        "spans": [
+          [
+            1316,
+            1465
+          ]
+        ]
+      },
+      {
+        "text": "Dilated fundus: optic nerves healthy C/D 0.4 OU; scattered dot-and-blot hemorrhages and microaneurysms OU; hard exudates temporal to macula OD.",
+        "spans": [
+          [
+            1467,
+            1489
+          ],
+          [
+            1572,
+            1631
+          ],
+          [
+            1650,
+            1801
+          ]
+        ]
+      },
+      {
+        "text": "Maculae clinically uninvolved without visible edema; central vision preserved OU.",
+        "spans": [
+          [
+            1942,
+            2043
+          ]
+        ]
+      }
+    ],
+    "A": [
+      {
+        "text": "Mild-to-moderate non-proliferative diabetic retinopathy OU.",
+        "spans": [
+          [
+            1847,
+            1923
+          ]
+        ]
+      },
+      {
+        "text": "Mild nuclear sclerotic cataract OU, visually insignificant.",
+        "spans": [
+          [
+            1374,
+            1465
+          ]
+        ]
+      },
+      {
+        "text": "Hyperopia with astigmatism and presbyopia OU.",
+        "spans": [
+          [
+            1172,
+            1212
+          ]
+        ]
+      }
+    ],
+    "P": [
+      {
+        "text": "Order OCT of both maculae today to rule out subclinical diabetic macular edema.",
+        "spans": [
+          [
+            2177,
+            2256
+          ]
+        ]
+      },
+      {
+        "text": "Shorten follow-up to 6 months to monitor retinopathy (rather than annual).",
+        "spans": [
+          [
+            2262,
+            2344
+          ]
+        ]
+      },
+      {
+        "text": "Send report to PCP emphasizing tighter glycemic control; patient to call sooner for new floaters, blurring, or dark spots.",
+        "spans": [
+          [
+            2346,
+            2501
+          ]
+        ]
+      },
+      {
+        "text": "Update spectacle Rx with new refraction.",
+        "spans": [
+          [
+            2503,
+            2556
+          ]
+        ]
+      }
+    ]
+  }
+}

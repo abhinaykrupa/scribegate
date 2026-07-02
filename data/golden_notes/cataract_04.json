@@ -1,0 +1,151 @@
+{
+  "transcript_id": "cataract_04",
+  "visit_type": "cataract_postop",
+  "synthetic": true,
+  "soap": {
+    "S": [
+      {
+        "text": "POD ~5 weeks (post-op month one) s/p cataract surgery OS; reports excellent vision, very pleased.",
+        "spans": [
+          [
+            136,
+            168
+          ],
+          [
+            228,
+            297
+          ]
+        ]
+      }
+    ],
+    "O": [
+      {
+        "text": "VA sc 20/25 OS, best corrected 20/20 OS; 20/30 sc OD.",
+        "spans": [
+          [
+            315,
+            373
+          ],
+          [
+            404,
+            471
+          ]
+        ]
+      },
+      {
+        "text": "Cornea clear OS, no edema.",
+        "spans": [
+          [
+            688,
+            721
+          ]
+        ]
+      },
+      {
+        "text": "IOL well-centered in the capsular bag OS.",
+        "spans": [
+          [
+            723,
+            772
+          ]
+        ]
+      },
+      {
+        "text": "AC completely quiet OS: no cell, no flare.",
+        "spans": [
+          [
+            774,
+            830
+          ]
+        ]
+      },
+      {
+        "text": "Posterior capsule clear OS, no opacification.",
+        "spans": [
+          [
+            832,
+            890
+          ]
+        ]
+      },
+      {
+        "text": "IOP 15 mmHg OS, 16 mmHg OD (Goldmann applanation).",
+        "spans": [
+          [
+            1297,
+            1345
+          ]
+        ]
+      }
+    ],
+    "A": [
+      {
+        "text": "POD month one s/p cataract extraction OS, uncomplicated with excellent outcome (20/20 BCVA); eye fully healed and quiet; clear posterior capsule.",
+        "spans": [
+          [
+            524,
+            570
+          ],
+          [
+            576,
+            631
+          ],
+          [
+            832,
+            890
+          ]
+        ]
+      }
+    ],
+    "P": [
+      {
+        "text": "Discontinue all post-op drops OS (prednisolone and ketorolac).",
+        "spans": [
+          [
+            1419,
+            1502
+          ]
+        ]
+      },
+      {
+        "text": "Prescribe spectacles: light distance correction for residual astigmatism OS plus near add ~+2.25.",
+        "spans": [
+          [
+            1700,
+            1813
+          ]
+        ]
+      },
+      {
+        "text": "Fill current Rx now (eye stable at one month); finalize full pair after OD surgery.",
+        "spans": [
+          [
+            1864,
+            1934
+          ],
+          [
+            1936,
+            1991
+          ]
+        ]
+      },
+      {
+        "text": "Counseled on possible future PCO — office YAG laser if late-onset haziness; return for new haziness/floaters.",
+        "spans": [
+          [
+            1050,
+            1096
+          ],
+          [
+            1195,
+            1231
+          ],
+          [
+            1993,
+            2045
+          ]
+        ]
+      }
+    ]
+  }
+}

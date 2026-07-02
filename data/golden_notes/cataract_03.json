@@ -1,0 +1,148 @@
+{
+  "transcript_id": "cataract_03",
+  "visit_type": "cataract_postop",
+  "synthetic": true,
+  "soap": {
+    "S": [
+      {
+        "text": "POD#1 s/p cataract surgery OD; reports dull aching/throbbing and pressure sensation behind the eye since waking.",
+        "spans": [
+          [
+            129,
+            186
+          ],
+          [
+            267,
+            366
+          ]
+        ]
+      }
+    ],
+    "O": [
+      {
+        "text": "VA sc 20/80 OD, 20/30 OS.",
+        "spans": [
+          [
+            397,
+            468
+          ]
+        ]
+      },
+      {
+        "text": "IOP 32 mmHg OD (markedly elevated), 16 mmHg OS (Goldmann applanation).",
+        "spans": [
+          [
+            674,
+            722
+          ]
+        ]
+      },
+      {
+        "text": "Cornea: mild edema OD, slightly more than average, consistent with elevated IOP.",
+        "spans": [
+          [
+            1074,
+            1162
+          ]
+        ]
+      },
+      {
+        "text": "IOL well-centered in the bag OD, good position.",
+        "spans": [
+          [
+            1164,
+            1217
+          ]
+        ]
+      },
+      {
+        "text": "AC: 2+ cell, 1+ flare OD.",
+        "spans": [
+          [
+            1219,
+            1259
+          ]
+        ]
+      }
+    ],
+    "A": [
+      {
+        "text": "POD#1 s/p cataract extraction OD with markedly elevated IOP (32 mmHg), likely retained viscoelastic; expected inflammation; well-positioned IOL.",
+        "spans": [
+          [
+            745,
+            808
+          ],
+          [
+            866,
+            919
+          ],
+          [
+            1330,
+            1358
+          ]
+        ]
+      }
+    ],
+    "P": [
+      {
+        "text": "Start timolol BID OD for IOP lowering.",
+        "spans": [
+          [
+            1404,
+            1453
+          ]
+        ]
+      },
+      {
+        "text": "Add brimonidine BID OD.",
+        "spans": [
+          [
+            1486,
+            1526
+          ]
+        ]
+      },
+      {
+        "text": "Continue prednisolone acetate 1% QID OD and moxifloxacin QID OD.",
+        "spans": [
+          [
+            1577,
+            1679
+          ]
+        ]
+      },
+      {
+        "text": "Recheck IOP OD in ~2 hours before discharge; escalate to oral agent or slit-lamp AC paracentesis if inadequately controlled.",
+        "spans": [
+          [
+            1719,
+            1782
+          ],
+          [
+            1856,
+            1943
+          ]
+        ]
+      },
+      {
+        "text": "Continue night shield; no bending/lifting.",
+        "spans": [
+          [
+            2133,
+            2184
+          ]
+        ]
+      },
+      {
+        "text": "Return tomorrow for IOP recheck (rather than waiting for week one).",
+        "spans": [
+          [
+            2185,
+            2263
+          ]
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,17 @@
+# SYNTHETIC TRANSCRIPT — no PHI. Visit type: glaucoma follow-up. ID: glaucoma_03
+TECH: Glaucoma follow-up, established. Patient has primary open-angle glaucoma both eyes, currently on latanoprost at bedtime plus dorzolamide twice a day, both eyes. Today's Goldmann pressures right eye fifteen, left eye sixteen.
+DOCTOR: Thanks. Hello again — good to see you. So you're on the two drops, the latanoprost at night and the dorzolamide twice a day. How's that regimen treating you?
+PATIENT: Hi. It's a lot of drops but I've got a system. Latanoprost before bed, dorzolamide morning and evening, both eyes. No missed doses.
+DOCTOR: That's great discipline. Any stinging or metallic taste from the dorzolamide?
+PATIENT: A little bitter taste sometimes, but I can live with it.
+DOCTOR: That's common and harmless. Any new vision problems?
+PATIENT: No, everything feels stable to me.
+DOCTOR: Fifteen and sixteen — those pressures are excellent, well below our target. Down from your untreated pressures which were thirty-one and thirty. Let me look at the optic nerves. Cup-to-disc zero point eight both eyes — advanced but stable, no interval change from your baseline, no disc hemorrhages.
+PATIENT: They were bad when we started, right?
+DOCTOR: They were, you had significant damage at diagnosis, which is why we're aggressive with the pressure. The good news is stability. Your Humphrey 24-2 field today shows established defects — a dense inferior arcuate in each eye — but critically it is stable, no progression versus your field from six months ago. And the OCT of the retinal nerve fiber layer shows the RNFL is thin but unchanged, no new thinning.
+PATIENT: So it's holding.
+DOCTOR: It's holding, which is the goal in advanced glaucoma — we can't reverse the damage, but we can stop it progressing, and your pressures are doing that. So no medication change: continue latanoprost at bedtime and dorzolamide twice a day, both eyes. Keep that adherence up. Given how advanced the disease is, I want to keep a close eye, so let's do a pressure check in three months, and repeat the visual field and OCT in six months.
+PATIENT: Every three months for pressure, got it.
+DOCTOR: Exactly. If anything changes with your vision, call sooner. Otherwise you're doing everything right.
+PATIENT: Thank you, doctor. Appreciate it.
+DOCTOR: My pleasure, see you in three months.

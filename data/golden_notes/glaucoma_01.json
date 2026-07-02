@@ -1,0 +1,122 @@
+{
+  "transcript_id": "glaucoma_01",
+  "visit_type": "glaucoma_followup",
+  "synthetic": true,
+  "soap": {
+    "S": [
+      {
+        "text": "Glaucoma follow-up for primary open-angle glaucoma OU, on latanoprost since last visit.",
+        "spans": [
+          [
+            146,
+            243
+          ]
+        ]
+      },
+      {
+        "text": "Reports full adherence: latanoprost one drop qHS OU nightly, no missed doses.",
+        "spans": [
+          [
+            310,
+            377
+          ]
+        ]
+      },
+      {
+        "text": "Transient redness first week that resolved; denies vision changes or new symptoms.",
+        "spans": [
+          [
+            458,
+            509
+          ],
+          [
+            583,
+            625
+          ]
+        ]
+      },
+      {
+        "text": "Notes mild lash lengthening (known cosmetic prostaglandin effect); no periocular skin change.",
+        "spans": [
+          [
+            901,
+            969
+          ]
+        ]
+      }
+    ],
+    "O": [
+      {
+        "text": "IOP 17 mmHg OD / 18 mmHg OS (GAT); pretreatment baseline 26 mmHg OD / 27 mmHg OS.",
+        "spans": [
+          [
+            1114,
+            1152
+          ],
+          [
+            1169,
+            1261
+          ]
+        ]
+      },
+      {
+        "text": "Optic nerves: C/D 0.65 OU, stable vs baseline photos, rims intact, no new disc hemorrhage.",
+        "spans": [
+          [
+            1437,
+            1561
+          ]
+        ]
+      },
+      {
+        "text": "HVF 24-2 stable: mean deviation essentially unchanged vs prior field 6 months ago, no new or deepening defects.",
+        "spans": [
+          [
+            1668,
+            1831
+          ]
+        ]
+      },
+      {
+        "text": "OCT RNFL stable, no progressive thinning vs prior scan.",
+        "spans": [
+          [
+            1837,
+            1951
+          ]
+        ]
+      }
+    ],
+    "A": [
+      {
+        "text": "Primary open-angle glaucoma OU, stable and at target IOP on latanoprost.",
+        "spans": [
+          [
+            2022,
+            2075
+          ]
+        ]
+      }
+    ],
+    "P": [
+      {
+        "text": "Continue latanoprost one drop qHS OU, no change; reinforce adherence.",
+        "spans": [
+          [
+            2109,
+            2178
+          ]
+        ]
+      },
+      {
+        "text": "RTC 4 months for IOP check; repeat HVF and OCT RNFL at next annual visit.",
+        "spans": [
+          [
+            2212,
+            2336
+          ]
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,109 @@
+{
+  "transcript_id": "glaucoma_05",
+  "visit_type": "glaucoma_followup",
+  "synthetic": true,
+  "soap": {
+    "S": [
+      {
+        "text": "Glaucoma follow-up for POAG OU on maximal medical therapy: latanoprost qHS, timolol BID, brimonidine BID, all OU.",
+        "spans": [
+          [
+            202,
+            323
+          ]
+        ]
+      },
+      {
+        "text": "Imperfect adherence due to complex regimen, especially the midday brimonidine dose.",
+        "spans": [
+          [
+            408,
+            516
+          ]
+        ]
+      },
+      {
+        "text": "Reports increased effort with near/reading vision OD.",
+        "spans": [
+          [
+            1008,
+            1072
+          ]
+        ]
+      }
+    ],
+    "O": [
+      {
+        "text": "IOP 26 mmHg OD / 24 mmHg OS (GAT); 21/20 four months ago; baseline 34/32; above target.",
+        "spans": [
+          [
+            666,
+            799
+          ]
+        ]
+      },
+      {
+        "text": "Optic nerves: C/D 0.85 OD, progressed from prior 0.8 with thinner inferior rim; OS 0.8 stable; no fresh disc hemorrhage.",
+        "spans": [
+          [
+            1115,
+            1324
+          ]
+        ]
+      },
+      {
+        "text": "HVF 24-2: superior defect OD deepened and expanded vs 4 months ago with worse mean deviation; OS stable.",
+        "spans": [
+          [
+            1434,
+            1600
+          ]
+        ]
+      },
+      {
+        "text": "OCT RNFL: progressive inferior RNFL thinning OD.",
+        "spans": [
+          [
+            1606,
+            1707
+          ]
+        ]
+      }
+    ],
+    "A": [
+      {
+        "text": "Primary open-angle glaucoma OU; OD progressing (structural and functional) on maximal medical therapy with IOP above target; OS stable.",
+        "spans": [
+          [
+            1865,
+            1963
+          ]
+        ]
+      }
+    ],
+    "P": [
+      {
+        "text": "Refer to glaucoma surgeon for surgical options (trabeculectomy or drainage device) for OD; target appointment within 2 weeks.",
+        "spans": [
+          [
+            2006,
+            2175
+          ],
+          [
+            2520,
+            2550
+          ]
+        ]
+      },
+      {
+        "text": "Continue latanoprost, timolol, and brimonidine unchanged until surgery.",
+        "spans": [
+          [
+            2404,
+            2477
+          ]
+        ]
+      }
+    ]
+  }
+}

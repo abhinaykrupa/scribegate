@@ -1,0 +1,156 @@
+{
+  "transcript_id": "cataract_01",
+  "visit_type": "cataract_postop",
+  "synthetic": true,
+  "soap": {
+    "S": [
+      {
+        "text": "POD#1 s/p cataract surgery OD; reports foggy vision OD, no pain, mild gritty/scratchy foreign-body sensation.",
+        "spans": [
+          [
+            127,
+            191
+          ],
+          [
+            229,
+            275
+          ],
+          [
+            543,
+            619
+          ]
+        ]
+      }
+    ],
+    "O": [
+      {
+        "text": "VA sc 20/60 OD, 20/25 OS.",
+        "spans": [
+          [
+            319,
+            401
+          ]
+        ]
+      },
+      {
+        "text": "Cornea: mild edema superiorly near the wound OD (typical POD#1).",
+        "spans": [
+          [
+            722,
+            809
+          ]
+        ]
+      },
+      {
+        "text": "IOL well-centered in the capsular bag OD, no tilt.",
+        "spans": [
+          [
+            811,
+            877
+          ]
+        ]
+      },
+      {
+        "text": "AC: 2+ cell, 1+ flare OD.",
+        "spans": [
+          [
+            1021,
+            1056
+          ]
+        ]
+      },
+      {
+        "text": "IOP 18 mmHg OD, 15 mmHg OS (Tono-Pen).",
+        "spans": [
+          [
+            1121,
+            1162
+          ]
+        ]
+      }
+    ],
+    "A": [
+      {
+        "text": "POD#1 s/p cataract extraction OD, uncomplicated; expected mild corneal edema and anterior chamber inflammation; well-positioned IOL.",
+        "spans": [
+          [
+            454,
+            499
+          ],
+          [
+            777,
+            809
+          ],
+          [
+            932,
+            976
+          ]
+        ]
+      }
+    ],
+    "P": [
+      {
+        "text": "Continue prednisolone acetate 1% QID OD.",
+        "spans": [
+          [
+            1334,
+            1370
+          ],
+          [
+            1412,
+            1445
+          ]
+        ]
+      },
+      {
+        "text": "Continue moxifloxacin QID OD.",
+        "spans": [
+          [
+            1495,
+            1539
+          ]
+        ]
+      },
+      {
+        "text": "Continue ketorolac once daily OD.",
+        "spans": [
+          [
+            1571,
+            1611
+          ]
+        ]
+      },
+      {
+        "text": "Wear protective shield at night x1 week; no rubbing.",
+        "spans": [
+          [
+            1828,
+            1877
+          ]
+        ]
+      },
+      {
+        "text": "Activity restrictions: avoid heavy lifting/bending; no swimming or hot tubs x2 weeks.",
+        "spans": [
+          [
+            2064,
+            2151
+          ]
+        ]
+      },
+      {
+        "text": "Return post-op week one; return precautions given (severe pain, vision drop, new floaters/flashes).",
+        "spans": [
+          [
+            1956,
+            1994
+          ],
+          [
+            2232,
+            2339
+          ]
+        ]
+      }
+    ]
+  }
+}

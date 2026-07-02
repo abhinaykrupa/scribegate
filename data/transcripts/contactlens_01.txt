@@ -1,0 +1,20 @@
+# SYNTHETIC TRANSCRIPT — no PHI. Visit type: contact lens fitting. ID: contactlens_01
+DOCTOR: Alright, so today we're doing a soft contact lens fitting — first time in contacts, right?
+PATIENT: Yeah, um, first time. I've worn glasses since, since I was like twelve.
+DOCTOR: Great. So your spectacle prescription, let me pull it up — right eye is minus three seventy-five, uh, sorry, minus three fifty sphere, with a minus zero seventy-five cylinder at axis one seventy.
+PATIENT: [overlapping] Is that a strong one?
+DOCTOR: — it's moderate, nothing unusual. Left eye is minus four twenty-five sphere, no cylinder to speak of. For a first fit I'm going to start with a standard soft lens, base curve eight point six, diameter fourteen point two.
+TECH: Trial lenses are in, doctor. He's had them settling for about, uh, ten minutes now.
+DOCTOR: Good. Let me check the fit at the slit lamp. Look straight ahead for me. Okay — centration is good on the right, the lens is covering the cornea fully, and I'm seeing about, mm, point three millimeters of movement on the blink. That's a nice fit.
+PATIENT: It doesn't really feel like anything's in there.
+DOCTOR: That's what we want. Left eye, same thing — well centered, good coverage, movement looks maybe a touch more, but within range. Now let me do an over-refraction to check the power on the eye.
+TECH: [inaudible] chart is up.
+DOCTOR: Reading the top line... over the right lens, you're seeing twenty thirty. Let me flip some lenses. With an extra minus zero fifty over the right, that sharpens to twenty twenty. So the right lens needs a touch more minus.
+PATIENT: So the trial one's not quite right?
+DOCTOR: The trial is close; the over-refraction just tells me the final power. Over the left lens you're already twenty twenty, no over-refraction needed there. So final contact lens power: right eye minus four hundred— minus four point zero zero, left eye minus four twenty-five.
+PATIENT: Okay.
+DOCTOR: Base curve eight six, diameter fourteen two for both. I'll have the tech teach you insertion and removal, and we'll do a one-week follow-up to check the fit with wear.
+TECH: I'll grab the practice lenses and the case.
+PATIENT: How long can I wear them a day?
+DOCTOR: Start with, let's say, six to eight hours a day this first week, then we'll build up. Don't sleep in them. Come back in a week and we'll check the health of the eye and confirm the prescription.
+PATIENT: Sounds good, thanks.

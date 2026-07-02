@@ -1,0 +1,21 @@
+# SYNTHETIC TRANSCRIPT — no PHI. Visit type: comprehensive optometry exam. ID: comprehensive_04
+TECH: Comprehensive exam, established patient, age thirty-four. No specific complaint, here for routine check. Wears contacts. Pupils equal, round, reactive, no afferent defect. Autorefraction captured.
+DOCTOR: Hey, thanks for coming in. So no complaints, just staying on top of things?
+PATIENT: Right. My contacts feel fine. I did run out of my last box so I'm in my backup pair today. I mostly want to renew the contact lens prescription and make sure everything's healthy.
+DOCTOR: Perfect. Any dryness with the contacts, especially late in the day?
+PATIENT: A little by evening, but manageable. I usually take them out around ten, and by then the right one feels a touch drier than the left.
+DOCTOR: Good to note. How many hours a day are you wearing them, roughly?
+PATIENT: Most days from seven in the morning until ten or eleven at night, so a long stretch. Maybe too long.
+DOCTOR: That's a full day. We'll make sure the fit still supports that. Any flashes, floaters, medical conditions, medications?
+PATIENT: None of that. Healthy, no meds. I exercise, drink plenty of water. The only thing is the screen time for work.
+DOCTOR: Great. Let me check your refraction in glasses first. One or two? ... Two or three?
+PATIENT: Two. Then three.
+DOCTOR: Right eye minus two point zero sphere, minus zero fifty cylinder axis one seventy-five, 20/20. Left eye minus two twenty-five sphere, no cylinder, 20/20. Nice stable prescription, essentially unchanged from last year.
+PATIENT: Good, I figured it was stable.
+DOCTOR: Slit lamp exam. Lids and lashes clean, conjunctiva quiet, no contact-lens-related redness. Corneas are clear with no neovascularization or staining, which is great for a contact lens wearer. Anterior chambers deep and quiet, crystalline lenses clear both eyes.
+PATIENT: So the contacts aren't damaging anything?
+DOCTOR: No damage at all, corneas look healthy. I'll do a non-dilated fundus look today with the wide-field imaging since you have no risk factors. Optic nerves healthy, cup-to-disc zero point two both eyes. Maculae flat and clear. Vessels normal. No peripheral concerns on the imaging.
+PATIENT: Everything checks out?
+DOCTOR: Everything checks out. Your spectacle prescription is stable. For contacts I'll keep you in the same lens, the base curve and power that have been working. I'll finalize the contact lens prescription after a quick fit check on the lenses you have in. Come back in one year for the next comprehensive, and reorder contacts as needed.
+PATIENT: Easy. Thanks so much.
+DOCTOR: Anytime, take care.

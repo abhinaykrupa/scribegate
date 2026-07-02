@@ -1,0 +1,21 @@
+# SYNTHETIC TRANSCRIPT — no PHI. Visit type: comprehensive optometry exam. ID: comprehensive_05
+DOCTOR: Good morning, please have a seat. This is your comprehensive exam, and I see you're diabetic — how long now?
+PATIENT: Morning. Type two, about nine years. My primary care doctor said I need a yearly eye exam because of it.
+DOCTOR: Absolutely right. How's your blood sugar control been?
+PATIENT: My last A1C was around seven point eight. Not perfect. I'm on metformin.
+DOCTOR: Any vision changes, blurriness that comes and goes?
+PATIENT: Sometimes my vision is a little blurry when my sugar is high, then it settles.
+DOCTOR: That's typical with fluctuating glucose. Any floaters, flashes, dark spots?
+PATIENT: No, none of those.
+TECH: Entrance testing complete. Pupils equal and reactive, no afferent pupillary defect. Confrontation fields full both eyes. Autorefraction done.
+DOCTOR: Thank you. Let me refine your glasses. Distance chart — one or two?
+PATIENT: Two.
+DOCTOR: Right eye plus one twenty-five sphere, minus zero fifty cylinder axis ninety, correcting to 20/25. Left eye plus one point zero sphere, minus zero seventy-five cylinder axis eighty-five, 20/25. Mild hyperopia with a little astigmatism. At fifty-five you also take a plus two point zero add for reading.
+PATIENT: Okay.
+DOCTOR: Slit lamp — lids and conjunctiva quiet, corneas clear, chambers deep, lenses show early nuclear sclerotic cataract both eyes, mild, not affecting vision much yet. I dilated you up front, so let's examine the retina carefully, this is the important part with diabetes. Optic nerves healthy, cup-to-disc zero point four both eyes. Now the retina — I see scattered dot-and-blot hemorrhages and a few microaneurysms in both eyes, and a couple of small hard exudates temporal to the macula on the right.
+PATIENT: Is that the diabetes?
+DOCTOR: Yes, this is mild to moderate non-proliferative diabetic retinopathy in both eyes. The good news is your maculae look uninvolved — no swelling that I can see clinically, and central vision is preserved. But this is a change we need to monitor and it means your systemic control matters even more.
+PATIENT: So what happens now?
+DOCTOR: I'm going to order an OCT of both maculae today to rule out any subtle swelling, and I want to see you back in six months rather than a year to recheck the retinopathy. I'll send a report to your primary care doctor emphasizing tighter glucose control. If you notice any new floaters, blurring, or dark spots, call us sooner. I'll update your glasses with the new numbers as well.
+PATIENT: Understood. Thank you for being thorough.
+DOCTOR: Of course. The staff will set up the OCT and your six-month recheck.

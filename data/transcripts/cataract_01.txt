@@ -1,0 +1,21 @@
+# SYNTHETIC TRANSCRIPT — no PHI. Visit type: cataract post-op (ophthalmology). ID: cataract_01
+TECH: Good morning, this is the post-op day one check after right eye cataract surgery yesterday. I'll get the vision first.
+PATIENT: Everything still looks a bit foggy in that eye, honestly.
+TECH: That's common on day one. Uncorrected distance vision today is 20/60 in the right eye, and the left is 20/25.
+DOCTOR: Thank you. Good morning, I'm Dr. Nolan. So this is post-op day one for the right eye, OD. Any pain, or just the fogginess?
+PATIENT: No real pain. A little scratchy, like there's sand in it, but no sharp pain.
+DOCTOR: That gritty feeling is expected. Let me take a look at the slit lamp. Chin here for me. Okay, the cornea shows mild edema superiorly near the wound, which is very typical on day one. The intraocular lens is well-centered in the capsular bag, no tilt.
+PATIENT: Is the lens in the right spot?
+DOCTOR: Yes, the IOL position looks good, nicely centered. Anterior chamber shows some inflammation — I'm grading it 2+ cell and 1+ flare, which is expected this early. Let me check the pressure.
+TECH: Tono-Pen reads IOP 18 mmHg OD, 15 mmHg OS.
+DOCTOR: Good, pressure is fine on the right. The corneal edema should clear over the next several days as the cornea deturgesces. Now let's talk about your drops. You'll continue the prednisolone acetate 1% — that's the anti-inflammatory steroid — four times a day in the right eye.
+PATIENT: The white-cap bottle?
+DOCTOR: Yes. And the moxifloxacin antibiotic four times daily as well, to prevent infection. Keep using the ketorolac drop once daily too; that helps prevent swelling at the back of the eye.
+PATIENT: How long do I keep shaking and waiting between them?
+DOCTOR: Wait about five minutes between different drops. Shake the prednisolone before each use. Keep wearing the clear shield at night for a week so you don't rub the eye in your sleep.
+PATIENT: When do I come back?
+DOCTOR: We'll see you back at post-op week one. By then the edema should be gone and the vision noticeably crisper. Avoid heavy lifting and bending at the waist, and no swimming or hot tubs for two weeks.
+PATIENT: Can I read and watch TV?
+DOCTOR: Absolutely, reading and TV are fine. If you get sudden severe pain, a big drop in vision, or lots of new floaters or flashes, call us right away.
+PATIENT: Got it. Thank you, Doctor.
+DOCTOR: You're welcome. The tech will print your drop schedule. Everything looks like a healthy day one for the right eye.

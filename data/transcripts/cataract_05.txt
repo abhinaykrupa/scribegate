@@ -1,0 +1,19 @@
+# SYNTHETIC TRANSCRIPT — no PHI. Visit type: cataract post-op (ophthalmology). ID: cataract_05
+TECH: Post-op week one, right eye. Surgery was eight days ago. He says the vision improved and then seemed to plateau.
+PATIENT: It got clear fast, then this week it hasn't changed much. Still a little hazy, like looking through a smudged window.
+TECH: Let me measure. Uncorrected distance vision is 20/40 in the right eye, and 20/25 in the left.
+DOCTOR: Morning, I'm Dr. Ramaswamy. So POD number eight for the right eye, OS — sorry, let me correct that, the RIGHT eye is OD. A little residual haze at week one is common. Let me take a look.
+PATIENT: Is something wrong?
+DOCTOR: Let's find out. Slit lamp, please. The cornea is mostly clear with just a trace of residual edema inferiorly — that will finish clearing. The IOL is well-centered, good position, no tilt. Anterior chamber shows 1+ cell and trace flare, so a little inflammation is lingering, which can soften the vision.
+PATIENT: So the smudge is the inflammation?
+DOCTOR: Partly the trace edema and the residual cell, yes. The posterior capsule is clear — no early opacification, so that's not the cause. Let me check pressure.
+TECH: Tono-Pen: IOP 19 mmHg OD, 17 mmHg OS.
+DOCTOR: Pressure is within normal range, 19 on the right. Nothing concerning there. Given the lingering inflammation, rather than taper this week I want to keep the prednisolone acetate 1% at four times daily in the right eye for one more week to settle that anterior chamber down.
+PATIENT: And the other drops?
+DOCTOR: You can stop the moxifloxacin now — a week of antibiotic is enough. Continue the ketorolac once daily; it's helping guard against swelling at the back of the eye that could also blur things.
+PATIENT: Should I be worried the vision plateaued?
+DOCTOR: Not at this point. The exam explains it — trace edema plus a bit of inflammation. As those clear over the next week, the haze should lift and the vision sharpen. If it worsens or you get pain, call us.
+PATIENT: Okay. Same shield routine?
+DOCTOR: You can stop the night shield now at week one. Keep water out of the eye, no swimming yet. We'll see you at post-op month one for your refraction, and I expect a much crisper right eye by then.
+PATIENT: Thank you, Doctor.
+DOCTOR: You're welcome. Keep the steroid going and we'll reassess in three weeks.

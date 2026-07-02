@@ -1,0 +1,19 @@
+# SYNTHETIC TRANSCRIPT — no PHI. Visit type: contact lens fitting. ID: contactlens_03
+DOCTOR: So you're here because the current contacts are drying out by the afternoon, is that the main issue?
+PATIENT: Yeah, by like three o'clock they're, um, they feel like sandpaper and my vision goes hazy.
+DOCTOR: Okay, so we'll refit into a daily disposable with a different material — better for dryness. Let me get your current prescription and confirm it still works. What's the power on your current lenses, do you know?
+PATIENT: I think the box says minus five something for both? I don't have it with me.
+DOCTOR: No problem, we'll measure. TECH, can you pull the last exam? [pause] Okay, from your exam three weeks ago: right eye minus five twenty-five sphere, left eye minus five point zero zero sphere, both essentially no cylinder. For the daily I'll start base curve eight point four— actually for this brand it's eight point five, diameter fourteen point one.
+TECH: [overlapping] the eight five trials are here.
+DOCTOR: Thanks. Let them settle a few minutes. [pause] Alright, slit lamp check. Right eye — good centration, full corneal coverage, movement about point two five millimeters on blink, maybe a hair low but acceptable for a daily. Left eye similar, centration good, coverage good, movement adequate.
+PATIENT: These already feel more comfortable than my old ones.
+DOCTOR: The material holds moisture better, that's the point. Let me over-refract. Look at the chart. Over the right lens?
+PATIENT: That's, um, that's clear down to the twenty twenty-five line I think.
+DOCTOR: Let me add a little. With an extra minus zero twenty-five over the right you're at twenty twenty — so I'll take the right to minus five fifty final. Over the left lens you read twenty twenty as is, so left stays minus five hundred— minus five point zero zero.
+PATIENT: Wait, did the right change?
+DOCTOR: Slightly — the over-refraction moved the right from minus five twenty-five to minus five fifty. The left stayed the same. That's the benefit of over-refracting on the eye rather than just copying the glasses number.
+PATIENT: Makes sense.
+DOCTOR: Base curve eight five, diameter fourteen one, daily disposable. Because they're dailies you throw them out each night, no cleaning solution, which also helps with the dryness and any deposits. Use rewetting drops if you still feel dry late in the day.
+PATIENT: Do I still need a follow-up?
+DOCTOR: Yes, one-week check to make sure the dryness is actually resolved and the fit holds up through a full day. If the afternoon haze comes back we'll reassess.
+PATIENT: Perfect, thank you.

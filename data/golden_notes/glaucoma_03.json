@@ -1,0 +1,113 @@
+{
+  "transcript_id": "glaucoma_03",
+  "visit_type": "glaucoma_followup",
+  "synthetic": true,
+  "soap": {
+    "S": [
+      {
+        "text": "Glaucoma follow-up for POAG OU on latanoprost qHS plus dorzolamide BID OU.",
+        "spans": [
+          [
+            120,
+            246
+          ]
+        ]
+      },
+      {
+        "text": "Reports full adherence to both drops, no missed doses.",
+        "spans": [
+          [
+            534,
+            617
+          ]
+        ]
+      },
+      {
+        "text": "Tolerable bitter taste from dorzolamide; denies new vision problems.",
+        "spans": [
+          [
+            714,
+            769
+          ],
+          [
+            841,
+            874
+          ]
+        ]
+      }
+    ],
+    "O": [
+      {
+        "text": "IOP 15 mmHg OD / 16 mmHg OS (GAT); untreated baseline 31/30.",
+        "spans": [
+          [
+            248,
+            310
+          ],
+          [
+            960,
+            1027
+          ]
+        ]
+      },
+      {
+        "text": "Optic nerves: C/D 0.8 OU, advanced but stable vs baseline, no disc hemorrhages.",
+        "spans": [
+          [
+            1062,
+            1182
+          ]
+        ]
+      },
+      {
+        "text": "HVF 24-2: dense inferior arcuate defect each eye, stable, no progression vs 6 months ago.",
+        "spans": [
+          [
+            1427,
+            1547
+          ]
+        ]
+      },
+      {
+        "text": "OCT RNFL: thin but unchanged, no new thinning.",
+        "spans": [
+          [
+            1553,
+            1647
+          ]
+        ]
+      }
+    ],
+    "A": [
+      {
+        "text": "Advanced primary open-angle glaucoma OU, stable at low target IOP on two agents.",
+        "spans": [
+          [
+            1683,
+            1735
+          ]
+        ]
+      }
+    ],
+    "P": [
+      {
+        "text": "Continue latanoprost qHS and dorzolamide BID OU, no change; reinforce adherence.",
+        "spans": [
+          [
+            1859,
+            1929
+          ]
+        ]
+      },
+      {
+        "text": "RTC 3 months for IOP check; repeat HVF and OCT RNFL in 6 months given advanced disease.",
+        "spans": [
+          [
+            2021,
+            2113
+          ]
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,21 @@
+# SYNTHETIC TRANSCRIPT — no PHI. Visit type: comprehensive optometry exam. ID: comprehensive_01
+DOCTOR: Morning, come on in. So this is your annual comprehensive exam, and it says here you're due for a new pair of glasses too.
+PATIENT: Yeah, morning. It's been about two years I think. My distance vision has gotten a little fuzzy, especially driving at night, the signs are harder to read.
+DOCTOR: Any headaches or eyestrain with computer work?
+PATIENT: A bit of strain end of the day, but no real headaches. I'm at the screen maybe eight hours.
+DOCTOR: Okay. Any flashes, floaters, double vision?
+PATIENT: No, nothing like that.
+DOCTOR: Family history of eye disease? Glaucoma, macular degeneration?
+PATIENT: My mom has, I think, dry eye. Nothing serious that I know of.
+TECH: I already got the autorefraction and entrance testing. Pupils equal and reactive, no afferent defect. Confrontation fields full both eyes.
+DOCTOR: Great, thanks. Let me refine the refraction. Which is clearer, one, or two? ... And now three, or four?
+PATIENT: Two is sharper. And four.
+DOCTOR: Good. So on the right I'm getting minus three seventy-five sphere, minus zero seventy-five cylinder, axis one seventy. That brings you to 20/20. Left eye minus four twenty-five sphere, minus one point zero cylinder at axis ten, also 20/20. You've got a mild myopic shift since last time, about half a diopter.
+PATIENT: That explains the night driving.
+DOCTOR: It does. Given your age, forty-eight, we should talk about a reading add soon, but you're managing at near for now, so I'll hold off. Let me look at the front of the eyes on the slit lamp. Lids and lashes clean, conjunctiva white and quiet, corneas clear, anterior chambers deep and quiet, lenses are clear both eyes — no cataract.
+PATIENT: Good to hear.
+DOCTOR: I put the dilating drops in earlier, so let's look at the back. Optic nerves are healthy, cup-to-disc ratio zero point three in both eyes, nice pink rim tissue. Maculae are flat and healthy, no drusen. Vessels normal caliber. Periphery is intact, no tears or holes, three-sixty both eyes.
+PATIENT: So everything's healthy?
+DOCTOR: Everything looks healthy. The only change is the refractive one. I'll update your spectacle prescription with the new numbers. Keep the anti-reflective coating for the night driving. Since the exam is clean, I'll see you back in one year for your next comprehensive. If you notice any sudden flashes or a curtain in your vision, call us right away.
+PATIENT: Will do. Thanks, doctor.
+DOCTOR: You're welcome. The front desk will get your glasses ordered.

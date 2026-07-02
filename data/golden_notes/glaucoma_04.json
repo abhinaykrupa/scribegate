@@ -1,0 +1,109 @@
+{
+  "transcript_id": "glaucoma_04",
+  "visit_type": "glaucoma_followup",
+  "synthetic": true,
+  "soap": {
+    "S": [
+      {
+        "text": "Follow-up for glaucoma suspect started on brimonidine for borderline/elevated IOP.",
+        "spans": [
+          [
+            117,
+            225
+          ]
+        ]
+      },
+      {
+        "text": "Good adherence: brimonidine BID OU, 1-2 missed doses over several months.",
+        "spans": [
+          [
+            268,
+            404
+          ]
+        ]
+      },
+      {
+        "text": "Mild intermittent redness and mild fatigue on brimonidine; denies vision changes, blurring, halos.",
+        "spans": [
+          [
+            516,
+            592
+          ],
+          [
+            682,
+            702
+          ]
+        ]
+      }
+    ],
+    "O": [
+      {
+        "text": "IOP 18 mmHg OD / 17 mmHg OS (GAT); pretreatment 24/23.",
+        "spans": [
+          [
+            739,
+            863
+          ]
+        ]
+      },
+      {
+        "text": "Optic nerves: C/D 0.55 OU, symmetric, healthy rims, no hemorrhages, stable vs baseline.",
+        "spans": [
+          [
+            984,
+            1114
+          ]
+        ]
+      },
+      {
+        "text": "HVF 24-2 full and reliable OU, no defects, stable vs prior.",
+        "spans": [
+          [
+            1265,
+            1390
+          ]
+        ]
+      },
+      {
+        "text": "OCT RNFL within normal limits, symmetric, no thinning, no change vs prior scan.",
+        "spans": [
+          [
+            1396,
+            1535
+          ]
+        ]
+      }
+    ],
+    "A": [
+      {
+        "text": "Glaucoma suspect / ocular hypertension OU, well controlled on brimonidine; no structural or functional damage.",
+        "spans": [
+          [
+            1625,
+            1725
+          ]
+        ]
+      }
+    ],
+    "P": [
+      {
+        "text": "Continue brimonidine BID OU.",
+        "spans": [
+          [
+            1785,
+            1834
+          ]
+        ]
+      },
+      {
+        "text": "Space follow-up given stability: IOP check in 4 months; repeat HVF and OCT in 1 year unless change.",
+        "spans": [
+          [
+            1928,
+            2042
+          ]
+        ]
+      }
+    ]
+  }
+}

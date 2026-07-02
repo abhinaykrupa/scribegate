@@ -1,0 +1,16 @@
+# SYNTHETIC TRANSCRIPT — no PHI. Visit type: glaucoma follow-up. ID: glaucoma_05
+DOCTOR: Come on in. So you're here for your glaucoma follow-up. You've got primary open-angle glaucoma in both eyes, and you're currently on three drops — latanoprost at bedtime, timolol twice a day, and brimonidine twice a day, all both eyes. That's a heavy regimen. How's it going?
+PATIENT: Hi doctor. It's a lot. I try, but with three different drops on different schedules I know I miss some. Especially the midday brimonidine dose.
+DOCTOR: That's understandable, maximal medical therapy is hard to keep up. Let's see where the pressures are. Tech?
+TECH: Goldmann pressures today, right eye twenty-six, left eye twenty-four. Four months ago they were twenty-one and twenty. At diagnosis, thirty-four and thirty-two.
+DOCTOR: So despite three medications, the pressure is climbing again, right eye twenty-six. That's above our target of the mid-teens for someone with your degree of damage. Any new vision symptoms?
+PATIENT: My reading vision on the right seems a little more effort lately. Hard to say.
+DOCTOR: Let me examine you. Cup-to-disc zero point eight five on the right, and I think that's progressed from your prior zero point eight — the inferior rim looks thinner. Left is zero point eight, stable. No fresh disc hemorrhage today.
+PATIENT: The right is getting worse?
+DOCTOR: I'm concerned it is. Your Humphrey 24-2 field from today shows the superior defect in the right eye has deepened and expanded compared with your field four months ago — the mean deviation dropped further. The left field is stable. And the OCT of the retinal nerve fiber layer confirms progressive inferior RNFL thinning in the right eye.
+PATIENT: So the medications aren't enough anymore.
+DOCTOR: That's the situation — you're on maximal medical therapy, adherence is understandably imperfect, the right pressure is above target, and the right eye is progressing structurally and functionally. Adding a fourth drop won't help much. So I'm going to refer you to a glaucoma surgeon to discuss surgical options — likely a trabeculectomy or a drainage device to get durable pressure control on that right eye.
+PATIENT: Surgery. Okay.
+DOCTOR: I know it's a big step, but the right eye needs more than drops can give. In the meantime, keep taking all three medications as best you can — every bit of pressure lowering helps until surgery. I'll continue the latanoprost, timolol, and brimonidine unchanged for now. I'll call the surgeon's office today and want you seen within two weeks. We'll coordinate closely.
+PATIENT: Alright. I trust your judgment.
+DOCTOR: Thank you. The staff will arrange the surgical referral and get you the soonest appointment.

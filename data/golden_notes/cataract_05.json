@@ -1,0 +1,144 @@
+{
+  "transcript_id": "cataract_05",
+  "visit_type": "cataract_postop",
+  "synthetic": true,
+  "soap": {
+    "S": [
+      {
+        "text": "POD#8 (post-op week one) s/p cataract surgery OD; reports rapid early improvement then plateau with persistent haze ('smudged window').",
+        "spans": [
+          [
+            130,
+            156
+          ],
+          [
+            223,
+            340
+          ]
+        ]
+      }
+    ],
+    "O": [
+      {
+        "text": "VA sc 20/40 OD, 20/25 OS.",
+        "spans": [
+          [
+            363,
+            439
+          ]
+        ]
+      },
+      {
+        "text": "Cornea: trace residual edema inferiorly OD.",
+        "spans": [
+          [
+            708,
+            781
+          ]
+        ]
+      },
+      {
+        "text": "IOL well-centered OD, good position, no tilt.",
+        "spans": [
+          [
+            811,
+            859
+          ]
+        ]
+      },
+      {
+        "text": "AC: 1+ cell, trace flare OD (residual inflammation).",
+        "spans": [
+          [
+            861,
+            907
+          ]
+        ]
+      },
+      {
+        "text": "Posterior capsule clear OD, no early opacification.",
+        "spans": [
+          [
+            1080,
+            1135
+          ]
+        ]
+      },
+      {
+        "text": "IOP 19 mmHg OD, 17 mmHg OS (Tono-Pen).",
+        "spans": [
+          [
+            1191,
+            1227
+          ]
+        ]
+      }
+    ],
+    "A": [
+      {
+        "text": "POD#8 s/p cataract extraction OD; VA plateau attributed to lingering anterior chamber inflammation plus trace residual corneal edema; posterior capsule clear; well-positioned IOL. (Note laterality: right eye is OD.)",
+        "spans": [
+          [
+            480,
+            568
+          ],
+          [
+            1841,
+            1879
+          ]
+        ]
+      }
+    ],
+    "P": [
+      {
+        "text": "Continue prednisolone acetate 1% QID OD x1 more week (do NOT taper) to quiet the anterior chamber.",
+        "spans": [
+          [
+            1385,
+            1472
+          ]
+        ]
+      },
+      {
+        "text": "Discontinue moxifloxacin OD.",
+        "spans": [
+          [
+            1549,
+            1615
+          ]
+        ]
+      },
+      {
+        "text": "Continue ketorolac once daily OD (CME prophylaxis).",
+        "spans": [
+          [
+            1617,
+            1650
+          ]
+        ]
+      },
+      {
+        "text": "Discontinue night shield; keep water out, no swimming yet.",
+        "spans": [
+          [
+            2045,
+            2090
+          ],
+          [
+            2119,
+            2134
+          ]
+        ]
+      },
+      {
+        "text": "Return post-op month one for refraction.",
+        "spans": [
+          [
+            2136,
+            2190
+          ]
+        ]
+      }
+    ]
+  }
+}

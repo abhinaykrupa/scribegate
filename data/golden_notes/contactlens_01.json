@@ -1,0 +1,147 @@
+{
+  "transcript_id": "contactlens_01",
+  "visit_type": "contact_lens_fitting",
+  "synthetic": true,
+  "soap": {
+    "S": [
+      {
+        "text": "First-time soft contact lens wearer; glasses since age ~12.",
+        "spans": [
+          [
+            154,
+            176
+          ],
+          [
+            216,
+            239
+          ]
+        ]
+      }
+    ],
+    "O": [
+      {
+        "text": "Spectacle Rx OD: -3.50 -0.75 x 170 (initial '-3.75' misspoken then self-corrected to -3.50).",
+        "spans": [
+          [
+            346,
+            468
+          ]
+        ]
+      },
+      {
+        "text": "Spectacle Rx OS: -4.25 sphere, no significant cylinder.",
+        "spans": [
+          [
+            557,
+            623
+          ]
+        ]
+      },
+      {
+        "text": "Trial soft lens: base curve 8.6 mm, diameter 14.2 mm OU.",
+        "spans": [
+          [
+            687,
+            742
+          ]
+        ]
+      },
+      {
+        "text": "Fit OD: good centration, full corneal coverage, ~0.3 mm movement on blink.",
+        "spans": [
+          [
+            922,
+            1068
+          ]
+        ]
+      },
+      {
+        "text": "Fit OS: well centered, good coverage, movement slightly greater but within range.",
+        "spans": [
+          [
+            1199,
+            1280
+          ]
+        ]
+      },
+      {
+        "text": "Over-refraction OD: -0.50 improves VA from 20/30 to 20/20; OS 20/20 with no over-refraction needed.",
+        "spans": [
+          [
+            1409,
+            1457
+          ],
+          [
+            1484,
+            1561
+          ],
+          [
+            1731,
+            1778
+          ]
+        ]
+      }
+    ],
+    "A": [
+      {
+        "text": "Successful first soft contact lens fit OU; over-refraction refined OD power.",
+        "spans": [
+          [
+            625,
+            685
+          ],
+          [
+            1680,
+            1729
+          ]
+        ]
+      }
+    ],
+    "P": [
+      {
+        "text": "Prescribe soft CL: OD -4.00, OS -4.25; base curve 8.6 mm, diameter 14.2 mm OU (OD power reflects -0.50 over-refraction, i.e., -3.50 -> -4.00).",
+        "spans": [
+          [
+            1842,
+            1931
+          ],
+          [
+            1956,
+            2008
+          ]
+        ]
+      },
+      {
+        "text": "Insertion/removal training with tech.",
+        "spans": [
+          [
+            2029,
+            2060
+          ]
+        ]
+      },
+      {
+        "text": "Wear 6-8 hours/day first week, build up; no sleeping in lenses.",
+        "spans": [
+          [
+            2246,
+            2286
+          ],
+          [
+            2309,
+            2328
+          ]
+        ]
+      },
+      {
+        "text": "One-week follow-up to check fit/eye health and confirm Rx.",
+        "spans": [
+          [
+            2330,
+            2416
+          ]
+        ]
+      }
+    ]
+  }
+}

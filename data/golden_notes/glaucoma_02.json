@@ -1,0 +1,132 @@
+{
+  "transcript_id": "glaucoma_02",
+  "visit_type": "glaucoma_followup",
+  "synthetic": true,
+  "soap": {
+    "S": [
+      {
+        "text": "Glaucoma follow-up, on timolol BID OU.",
+        "spans": [
+          [
+            139,
+            186
+          ]
+        ]
+      },
+      {
+        "text": "Poor morning-dose adherence (~3-4 mornings/week); better with bedtime dose.",
+        "spans": [
+          [
+            259,
+            376
+          ]
+        ]
+      },
+      {
+        "text": "Denies respiratory symptoms/asthma with the beta-blocker.",
+        "spans": [
+          [
+            557,
+            603
+          ]
+        ]
+      },
+      {
+        "text": "New subjective left-sided peripheral vision loss (bumping into door frames on the left).",
+        "spans": [
+          [
+            669,
+            728
+          ]
+        ]
+      }
+    ],
+    "O": [
+      {
+        "text": "IOP 22 mmHg OD / 25 mmHg OS (GAT); up from 19/20 four months ago; baseline 28/30.",
+        "spans": [
+          [
+            877,
+            1025
+          ]
+        ]
+      },
+      {
+        "text": "Optic nerves: C/D 0.7 OD stable; C/D 0.8 OS, worse than prior 0.75, with new inferior-rim disc hemorrhage OS.",
+        "spans": [
+          [
+            1161,
+            1394
+          ]
+        ]
+      },
+      {
+        "text": "HVF 24-2: deepening superior arcuate defect OS with worsened mean deviation vs 6 months ago; OD field stable.",
+        "spans": [
+          [
+            1518,
+            1695
+          ]
+        ]
+      },
+      {
+        "text": "OCT RNFL: new inferior RNFL thinning OS vs prior scan.",
+        "spans": [
+          [
+            1701,
+            1815
+          ]
+        ]
+      }
+    ],
+    "A": [
+      {
+        "text": "Primary open-angle glaucoma OU; OS progressing (structural and functional) with IOP above target; OD stable.",
+        "spans": [
+          [
+            1868,
+            1995
+          ]
+        ]
+      },
+      {
+        "text": "Suboptimal medication adherence contributing.",
+        "spans": [
+          [
+            1093,
+            1132
+          ]
+        ]
+      }
+    ],
+    "P": [
+      {
+        "text": "Continue timolol BID OU and add latanoprost one drop qHS OU as second agent.",
+        "spans": [
+          [
+            2050,
+            2188
+          ]
+        ]
+      },
+      {
+        "text": "Adherence intervention: phone alarms for the morning dose.",
+        "spans": [
+          [
+            2227,
+            2270
+          ]
+        ]
+      },
+      {
+        "text": "RTC 6 weeks for IOP recheck; repeat HVF in 3 months; consider laser trabeculoplasty if uncontrolled on two agents.",
+        "spans": [
+          [
+            2353,
+            2566
+          ]
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,21 @@
+# SYNTHETIC TRANSCRIPT — no PHI. Visit type: comprehensive optometry exam. ID: comprehensive_02
+TECH: This is a new patient, comprehensive exam. Chief complaint is trouble reading small print, worse over the last year. Autorefract's done, pupils round and reactive, no relative afferent pupillary defect.
+DOCTOR: Thanks. Good afternoon. So the reading's the main issue?
+PATIENT: Yes. I'm fifty-two and lately I have to hold my phone way out here to read it. Menus in restaurants are a nightmare.
+DOCTOR: Classic presbyopia — the lens loses flexibility with age. Any distance blur?
+PATIENT: Distance is actually fine.
+DOCTOR: Dry eyes, burning, watering?
+PATIENT: Sometimes gritty in the afternoon, especially on the computer.
+DOCTOR: We'll check the tear film. Any medical conditions, diabetes, blood pressure?
+PATIENT: Blood pressure, I take lisinopril. No diabetes.
+DOCTOR: Okay. Let me refract you. Looking at the distance chart — clearer with one or two?
+PATIENT: They look about the same, honestly.
+DOCTOR: That fits. Your distance is essentially plano — I'm getting plano sphere with a tiny minus zero five cylinder at axis eighty-five on the right, and plano with minus zero five cylinder axis ninety-five on the left. Distance acuity is 20/20 in each eye uncorrected. Now for near, I'm finding you need a plus two twenty-five add in both eyes to bring reading to 20/20 at near.
+PATIENT: So I do need reading glasses.
+DOCTOR: Reading glasses or progressives, your choice. Let me do the slit lamp. Lids fine, but I do see a mild reduced tear breakup time, about six seconds, some punctate staining on both corneas — consistent with dry eye. Anterior chambers deep, lenses show very early nuclear changes but nothing visually significant yet.
+PATIENT: My eyes have felt sandy.
+DOCTOR: That's the dryness. I dilated you at check-in; let's look behind. Cup-to-disc zero point four both eyes, symmetric, healthy rims. Maculae flat, no age-related changes. Peripheral retina attached and intact both eyes.
+PATIENT: Good.
+DOCTOR: So the plan: I'll prescribe a plus two twenty-five reading add — I'd suggest progressives given your lifestyle. For the dry eye, start artificial tears four times a day and we'll recheck the surface. Everything else is healthy. Come back in one year, or sooner if the dryness doesn't settle with the drops.
+PATIENT: Sounds good, thank you.
+DOCTOR: My pleasure.

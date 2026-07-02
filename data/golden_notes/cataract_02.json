@@ -1,0 +1,151 @@
+{
+  "transcript_id": "cataract_02",
+  "visit_type": "cataract_postop",
+  "synthetic": true,
+  "soap": {
+    "S": [
+      {
+        "text": "POD#7 s/p cataract surgery OS; reports markedly brighter vision OS and bluish color tint; no discomfort (early scratchiness resolved).",
+        "spans": [
+          [
+            137,
+            177
+          ],
+          [
+            212,
+            294
+          ],
+          [
+            648,
+            704
+          ]
+        ]
+      }
+    ],
+    "O": [
+      {
+        "text": "VA sc 20/25 OS, 20/40 OD.",
+        "spans": [
+          [
+            368,
+            450
+          ]
+        ]
+      },
+      {
+        "text": "Cornea clear OS; POD#1 edema fully resolved.",
+        "spans": [
+          [
+            760,
+            822
+          ]
+        ]
+      },
+      {
+        "text": "IOL well-centered in the bag OS, no decentration.",
+        "spans": [
+          [
+            824,
+            876
+          ]
+        ]
+      },
+      {
+        "text": "AC: trace cell, no flare OS.",
+        "spans": [
+          [
+            905,
+            937
+          ]
+        ]
+      },
+      {
+        "text": "IOP 16 mmHg OS, 17 mmHg OD (iCare).",
+        "spans": [
+          [
+            1098,
+            1141
+          ]
+        ]
+      }
+    ],
+    "A": [
+      {
+        "text": "POD#7 s/p cataract extraction OS, uncomplicated; excellent healing with quiet anterior chamber and resolved corneal edema; well-centered IOL.",
+        "spans": [
+          [
+            488,
+            525
+          ],
+          [
+            939,
+            975
+          ],
+          [
+            1023,
+            1066
+          ]
+        ]
+      }
+    ],
+    "P": [
+      {
+        "text": "Taper prednisolone acetate 1% from QID to TID OS this week.",
+        "spans": [
+          [
+            1272,
+            1345
+          ]
+        ]
+      },
+      {
+        "text": "Discontinue moxifloxacin OS.",
+        "spans": [
+          [
+            1415,
+            1448
+          ]
+        ]
+      },
+      {
+        "text": "Continue ketorolac once daily OS x3 more weeks (CME prophylaxis).",
+        "spans": [
+          [
+            1483,
+            1537
+          ]
+        ]
+      },
+      {
+        "text": "Night shield now optional; continue no rubbing and keep water out (no swimming x1 more week).",
+        "spans": [
+          [
+            1638,
+            1685
+          ],
+          [
+            1753,
+            1781
+          ]
+        ]
+      },
+      {
+        "text": "Return post-op month one for refraction and possible spectacle update for residual astigmatism.",
+        "spans": [
+          [
+            1824,
+            1841
+          ],
+          [
+            1857,
+            1881
+          ],
+          [
+            1909,
+            1983
+          ]
+        ]
+      }
+    ]
+  }
+}

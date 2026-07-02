@@ -1,0 +1,151 @@
+# SYNTHETIC/EDUCATIONAL specification — not clinical guidance.
+#
+# ScribeGate eye-care terminology & notation reference.
+# Covers four visit types: comprehensive optometry exam, glaucoma follow-up,
+# cataract post-op, contact lens fitting. Consumed by the terminology dimension
+# of rubric.yaml. Ranges are typical/plausibility bounds for validation, NOT
+# diagnostic or treatment thresholds.
+
+visual_acuity:
+  description: >
+    Distance visual acuity. Snellen (US, feet) and metric (meters) express the
+    same fraction; the ScribeGate validator accepts either but flags mismatched
+    equivalences (e.g., "20/40" paired with "6/9").
+  snellen_metric_equivalents:
+    - snellen: "20/20"
+      metric: "6/6"
+    - snellen: "20/25"
+      metric: "6/7.5"
+    - snellen: "20/30"
+      metric: "6/9"
+    - snellen: "20/40"
+      metric: "6/12"
+    - snellen: "20/60"
+      metric: "6/18"
+    - snellen: "20/80"
+      metric: "6/24"
+    - snellen: "20/100"
+      metric: "6/30"
+    - snellen: "20/200"
+      metric: "6/60"
+  notation_rules:
+    sc: "sine correction — visual acuity measured WITHOUT correction (unaided)"
+    cc: "cum correction — visual acuity measured WITH correction (spectacles/CL)"
+    PH: "pinhole acuity — used to estimate best-corrected potential; often noted as e.g. '20/40 PH 20/25'"
+    format_note: >
+      Acuity is per-eye with laterality, e.g. "VA cc 20/25 OD, 20/30 OS".
+      Do not report a bare "20/20" on a material finding without an sc/cc
+      qualifier where correction status is clinically relevant.
+  low_vision_scale:
+    description: >
+      When acuity is worse than the Snellen chart's lowest line, use the
+      descending count-based / light-based scale (best to worst):
+    scale_best_to_worst:
+      - CF: "Counting Fingers — patient can count examiner's fingers; note distance, e.g. 'CF at 2 ft'"
+      - HM: "Hand Motion — patient perceives movement of a hand but cannot count fingers"
+      - LP: "Light Perception — patient perceives light only (may add 'with/without projection')"
+      - NLP: "No Light Perception — no perception of light; the worst measurable acuity"
+
+iop:
+  description: "Intraocular pressure. Reported per eye with method when available."
+  units: mmHg
+  physiologic_norm: "10–21 mmHg (typical adult range)"
+  flag_thresholds:
+    elevated: ">21 mmHg — above typical norm; flag for correlation"
+    urgent: ">30 mmHg — markedly elevated; urgent-review flag"
+    hypotony: "<6 mmHg — abnormally low (hypotony); flag, esp. post-op"
+  measurement_methods:
+    GAT: "Goldmann Applanation Tonometry — reference/'gold standard' slit-lamp method (a.k.a. Goldmann)"
+    Tonopen: "Tono-Pen — handheld applanation; portable"
+    iCare: "iCare — rebound tonometry; no anesthetic drop required"
+    NCT: "Non-Contact Tonometry — 'air puff'; common screening method"
+  format_note: >
+    Prefer explicit units and per-eye values, e.g. "IOP 17 mmHg OD / 18 mmHg OS (GAT)".
+    A slash form like "17/18" is acceptable only when OD/OS order is unambiguous.
+
+laterality:
+  description: >
+    Eye designation. Laterality errors are high-severity: a flip can misdirect
+    treatment to the wrong eye.
+  codes:
+    OD: "oculus dexter — RIGHT eye"
+    OS: "oculus sinister — LEFT eye"
+    OU: "oculus uterque — BOTH eyes"
+  confusion_patterns_to_detect:
+    - "Transcript says 'right eye' but note writes OS (right→left flip)."
+    - "Transcript says 'left eye' but note writes OD (left→right flip)."
+    - "Transcript specifies one eye but note generalizes to OU (or vice versa)."
+    - "OD/OS transposed within a paired measurement, e.g. IOP values swapped between eyes."
+    - "Assessment/plan laterality inconsistent with the objective finding's laterality."
+
+lens_rx:
+  description: >
+    Spectacle/contact refraction. ScribeGate assumes minus-cylinder convention
+    (standard in US optometry). Format: sphere / cylinder x axis, then add if present.
+  format: "SPH  CYL x AXIS   (e.g., -2.25 -0.75 x 090), add +X.XX for near"
+  conventions:
+    sphere: "Refractive power of the eye's spherical component (diopters, D)."
+    cylinder: "Astigmatic power; in minus-cylinder convention cylinder is 0 or negative."
+    axis: "Orientation of the cylinder correction, in degrees, 1–180."
+    add: "Additional plus power for near (presbyopia/multifocal), always positive."
+    minus_cylinder_convention: >
+      Cylinder power written as zero or a negative value (e.g., -0.75). A positive
+      cylinder value should be flagged as a possible convention error/transcription slip.
+  sign_rules:
+    myopia: "Nearsighted — NEGATIVE sphere (e.g., -3.00)."
+    hyperopia: "Farsighted — POSITIVE sphere (e.g., +2.50)."
+    note: "Sign flips (myope↔hyperope) are meaning-changing errors; flag them."
+  plausible_ranges:
+    sphere: "±20.00 D (values beyond are implausible for routine Rx; flag)"
+    cylinder: "0.00 to -6.00 D (minus-cylinder)"
+    axis: "1 to 180 degrees (integer; out-of-range = error)"
+    add: "+0.75 to +3.50 D"
+
+medications:
+  description: "Common eye-care drug classes with representative agents and typical use."
+  classes:
+    prostaglandin_analogs:
+      example: latanoprost
+      typical_use: "First-line IOP lowering in glaucoma/OHTN; usually once daily (qHS)."
+    beta_blockers:
+      example: timolol
+      typical_use: "IOP lowering by reducing aqueous production; often BID."
+    carbonic_anhydrase_inhibitors:
+      example: dorzolamide
+      typical_use: "Topical CAI for IOP lowering; adjunctive, typically BID–TID."
+    alpha_agonists:
+      example: brimonidine
+      typical_use: "IOP lowering (reduced production + increased outflow); adjunctive."
+    postop_steroids:
+      example: "prednisolone acetate 1%"
+      typical_use: "Post-op anti-inflammatory (e.g., after cataract surgery); tapering schedule."
+    nsaids:
+      example: ketorolac
+      typical_use: "Topical anti-inflammatory / CME prophylaxis; peri-operative."
+    antibiotics:
+      example: moxifloxacin
+      typical_use: "Fluoroquinolone for infection prophylaxis/treatment (e.g., peri-op)."
+
+exam_findings:
+  description: "Representative vocabulary per visit type for completeness/terminology checks."
+  comprehensive_optometry_exam:
+    - refraction: "manifest/cycloplegic refraction; sphere/cyl/axis (see lens_rx)"
+    - slit_lamp: "anterior segment exam: lids, conjunctiva, cornea, anterior chamber, lens"
+    - fundus: "posterior pole / dilated fundus exam: disc, macula, vessels, periphery"
+    - cup_to_disc_ratio: "C/D ratio, e.g. 0.3 OU; larger or asymmetric = glaucoma-relevant"
+  glaucoma_follow_up:
+    - visual_field: "Humphrey Visual Field (HVF) 24-2; assess defects and progression vs prior"
+    - oct_rnfl: "OCT of retinal nerve fiber layer; thinning tracks glaucomatous damage"
+    - gonioscopy: "angle assessment (open vs narrow/closed) — angle-closure risk"
+    - iop_trend: "serial IOP vs target (see iop section)"
+  cataract_post_op:
+    - iol_position: "intraocular lens centration/position (well-centered vs decentered)"
+    - corneal_edema: "post-op corneal swelling/haze"
+    - cell_and_flare: "anterior chamber inflammation grading (cell = cells, flare = protein)"
+    - posterior_capsule: "capsule clarity; late PCO (posterior capsule opacification)"
+    - pod: "post-operative day, e.g. POD#1, POD#7"
+  contact_lens_fitting:
+    - base_curve: "BC — back curvature of the lens (mm), matched to corneal curvature"
+    - diameter: "DIA — overall lens diameter (mm)"
+    - fit_assessment: "centration, movement, coverage on the eye"
+    - over_refraction: "residual refraction over the trial lens to refine power"

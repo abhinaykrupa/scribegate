@@ -1,0 +1,225 @@
+# SYNTHETIC/EDUCATIONAL specification — not clinical guidance.
+#
+# ScribeGate scoring rubric for AI-generated eye-care SOAP notes.
+# Judges a generated note against a golden reference + source transcript.
+# All examples use 100% synthetic data. Notation reference: terminology.yaml
+#
+# Scoring: each of 4 dimensions gets an integer 1–5. The aggregate is the mean
+# of the four dimension scores, normalized to 0–1, and routed by router_thresholds.
+
+scale: 1-5
+aggregate: mean of dimensions
+# Normalized 0–1 = (mean_of_dimensions - 1) / 4
+router_thresholds:
+  auto_accept: 0.85   # normalized aggregate >= 0.85 → accept without human review
+  review: 0.60        # 0.60 <= normalized < 0.85 → route to human review
+                      # normalized < 0.60 → reject / regenerate
+
+dimensions:
+
+  completeness:
+    description: >
+      Are all clinically material findings present in the transcript captured
+      in the note, and placed in the correct SOAP section (S = subjective /
+      history, O = objective / measured findings, A = assessment / diagnosis,
+      P = plan)? Penalize omitted material findings and section misplacement
+      (e.g., an objective IOP reading written into the Subjective section).
+      Do NOT penalize omission of clinically immaterial small talk.
+    anchors:
+      "1": >
+        Major material findings missing (e.g., transcript documents IOP 34 mmHg
+        OD and a new field defect, note records neither), or entire SOAP sections
+        empty when the transcript supports them. Note is unusable as a record.
+      "2": >
+        Several material findings missing or badly misplaced; the clinical
+        picture is distorted (e.g., diagnosis present but the supporting
+        objective data that justifies it is absent).
+      "3": >
+        Core findings captured, but 1–2 material items missing or in the wrong
+        section (e.g., dilation status omitted, or C/D ratio placed in Assessment
+        instead of Objective). Record is usable with minor gaps.
+      "4": >
+        All material findings captured and correctly sectioned; only trivial or
+        borderline-immaterial details omitted (e.g., patient's incidental comment
+        about lighting preference).
+      "5": >
+        Complete and correctly sectioned: every clinically material S/O/A/P item
+        from the transcript is present in its proper section, nothing material
+        lost, matching the golden reference's coverage.
+    worked_examples:
+      - excerpt: >
+          "O: VA cc 20/25 OD, 20/30 OS. A: Refractive error. P: Update spectacle Rx, RTC 1 year."
+        context: >
+          Transcript (comprehensive exam): patient reports blur at distance;
+          exam records VA, IOP 15/16 mmHg, C/D 0.3 OU, clear lens, flat maculae,
+          and a −0.75 sphere change OD. Note omitted IOP and fundus findings.
+        score: 3
+        justification: >
+          Core VA/refraction and plan captured, but material objective data
+          (IOP, C/D ratio, fundus) present in transcript were dropped from O.
+      - excerpt: >
+          "S: Glaucoma f/u, no new sx, adherent to latanoprost qHS OU.
+          O: IOP 17 OD / 18 OS (GAT), C/D 0.65 OU, HVF 24-2 stable vs prior.
+          A: POAG, stable. P: Continue latanoprost, RTC 4 months, repeat OCT RNFL."
+        context: >
+          Transcript (glaucoma follow-up): matches all items above including
+          adherence, IOP method, field stability, and follow-up interval.
+        score: 5
+        justification: >
+          Every material finding captured in the correct section, mirroring the
+          golden reference with correct S/O/A/P placement.
+
+  hallucination:
+    description: >
+      Inverse-scored. Does the note assert findings, measurements, diagnoses, or
+      plan items that are NOT supported by the transcript? This is the safety-
+      critical dimension: fabricated measurements or diagnoses are the highest-
+      severity failure. A specific invented number (e.g., an IOP value never
+      spoken) is worse than a vague unsupported adjective. 5 = zero unsupported
+      claims; 1 = fabricated measurements or diagnoses.
+    anchors:
+      "1": >
+        Fabricated measurement or diagnosis: a specific value or condition the
+        transcript never supports (e.g., note states "IOP 22 mmHg OU" or
+        "diabetic retinopathy" when neither appears in the transcript). Actively
+        dangerous.
+      "2": >
+        A plan or clinically consequential claim invented (e.g., note prescribes
+        a medication or references an imaging result the transcript does not
+        contain), or multiple unsupported findings.
+      "3": >
+        One unsupported non-measurement finding of moderate consequence
+        (e.g., "mild NS cataract OU" when the transcript only says lenses were
+        assessed without grading).
+      "4": >
+        Only trivial unsupported filler that does not alter clinical meaning
+        (e.g., "patient in no acute distress" boilerplate not stated but
+        clinically harmless), otherwise faithful.
+      "5": >
+        Every finding, measurement, and plan item is traceable to the
+        transcript. No fabrication, no invented numbers, no phantom diagnoses.
+    worked_examples:
+      - excerpt: >
+          "O: IOP 21 mmHg OD, 22 mmHg OS. A: Ocular hypertension OU."
+        context: >
+          Transcript (comprehensive exam): clinician says "pressures looked fine,
+          I didn't get a formal reading today, we'll check next visit." No IOP
+          number and no hypertension diagnosis were stated.
+        score: 1
+        justification: >
+          Both the specific IOP values and the ocular-hypertension diagnosis are
+          fabricated — the transcript explicitly deferred measurement.
+      - excerpt: >
+          "O: Anterior chamber deep and quiet OU, IOL well-centered OD.
+          A: POD#7 uncomplicated cataract surgery OD. P: Continue pred acetate 1% QID."
+        context: >
+          Transcript (cataract post-op): dictates deep quiet AC, centered IOL,
+          uncomplicated POD#7, and continuation of prednisolone acetate 1% QID.
+        score: 5
+        justification: >
+          All findings, the IOL position, the assessment, and the steroid plan
+          are directly supported by the transcript with no added claims.
+
+  coding_plausibility:
+    description: >
+      Would the documentation plausibly support the visit's likely ICD-10 /
+      CPT coding level, and does it avoid upcoding red flags? Reward
+      documentation that genuinely justifies its complexity; penalize
+      documentation inflation (padded exhaustive review-of-systems or exam
+      elements that were never performed) and copy-forward / cloned patterns
+      (identical prior-visit language pasted forward as if freshly examined).
+      This is about defensibility of coding, NOT about maximizing reimbursement.
+    anchors:
+      "1": >
+        Clear upcoding: documentation padded with exam elements or histories not
+        supported by the transcript to justify a higher level, and/or verbatim
+        copy-forward of a prior note presented as today's exam. Audit-risk.
+      "2": >
+        Notable inflation: several documented elements unsupported by the
+        encounter, or the note's complexity is materially mismatched to a
+        routine transcript (e.g., high-complexity language on a stable recheck).
+      "3": >
+        Coding-relevant documentation is roughly proportionate but thin in
+        places — the note would likely support a level but leaves a defensible
+        gap (e.g., MDM rationale not stated).
+      "4": >
+        Documentation cleanly matches encounter complexity; minor stylistic
+        redundancy but no inflation and no copy-forward.
+      "5": >
+        Documentation is proportionate and defensible: elements match what the
+        transcript shows was actually done, medical decision-making is stated,
+        laterality/diagnoses support the ICD-10/CPT level, no copy-forward
+        artifacts, no inflation.
+    worked_examples:
+      - excerpt: >
+          "O: Complete 12-element exam performed. Comprehensive ROS 14 systems
+          all negative. Dilated fundus, gonioscopy, and extended
+          ophthalmoscopy documented. A: Established glaucoma, high complexity."
+        context: >
+          Transcript (glaucoma follow-up): brief stable recheck — IOP measured,
+          patient reports no new symptoms, no gonioscopy or extended
+          ophthalmoscopy discussed or performed.
+        score: 1
+        justification: >
+          Padded ROS and exam procedures never performed plus "high complexity"
+          on a stable recheck are textbook documentation inflation / upcoding.
+      - excerpt: >
+          "S: CL fitting, wants dailies for sports. O: Ks, BC 8.6/DIA 14.2 trial,
+          over-refraction plano OU, fit assessment good movement/centration.
+          A: Myopia, successful soft CL fit. P: Dispense trial, f/u 1 week."
+        context: >
+          Transcript (contact lens fitting): matches — fitting service performed,
+          trial lens parameters, over-refraction, and fit assessment all done.
+        score: 5
+        justification: >
+          Documentation matches the fitting service actually performed; supports
+          a CL-fitting code without padding or cloned language.
+
+  terminology:
+    description: >
+      Correct eye-care notation and units per terminology.yaml: visual-acuity
+      format, IOP units (mmHg), lens Rx sign/axis conventions, drug names, and —
+      critically — correct laterality (OD/OS/OU) matching the transcript. Unit
+      errors and laterality flips are the primary failure modes. A laterality
+      flip (transcript says right eye, note writes OS) is high-severity because
+      it can misdirect care.
+    anchors:
+      "1": >
+        Laterality reversed on a material finding (e.g., transcript "elevated
+        pressure in the right eye" documented as OS), or a unit error that
+        changes meaning (IOP written as "17/100" or VA "6/20" mislabeled).
+      "2": >
+        Multiple notation errors (e.g., sphere sign wrong turning myope into
+        hyperope, or axis out of 1–180 range) or a laterality error on a
+        non-primary finding.
+      "3": >
+        One clear notation slip that a reader could self-correct (e.g., "20/20"
+        written without sc/cc qualifier where it matters, or metric/Snellen
+        mismatch like 20/40 ↔ 6/9).
+      "4": >
+        Notation essentially correct; only cosmetic inconsistency (e.g., mixing
+        "OU" and "both eyes" prose, spacing/format quirks) with no meaning change.
+      "5": >
+        All notation, units, laterality, and Rx conventions correct and
+        consistent with terminology.yaml and the transcript.
+    worked_examples:
+      - excerpt: >
+          "O: IOP 31 mmHg OS, 16 mmHg OD. A: Suspected acute angle closure, left eye."
+        context: >
+          Transcript (glaucoma follow-up): "the RIGHT eye pressure is way up,
+          thirty-one, the left is normal at sixteen." Right eye is the elevated,
+          symptomatic eye.
+        score: 1
+        justification: >
+          Laterality fully reversed — the elevated pressure and the assessment
+          are assigned to OS when the transcript clearly states the right eye.
+      - excerpt: >
+          "O: Manifest refraction OD −2.25 −0.75 x 090, add +2.00; VA cc 20/20 OD.
+          IOP 14 mmHg OD (Tonopen)."
+        context: >
+          Transcript (comprehensive exam): right eye −2.25 sphere, −0.75 cylinder
+          axis 90, +2.00 add, corrected acuity 20/20, Tonopen pressure 14.
+        score: 5
+        justification: >
+          Minus-cylinder convention, axis in range, add power, VA format, IOP
+          units/method, and OD laterality all correct and transcript-consistent.

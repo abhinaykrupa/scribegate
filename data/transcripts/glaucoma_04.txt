@@ -1,0 +1,17 @@
+# SYNTHETIC TRANSCRIPT — no PHI. Visit type: glaucoma follow-up. ID: glaucoma_04
+DOCTOR: Hi, welcome back. This is a follow-up for your glaucoma suspect status — you were started on brimonidine because of borderline pressures. How have the drops been?
+PATIENT: Hello. I've been putting the brimonidine in twice a day, both eyes, pretty consistently. Maybe missed one or two doses over the last few months.
+DOCTOR: That's fine, good adherence. Any dry mouth, drowsiness, or eye redness with the brimonidine?
+PATIENT: A bit of redness now and then, and I do feel a little tired, but nothing bad.
+DOCTOR: Those can happen with that class. Any vision changes, blurring, halos?
+PATIENT: No, my vision's fine.
+TECH: Today's pressures, Goldmann. Right eye eighteen, left eye seventeen. At the visit before starting the drop they were twenty-four right, twenty-three left.
+DOCTOR: Good, so the brimonidine has brought you from the mid-twenties into the high teens. Let me look at the nerves. Cup-to-disc zero point five five both eyes, symmetric, healthy rim tissue, no hemorrhages — this looks stable versus your baseline.
+PATIENT: So am I actually a glaucoma patient now, or still just a suspect?
+DOCTOR: Good question. Let's look at the functional and structural tests. Your Humphrey 24-2 visual field today is full and reliable in both eyes — no defects, and stable compared to your prior field. And the OCT of the retinal nerve fiber layer shows RNFL thickness within normal limits, symmetric, no thinning and no change from the last scan.
+PATIENT: So no actual damage yet.
+DOCTOR: Correct — no structural or functional damage. You remain a glaucoma suspect with ocular hypertension that's now well controlled on the brimonidine. The drop is doing its job of protecting you. So the plan: continue the brimonidine twice a day in both eyes. Because everything is stable and there's no damage, I'm comfortable spacing you out a bit — let's do a pressure check in four months, and repeat the visual field and OCT in one year unless something changes.
+PATIENT: That's reassuring.
+DOCTOR: It should be. Keep the drops going, and if you ever notice vision changes, call us. Otherwise this is a nice stable picture.
+PATIENT: Great, thank you so much.
+DOCTOR: You're welcome. See you in four months for the pressure check.

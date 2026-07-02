@@ -1,0 +1,158 @@
+{
+  "transcript_id": "comprehensive_03",
+  "visit_type": "comprehensive_exam",
+  "synthetic": true,
+  "soap": {
+    "S": [
+      {
+        "text": "Established patient for annual exam with new-onset symptoms.",
+        "spans": [
+          [
+            131,
+            164
+          ]
+        ]
+      },
+      {
+        "text": "Reports new floaters (cobweb-like) OD for ~1 week with occasional temporal flashes.",
+        "spans": [
+          [
+            245,
+            390
+          ]
+        ]
+      },
+      {
+        "text": "Age 61; lifelong myope.",
+        "spans": [
+          [
+            457,
+            514
+          ]
+        ]
+      },
+      {
+        "text": "Denies curtain or shadow over the vision.",
+        "spans": [
+          [
+            666,
+            720
+          ]
+        ]
+      }
+    ],
+    "O": [
+      {
+        "text": "Pupils reactive, no afferent pupillary defect; confrontation fields full to finger count OU.",
+        "spans": [
+          [
+            751,
+            839
+          ]
+        ]
+      },
+      {
+        "text": "Manifest refraction OD -6.50 -1.25 x 100, VA cc 20/25 OD.",
+        "spans": [
+          [
+            977,
+            1079
+          ]
+        ]
+      },
+      {
+        "text": "Manifest refraction OS -6.75 -1.00 x 080, VA cc 20/20 OS; high myopia OU.",
+        "spans": [
+          [
+            1081,
+            1195
+          ]
+        ]
+      },
+      {
+        "text": "Slit lamp: lids and conjunctiva quiet, corneas clear, anterior chambers deep, early lens changes OU.",
+        "spans": [
+          [
+            1213,
+            1299
+          ]
+        ]
+      },
+      {
+        "text": "Dilated fundus OD: optic nerve healthy C/D 0.3; posterior vitreous detachment; superotemporal horseshoe retinal tear with surrounding fluid.",
+        "spans": [
+          [
+            1386,
+            1621
+          ]
+        ]
+      },
+      {
+        "text": "Dilated fundus OS unremarkable: C/D 0.3, macula flat, periphery intact.",
+        "spans": [
+          [
+            1755,
+            1854
+          ]
+        ]
+      }
+    ],
+    "A": [
+      {
+        "text": "Horseshoe retinal tear OD with surrounding fluid and PVD — sight-threatening, requires urgent treatment.",
+        "spans": [
+          [
+            1557,
+            1621
+          ],
+          [
+            1680,
+            1753
+          ]
+        ]
+      },
+      {
+        "text": "High myopia with astigmatism OU.",
+        "spans": [
+          [
+            1171,
+            1195
+          ]
+        ]
+      }
+    ],
+    "P": [
+      {
+        "text": "Urgent referral to retina specialist for laser retinopexy OD; office to coordinate same-day/next-day appointment.",
+        "spans": [
+          [
+            1952,
+            2027
+          ],
+          [
+            2071,
+            2105
+          ]
+        ]
+      },
+      {
+        "text": "Activity precautions: avoid heavy lifting and sudden head movements; ER precautions for a visual field curtain.",
+        "spans": [
+          [
+            2124,
+            2239
+          ]
+        ]
+      },
+      {
+        "text": "Defer finalizing spectacle Rx change until retinal issue is managed.",
+        "spans": [
+          [
+            2383,
+            2459
+          ]
+        ]
+      }
+    ]
+  }
+}

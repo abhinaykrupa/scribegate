@@ -1,0 +1,19 @@
+# SYNTHETIC TRANSCRIPT — no PHI. Visit type: contact lens fitting. ID: contactlens_04
+DOCTOR: Today's a multifocal contact lens fitting — you mentioned trouble with reading up close now?
+PATIENT: Right, I can see far fine with my contacts but I'm holding my phone at arm's length. It's the, uh, the age thing.
+DOCTOR: Presbyopia, yes, happens to all of us. Multifocal contacts have a distance and a near zone built in. Let me get your distance numbers. Right eye minus one point zero zero sphere, left eye minus one twenty-five sphere, minimal cylinder both eyes. And I need your reading add — based on today's testing that's a plus two hundred, uh, plus two point zero zero add.
+PATIENT: [overlapping] two point oh, okay.
+DOCTOR: For a multifocal I'll set the trials at base curve eight point six, diameter fourteen point three, with a low add profile to start— no, given your add is a full plus two, I'll go with the medium add profile.
+TECH: Medium add trials loaded, both eyes.
+DOCTOR: Give them a good ten minutes; multifocals need the patient to neuro-adapt so don't judge vision instantly. [pause] Okay, slit lamp. Right eye centration good, coverage complete, movement point three millimeters, nicely centered which matters a lot for multifocals since decentration blurs both distance and near. Left eye also well centered, good coverage.
+PATIENT: The far vision seems good right off.
+DOCTOR: Good. Multifocal over-refraction is a balance — I check distance and near together. Look at the distance chart first.
+PATIENT: The twenty twenty-five line is clear, the next one's soft.
+DOCTOR: Okay. Over the right, a tiny bit of minus, minus zero twenty-five, cleans up distance to twenty twenty without hurting near. Left is twenty twenty at distance already. Now hold this near card. Can you read the middle row?
+PATIENT: Yeah, that row's clear. The smallest one's a little blurry but I can read the one above it.
+DOCTOR: That's a good near result for a first fit — near acuity roughly 20/25 equivalent, and it'll improve as you adapt. So finals: right eye minus one twenty-five with plus two point zero zero add, left eye minus one twenty-five with plus two point zero zero add.
+PATIENT: Both the same now?
+DOCTOR: The over-refraction nudged the right from minus one hundred to minus one twenty-five, so yes, both landed at minus one twenty-five distance with a plus two add. Base curve eight six, diameter fourteen three, medium add.
+PATIENT: How long to get used to them?
+DOCTOR: Give it one to two weeks of consistent wear. Come back in a week; some people I fine-tune the add or balance the eyes. Don't give up in the first few days.
+PATIENT: Okay, I'll stick with it. Thanks, doc.

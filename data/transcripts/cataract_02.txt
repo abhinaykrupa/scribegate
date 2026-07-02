@@ -1,0 +1,21 @@
+# SYNTHETIC TRANSCRIPT — no PHI. Visit type: cataract post-op (ophthalmology). ID: cataract_02
+TECH: This is the post-op week one visit, left eye cataract surgery seven days ago. Let me grab her acuity.
+PATIENT: It's already so much brighter on the left. The colors look different, almost blue.
+TECH: That's a very common thing patients notice after cataract removal. Uncorrected distance vision is 20/25 in the left eye today, and 20/40 in the right.
+DOCTOR: Morning, I'm Dr. Ferris. So POD number seven for the left eye, OS. The blue tint is your brain adjusting after the cloudy lens came out — it settles. Any discomfort?
+PATIENT: None really. It felt scratchy the first two days but that's gone now.
+DOCTOR: Good. Let me examine you. Look straight ahead. The cornea is clear now — the day-one edema has fully resolved. The IOL is well-centered in the bag, no decentration. Anterior chamber is quiet, I'd call it trace cell, no flare. That's excellent healing at week one.
+PATIENT: So the swelling's gone?
+DOCTOR: Yes, the corneal edema cleared right on schedule. Let me check pressures.
+TECH: iCare tonometry: IOP 16 mmHg OS, 17 mmHg OD.
+DOCTOR: Pressures are normal in both eyes. Now, let's taper your drops since you're doing so well. The prednisolone acetate 1% — drop from four times a day to three times daily this week in the left eye, then we'll step it down again.
+PATIENT: And the antibiotic?
+DOCTOR: You can stop the moxifloxacin now — one week of coverage is plenty. Continue the ketorolac once daily for three more weeks; that guards against macular swelling.
+PATIENT: I stopped the shield already. Is that okay?
+DOCTOR: At week one the shield at night is optional now, so that's fine. Still no rubbing, and keep water out of the eye — no swimming for another week.
+PATIENT: When is the next visit?
+DOCTOR: Post-op month one. At that visit we'll do your refraction and, if the eye is stable, talk about updating your glasses prescription for any residual astigmatism.
+PATIENT: Will I need glasses?
+DOCTOR: Likely just for reading, and possibly a light distance correction. We'll know precisely at the one-month refraction. Keep tapering as we discussed and call if vision suddenly worsens.
+PATIENT: Thank you so much.
+DOCTOR: My pleasure. This is a textbook week-one result for the left eye.

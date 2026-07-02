@@ -1,0 +1,20 @@
+# SYNTHETIC TRANSCRIPT — no PHI. Visit type: glaucoma follow-up. ID: glaucoma_01
+DOCTOR: Good to see you again. This is your glaucoma follow-up — you've got primary open-angle glaucoma in both eyes, and we started you on latanoprost last visit. How are the drops going?
+PATIENT: Hi doctor. They're going fine. One drop at bedtime in both eyes, every night. I haven't missed any.
+DOCTOR: Excellent adherence. Any redness or irritation from the drop?
+PATIENT: A little redness the first week but it settled down.
+DOCTOR: Any changes in vision, or anything new you've noticed?
+PATIENT: No, vision feels the same. No new symptoms. Reading's fine, driving's fine, no blurring or halos or anything like that.
+DOCTOR: That's what I like to hear. And no trouble with the eyelashes growing longer or any darkening of the eyelid skin? Those can happen with this class of drop.
+PATIENT: Now that you mention it, my lashes do seem a little longer, but the skin looks the same to me.
+DOCTOR: That's a common and harmless cosmetic effect of the latanoprost, nothing to worry about.
+TECH: I've got today's pressures by Goldmann. Right eye seventeen, left eye eighteen. For reference, at diagnosis before treatment they were twenty-six on the right and twenty-seven on the left.
+DOCTOR: Good, that's a nice response to the latanoprost — we've come down from the mid-twenties into the high teens, which is right at our target. Let me look at the nerves. Cup-to-disc ratio zero point six five in both eyes, stable compared to your baseline photos, rims intact, no new hemorrhages.
+PATIENT: So the pressure medicine is working?
+DOCTOR: It's working well. We also have your recent tests. The Humphrey 24-2 visual field from today is stable — the mean deviation is essentially unchanged from your prior field six months ago, no new or deepening defects. And the OCT of the retinal nerve fiber layer shows stable RNFL thickness, no progressive thinning versus the last scan.
+PATIENT: That's a relief.
+DOCTOR: It's exactly what we want to see — stable structure, stable function, pressure at target. So the plan is straightforward: continue the latanoprost, one drop at bedtime in both eyes, no change. Keep up that perfect adherence. I'll see you back in four months to recheck the pressure, and we'll repeat the visual field and OCT at your next annual mark.
+PATIENT: Sounds good. Same routine.
+DOCTOR: Same routine. Any trouble getting the prescription refilled, let the front desk know.
+PATIENT: Will do, thanks doctor.
+DOCTOR: Take care, see you in four months.

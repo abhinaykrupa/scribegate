@@ -1,0 +1,19 @@
+# SYNTHETIC TRANSCRIPT — no PHI. Visit type: cataract post-op (ophthalmology). ID: cataract_04
+TECH: Post-op month one visit, left eye. Surgery was about five weeks ago. She's here for her final post-op and refraction.
+PATIENT: The left eye has been wonderful. I can see the leaves on trees again.
+TECH: Wonderful. Uncorrected distance vision is 20/25 in the left eye today. With the refraction I found, best corrected is 20/20 in the left. The right is 20/30 uncorrected.
+DOCTOR: Excellent. Good morning, Dr. Lindqvist. So this is post-op month one for the left eye, OS, and you've hit 20/20 best corrected. That's a great outcome.
+PATIENT: I'm thrilled.
+DOCTOR: Let me examine the eye. Cornea is crystal clear, no edema. The IOL remains well-centered in the capsular bag. Anterior chamber is completely quiet — no cell, no flare. The posterior capsule is clear today with no opacification.
+PATIENT: What was that last part?
+DOCTOR: The posterior capsule — it's the thin membrane the lens sits on. Sometimes months to years later it can get cloudy, called posterior capsule opacification, or PCO. Yours is clear now, but if vision ever gets hazy again down the road, that's often the cause and it's a quick laser fix in the office.
+PATIENT: Good to know.
+DOCTOR: Let me check the pressure.
+TECH: Goldmann applanation: IOP 15 mmHg OS, 16 mmHg OD.
+DOCTOR: Pressures are perfect. Since the eye is fully healed and quiet, you can stop all the drops today — the prednisolone and the ketorolac are both done. No more post-op drops.
+PATIENT: That's a relief, they were a lot to keep track of.
+DOCTOR: You did great with them. On the refraction: your left eye has a small amount of residual astigmatism, so a light spectacle correction will sharpen distance a touch, and you'll want a reading add of about +2.25 for near.
+PATIENT: Can I get new glasses now?
+DOCTOR: Yes, the eye is stable at one month, so this is a good prescription to fill. Once the right eye is done we'll finalize the full pair. Come back if you notice any new haziness or floaters.
+PATIENT: Thank you for everything.
+DOCTOR: My pleasure — a textbook one-month result.

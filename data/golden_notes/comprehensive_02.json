@@ -1,0 +1,158 @@
+{
+  "transcript_id": "comprehensive_02",
+  "visit_type": "comprehensive_exam",
+  "synthetic": true,
+  "soap": {
+    "S": [
+      {
+        "text": "New patient, comprehensive exam. Chief complaint: difficulty reading small print, worsening over the past year.",
+        "spans": [
+          [
+            145,
+            217
+          ]
+        ]
+      },
+      {
+        "text": "Age 52; must hold reading material at arm's length; difficulty with restaurant menus. Denies distance blur.",
+        "spans": [
+          [
+            384,
+            494
+          ],
+          [
+            590,
+            615
+          ]
+        ]
+      },
+      {
+        "text": "Reports afternoon grittiness, worse with computer use.",
+        "spans": [
+          [
+            663,
+            724
+          ]
+        ]
+      },
+      {
+        "text": "Medical history: hypertension on lisinopril; no diabetes.",
+        "spans": [
+          [
+            820,
+            866
+          ]
+        ]
+      }
+    ],
+    "O": [
+      {
+        "text": "Pupils round and reactive, no relative afferent pupillary defect.",
+        "spans": [
+          [
+            239,
+            303
+          ]
+        ]
+      },
+      {
+        "text": "Manifest refraction OD plano -0.50 x 085; OS plano -0.50 x 095; distance VA sc 20/20 OU.",
+        "spans": [
+          [
+            1072,
+            1274
+          ]
+        ]
+      },
+      {
+        "text": "Near add +2.25 OU bringing near VA to 20/20.",
+        "spans": [
+          [
+            1280,
+            1384
+          ]
+        ]
+      },
+      {
+        "text": "Slit lamp: reduced tear breakup time ~6 s with punctate corneal staining OU; anterior chambers deep; very early nuclear lens changes not visually significant.",
+        "spans": [
+          [
+            1519,
+            1746
+          ]
+        ]
+      },
+      {
+        "text": "Dilated fundus exam: C/D 0.4 OU symmetric with healthy rims; maculae flat without age-related changes; peripheral retina attached and intact OU.",
+        "spans": [
+          [
+            1810,
+            1835
+          ],
+          [
+            1856,
+            2005
+          ]
+        ]
+      }
+    ],
+    "A": [
+      {
+        "text": "Presbyopia; requires near correction.",
+        "spans": [
+          [
+            504,
+            560
+          ]
+        ]
+      },
+      {
+        "text": "Dry eye disease OU (reduced TBUT, punctate keratopathy).",
+        "spans": [
+          [
+            1622,
+            1645
+          ]
+        ]
+      },
+      {
+        "text": "Very early nuclear lens changes OU, visually insignificant.",
+        "spans": [
+          [
+            1671,
+            1746
+          ]
+        ]
+      }
+    ],
+    "P": [
+      {
+        "text": "Prescribe +2.25 near add; progressive lenses recommended given lifestyle.",
+        "spans": [
+          [
+            2043,
+            2140
+          ]
+        ]
+      },
+      {
+        "text": "Begin artificial tears QID for dry eye; recheck ocular surface.",
+        "spans": [
+          [
+            2159,
+            2228
+          ]
+        ]
+      },
+      {
+        "text": "RTC 1 year, or sooner if dryness not controlled with drops.",
+        "spans": [
+          [
+            2258,
+            2335
+          ]
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,18 @@
+# SYNTHETIC TRANSCRIPT — no PHI. Visit type: contact lens fitting. ID: contactlens_05
+TECH: This is a rigid gas permeable fitting, referred for keratoconus in the right eye. Soft lenses weren't giving stable vision.
+PATIENT: Yeah the soft ones, the vision would come and go. Somebody said the hard lenses hold their shape better over the, um, the cone.
+DOCTOR: [entering] Exactly right. With keratoconus the cornea is irregular, so a rigid lens vaults over it and creates a smooth optical surface. Let me look at the topography numbers. The right cornea is steep — the fitting is trickier on that side. Left eye is close to normal. Refraction, right eye is minus six— hang on, let me read it properly, minus six point five zero sphere with a minus three hundred cylinder, and the left is minus two point zero zero sphere, minus zero seventy-five cylinder.
+PATIENT: [overlapping] the right's the bad one, yeah.
+DOCTOR: For the right RGP I'm choosing a steep base curve to match the cone, seven point one millimeters, diameter nine point— sorry, for RGPs the diameter's smaller, nine point six millimeters. Left eye is a more standard RGP, base curve seven point eight, diameter nine point six.
+TECH: Trials are in. He's been tearing a bit on the right, which is normal for a first rigid lens.
+DOCTOR: Very normal, they feel more noticeable than soft. Let me assess the fit with fluorescein. [pause] On the right, the fluorescein pattern shows light touch at the apex of the cone with pooling around it — that's the vault I want, close to an ideal three-point touch. Movement is good, about one millimeter on blink, centration acceptable given the irregular cornea.
+PATIENT: Is it sitting okay?
+DOCTOR: It's a good keratoconic fit. Left eye shows an even fluorescein pattern, well centered, good edge clearance, movement about one millimeter. Now over-refraction — this is where RGPs shine for cone patients. Over the right lens, read the chart.
+PATIENT: Wow, that's, that's a lot clearer than my soft lens ever was. The twenty thirty line, easily.
+DOCTOR: And with a little sphere over the top — plus zero fifty over the right — you jump to twenty twenty-five. That's excellent for a keratoconic eye. Over the left lens you're twenty twenty. So the rigid lens is masking the corneal irregularity, exactly the point.
+PATIENT: So the right will actually be usable?
+DOCTOR: Much better than the soft lens gave you. Final: right RGP base curve seven one, diameter nine six, power incorporating the over-refraction; left RGP base curve seven eight, diameter nine six. Because these are rigid, adaptation takes longer — wear a few hours the first day and add an hour daily.
+PATIENT: And follow-up?
+DOCTOR: Sooner than usual — I want to see you in a few days to recheck the fit and the corneal surface, then again at one week. Keratoconus fits often need a tweak or two.
+PATIENT: Understood. Thank you, doctor.
+DOCTOR: The tech will teach you rigid lens insertion — it's a bit different from soft.

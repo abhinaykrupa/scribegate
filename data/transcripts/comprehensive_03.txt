@@ -1,0 +1,20 @@
+# SYNTHETIC TRANSCRIPT — no PHI. Visit type: comprehensive optometry exam. ID: comprehensive_03
+DOCTOR: Hi there, good to see you. You're here for your yearly check, and you mentioned something to the tech about seeing spots?
+PATIENT: Yeah, hi. About a week ago I started noticing floaters in my right eye. Little cobweb things drifting around. And maybe a couple of flashes off to the side.
+DOCTOR: How old are you again, and are you nearsighted?
+PATIENT: I'm sixty-one, and yeah, pretty nearsighted my whole life.
+DOCTOR: Okay, floaters and flashes in a nearsighted eye — that's something we take seriously. Any curtain or shadow over part of the vision?
+PATIENT: No curtain. Just the floaters and the occasional flash.
+TECH: Entrance testing done. Pupils reactive, no afferent defect. Confrontation fields full to finger count both eyes.
+DOCTOR: Thank you. Let me get your refraction first, then we'll do a careful dilated look. Distance — one or two?
+PATIENT: One.
+DOCTOR: Right eye minus six fifty sphere, minus one twenty-five cylinder axis one hundred, correcting to 20/25. Left eye minus six seventy-five sphere, minus one point zero cylinder axis eighty, 20/20. High myopia, as expected. Slit lamp now — lids and conjunctiva quiet, corneas clear, chambers deep, early lens changes both eyes.
+PATIENT: And the floaters?
+DOCTOR: That's the dilated exam. Give me a moment. Okay — on the right, the optic nerve is healthy, cup-to-disc zero point three. But I can see a posterior vitreous detachment, and importantly, up in the superotemporal periphery there's a horseshoe retinal tear with a little surrounding fluid.
+PATIENT: Is that bad?
+DOCTOR: It needs prompt attention. A tear like this can progress to a retinal detachment if it isn't treated. The left eye, for comparison, is fine — cup-to-disc zero point three, macula flat, periphery intact. But that right eye tear I want treated today or tomorrow.
+PATIENT: What does that mean?
+DOCTOR: I'm going to refer you urgently to a retina specialist for laser retinopexy — they'll seal around the tear with laser. I'm calling them now to get you in. In the meantime, avoid heavy lifting or sudden head movements. If you see a curtain coming across your vision, go straight to the ER.
+PATIENT: Okay, that's a little scary but I'm glad we caught it.
+DOCTOR: You did the right thing coming in for the floaters. For your glasses, I'll finalize the mild prescription change after the retina issue is handled. Priority right now is that tear. The staff will coordinate the referral.
+PATIENT: Thank you, doctor.

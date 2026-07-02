@@ -1,0 +1,18 @@
+# SYNTHETIC TRANSCRIPT — no PHI. Visit type: contact lens fitting. ID: contactlens_02
+TECH: This is a toric soft lens fitting, follow-up from the exam last week. Astigmatism in both eyes.
+PATIENT: Right, the doctor said regular contacts wouldn't fix the blur because of the, um, the football-shaped thing.
+DOCTOR: [entering] Morning. Yes, your cornea has astigmatism, so you need a toric lens that corrects the cylinder. Let me confirm the numbers. Right eye, your refraction is minus two twenty-five sphere, minus one seventy— sorry, minus one point five zero cylinder, axis oh-nine-zero. Ninety degrees.
+PATIENT: [overlapping] whatever you say, doc.
+DOCTOR: Left eye is minus one seventy-five sphere, minus one twenty-five cylinder, axis one hundred. So I'll fit toric lenses. Base curve eight point seven, diameter fourteen point five for the trials.
+TECH: They've been in about fifteen minutes.
+DOCTOR: Perfect, torics need time to settle and stabilize the axis. Slit lamp. On the right, centration good, coverage good, and I'm watching the orientation mark — the lens is sitting stable, the marker is right at the six o'clock position, rotating maybe five degrees on blink and coming back. That's acceptable.
+PATIENT: What are you looking at exactly?
+DOCTOR: Toric lenses have a little mark so I can see if they rotate. If it spins too much the axis is off and vision fluctuates. Yours is stable. Left eye — coverage good, but the marker is rotating a bit more, maybe, uh, ten degrees, and settling nasally. I'll compensate the axis for that.
+PATIENT: Is that a problem?
+DOCTOR: It's within what I can adjust for. Now the over-refraction. Over the right lens, what do you see on the chart?
+PATIENT: The, uh, the second line down is clear. The one under it is fuzzy.
+DOCTOR: So about twenty twenty-five on the right. A little sphere over the top — with plus, no, with an extra minus zero twenty-five you're at twenty twenty. Good. Left lens, you're reading twenty twenty already. Final toric powers: right minus two twenty-five, minus one fifty by ninety; left minus one seventy-five, minus one twenty-five, axis adjusted to one-oh-five for the rotation.
+PATIENT: So the left axis changed?
+DOCTOR: Right, I bumped it from one hundred to one-oh-five to account for the lens rotating nasally. Base curve eight seven, diameter fourteen five. One-week follow-up to confirm stability with all-day wear.
+PATIENT: Great, thank you.
+DOCTOR: The tech will handle training and ordering.

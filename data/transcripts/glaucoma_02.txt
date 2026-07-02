@@ -1,0 +1,18 @@
+# SYNTHETIC TRANSCRIPT — no PHI. Visit type: glaucoma follow-up. ID: glaucoma_02
+DOCTOR: Come in, come in. So this is your glaucoma check. You've been on timolol twice a day in both eyes — remind me how that's been going.
+PATIENT: Hello. Honestly, not great. I keep forgetting the morning dose. Maybe I get it in three or four mornings a week. The bedtime one I'm better about.
+DOCTOR: I appreciate the honesty — adherence really matters here. Any breathing issues or slow heartbeat with the timolol? We ask because beta-blockers can affect those.
+PATIENT: No, no breathing problems. I don't have asthma.
+DOCTOR: Good. Any new vision symptoms?
+PATIENT: My side vision, I feel like I'm bumping into door frames on the left lately. Might be nothing.
+DOCTOR: That's worth taking seriously. Let's get the numbers. Tech, what are today's pressures?
+TECH: Goldmann pressures today — right eye twenty-two, left eye twenty-five. Last visit four months ago they were nineteen and twenty. At diagnosis they were twenty-eight and thirty.
+DOCTOR: So they've crept back up, and the left is running higher. That fits with the missed morning doses. Let me examine the nerves. Cup-to-disc zero point seven on the right — stable. But the left, the cup-to-disc looks like zero point eight now, a touch worse than your prior zero point seven five, and I see a small disc hemorrhage at the inferior rim on the left.
+PATIENT: That doesn't sound good.
+DOCTOR: A disc hemorrhage can be a sign of progression. Let's correlate with the tests. Your Humphrey 24-2 from today shows a deepening superior arcuate defect in the left eye compared with six months ago — the mean deviation has worsened. The right field is stable. And the OCT of the retinal nerve fiber layer confirms new inferior RNFL thinning in the left eye versus the prior scan.
+PATIENT: So the left eye is getting worse.
+DOCTOR: The left eye is showing progression, yes — structure and function both moving in the same direction, and pressures above target. So we're going to intensify treatment. I want you to continue the timolol twice daily, but let's add latanoprost, one drop at bedtime in both eyes, as a second agent to get the pressure lower. And we need to solve the adherence — let's set phone alarms for the morning dose.
+PATIENT: I can do the alarms.
+DOCTOR: Good. Because the left eye is progressing, I want to see you back in six weeks to recheck the pressure, sooner than usual, and we'll repeat the visual field in three months. If the pressure isn't controlled on two drops, we'll discuss laser trabeculoplasty.
+PATIENT: Understood. I'll be much better about the drops.
+DOCTOR: Thank you. The front desk will get you the latanoprost and the six-week recheck.

@@ -1,0 +1,129 @@
+{
+  "transcript_id": "contactlens_03",
+  "visit_type": "contact_lens_fitting",
+  "synthetic": true,
+  "soap": {
+    "S": [
+      {
+        "text": "Established CL wearer with afternoon dryness/sandpaper sensation and hazy vision by ~3 PM; refit into daily disposables planned.",
+        "spans": [
+          [
+            210,
+            293
+          ],
+          [
+            312,
+            373
+          ]
+        ]
+      }
+    ],
+    "O": [
+      {
+        "text": "Prior exam Rx (3 weeks ago) OD: -5.25 sphere; OS: -5.00 sphere; both no significant cylinder.",
+        "spans": [
+          [
+            716,
+            829
+          ]
+        ]
+      },
+      {
+        "text": "Trial daily disposable: base curve 8.5 mm (initial '8.4' corrected to 8.5), diameter 14.1 mm.",
+        "spans": [
+          [
+            856,
+            959
+          ]
+        ]
+      },
+      {
+        "text": "Fit OD: good centration, full coverage, ~0.25 mm movement (slightly low but acceptable).",
+        "spans": [
+          [
+            1106,
+            1241
+          ]
+        ]
+      },
+      {
+        "text": "Fit OS: good centration/coverage, adequate movement.",
+        "spans": [
+          [
+            1243,
+            1310
+          ]
+        ]
+      },
+      {
+        "text": "Over-refraction OD: -0.25 improves from 20/25 to 20/20; OS 20/20 as is.",
+        "spans": [
+          [
+            1606,
+            1681
+          ],
+          [
+            1734,
+            1781
+          ]
+        ]
+      }
+    ],
+    "A": [
+      {
+        "text": "Refit into daily disposable of moisture-retaining material to address afternoon dryness/deposits; over-refraction refined OD power.",
+        "spans": [
+          [
+            1383,
+            1435
+          ],
+          [
+            1901,
+            1984
+          ]
+        ]
+      }
+    ],
+    "P": [
+      {
+        "text": "Prescribe daily disposable soft CL: OD -5.50 (over-refraction moved -5.25 -> -5.50), OS -5.00; base curve 8.5 mm, diameter 14.1 mm.",
+        "spans": [
+          [
+            1687,
+            1732
+          ],
+          [
+            1786,
+            1843
+          ],
+          [
+            2136,
+            2198
+          ]
+        ]
+      },
+      {
+        "text": "Daily disposal (no cleaning solution) to reduce dryness/deposits; rewetting drops PRN.",
+        "spans": [
+          [
+            2224,
+            2275
+          ],
+          [
+            2329,
+            2386
+          ]
+        ]
+      },
+      {
+        "text": "One-week follow-up to confirm dryness resolved and full-day fit; reassess if afternoon haze recurs.",
+        "spans": [
+          [
+            2439,
+            2539
+          ]
+        ]
+      }
+    ]
+  }
+}

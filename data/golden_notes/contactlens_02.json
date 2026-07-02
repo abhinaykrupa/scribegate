@@ -1,0 +1,135 @@
+{
+  "transcript_id": "contactlens_02",
+  "visit_type": "contact_lens_fitting",
+  "synthetic": true,
+  "soap": {
+    "S": [
+      {
+        "text": "Toric soft CL fitting (follow-up from exam); bilateral astigmatism; standard lenses insufficient for cylinder.",
+        "spans": [
+          [
+            92,
+            160
+          ],
+          [
+            220,
+            258
+          ]
+        ]
+      }
+    ],
+    "O": [
+      {
+        "text": "Refraction OD: -2.25 -1.50 x 090 (cylinder initially misspoken '-1.70' then corrected to -1.50).",
+        "spans": [
+          [
+            479,
+            588
+          ]
+        ]
+      },
+      {
+        "text": "Refraction OS: -1.75 -1.25 x 100.",
+        "spans": [
+          [
+            660,
+            751
+          ]
+        ]
+      },
+      {
+        "text": "Trial toric lens: base curve 8.7 mm, diameter 14.5 mm OU.",
+        "spans": [
+          [
+            779,
+            852
+          ]
+        ]
+      },
+      {
+        "text": "Fit OD: good centration/coverage; orientation marker stable at 6 o'clock, ~5 deg rotation on blink with recovery (acceptable).",
+        "spans": [
+          [
+            1092,
+            1193
+          ]
+        ]
+      },
+      {
+        "text": "Fit OS: good coverage; marker rotating ~10 deg, settling nasally (axis compensation planned).",
+        "spans": [
+          [
+            1432,
+            1511
+          ]
+        ]
+      },
+      {
+        "text": "Over-refraction OD: -0.25 improves from ~20/25 to 20/20; OS 20/20 already.",
+        "spans": [
+          [
+            1867,
+            1927
+          ],
+          [
+            1935,
+            1982
+          ]
+        ]
+      }
+    ],
+    "A": [
+      {
+        "text": "Toric soft CL fit OU; OD stable axis, OS lens rotation requiring axis compensation.",
+        "spans": [
+          [
+            1385,
+            1400
+          ],
+          [
+            1513,
+            1546
+          ]
+        ]
+      }
+    ],
+    "P": [
+      {
+        "text": "Prescribe toric soft CL: OD -2.25 -1.50 x 090; OS -1.75 -1.25 with axis adjusted to 105 (from 100) to compensate nasal rotation.",
+        "spans": [
+          [
+            2004,
+            2157
+          ]
+        ]
+      },
+      {
+        "text": "Base curve 8.7 mm, diameter 14.5 mm OU.",
+        "spans": [
+          [
+            2295,
+            2341
+          ]
+        ]
+      },
+      {
+        "text": "One-week follow-up to confirm stability with all-day wear.",
+        "spans": [
+          [
+            2343,
+            2400
+          ]
+        ]
+      },
+      {
+        "text": "Tech to handle training and lens ordering.",
+        "spans": [
+          [
+            2437,
+            2479
+          ]
+        ]
+      }
+    ]
+  }
+}
