@@ -3,3 +3,4 @@ pytest
 streamlit
 anthropic
 pandas
+streamlit-mic-recorder

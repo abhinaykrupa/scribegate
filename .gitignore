@@ -6,3 +6,4 @@ __pycache__
 .streamlit/secrets.toml
 data/results/*
 !data/results/benchmark.md
+!data/results/history_demo.jsonl

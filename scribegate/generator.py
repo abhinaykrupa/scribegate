@@ -254,7 +254,7 @@ _SELF_CORRECTION_RE = re.compile(
 )
 
 
-def _clean_utterance_text(text: str) -> str:
+def _clean_utterance_text(text: str, transcript_id: str = "", quality: str = "baseline") -> str:
     """Light cleanup for composing a note line: strip brackets/fillers,
     canonicalize spoken numbers to digit notation, collapse ws.
 
@@ -264,10 +264,17 @@ def _clean_utterance_text(text: str) -> str:
     Canonicalizing spoken numbers to digits happens in-place/in-order (see
     _canonicalize_spoken_numbers) so a self-correcting utterance still
     surfaces both the first-stated and corrected digit values in sequence.
+
+    `quality` gates an additional deterministic numeric-drift pass (see
+    `_apply_numeric_drift`) that perturbs some canonicalized numeric tokens —
+    modeling the kind of transcription/dictation slip a lower-quality
+    drafter pass would introduce. Baseline quality applies drift at a very
+    low (near-zero) rate; degraded applies it at a meaningfully higher rate.
     """
     t = _BRACKET_RE.sub("", text)
     t = _FILLER_RE.sub("", t)
     t = _canonicalize_spoken_numbers(t)
+    t = _apply_numeric_drift(t, transcript_id, quality)
     t = _WS_RE.sub(" ", t).strip()
     return t
 
@@ -551,6 +558,79 @@ def _canonicalize_spoken_numbers(text: str) -> str:
     return t
 
 
+# ---------------------------------------------------------------------------
+# Numeric drift (quality knob)
+#
+# WHY: quality="degraded" models a lower-fidelity drafter pass that
+# occasionally mis-transcribes a numeric clinical value (an IOP mmHg
+# integer off-by-one, or a diopter decimal digit shift) rather than
+# corrupting text at random. Drift is gated purely on `quality` plus a
+# deterministic hash of (transcript_id, the matched numeric token's value
+# and position in the string) — no `random.random()`, no per-transcript-id
+# special-casing. baseline keeps the drift rate effectively at zero;
+# degraded raises it to a rate high enough to be visible across a 20-
+# transcript run without touching every single numeric token (which would
+# look like noise rather than a realistic occasional slip).
+# ---------------------------------------------------------------------------
+
+# Matches a bare 2-3 digit IOP-style integer (e.g. "IOP 26 mmHg", "pressure
+# 15") or a signed diopter-style decimal (e.g. "-3.75", "+2.00"). Kept
+# intentionally narrow/general (no clinical-value special-casing) — it just
+# targets "the kind of number canonicalization already produced".
+_DRIFT_TARGET_RE = re.compile(r"(?P<num>[-+]?\d{1,3}(?:\.\d{1,2})?)")
+
+_BASELINE_DRIFT_RATE_DENOM = 200  # ~0.5% of numeric tokens — effectively negligible
+_DEGRADED_DRIFT_RATE_DENOM = 3  # ~1-in-3 numeric tokens drift
+
+
+def _drift_seed(transcript_id: str, token: str, position: int) -> int:
+    h = hashlib.sha256(f"{transcript_id}:{token}:{position}".encode("utf-8")).hexdigest()
+    return int(h[:8], 16)
+
+
+def _perturb_numeric_token(token: str) -> str | None:
+    """Deterministically nudge a numeric token by a small clinically-plausible
+    amount: integers shift by +/-1 (e.g. IOP mmHg off-by-one), decimals shift
+    the last digit by +/-1 (e.g. a diopter value's hundredths digit slips).
+    Returns None if the token can't be perturbed (shouldn't happen given the
+    regex, but keeps this defensive)."""
+    sign = ""
+    body = token
+    if body and body[0] in "+-":
+        sign, body = body[0], body[1:]
+    if "." in body:
+        whole, frac = body.split(".", 1)
+        if not frac:
+            return None
+        last_digit = int(frac[-1])
+        new_last = (last_digit + 1) % 10
+        new_frac = frac[:-1] + str(new_last)
+        return f"{sign}{whole}.{new_frac}"
+    if not body.isdigit():
+        return None
+    val = int(body)
+    new_val = val + 1
+    return f"{sign}{new_val}"
+
+
+def _apply_numeric_drift(text: str, transcript_id: str, quality: str = "baseline") -> str:
+    """Deterministically perturb some already-canonicalized numeric tokens in
+    `text`, at a rate gated by `quality`. See module comment above."""
+    if not text or not _DRIFT_TARGET_RE.search(text):
+        return text
+    denom = _DEGRADED_DRIFT_RATE_DENOM if quality == "degraded" else _BASELINE_DRIFT_RATE_DENOM
+
+    def _repl(m: re.Match) -> str:
+        token = m.group("num")
+        seed = _drift_seed(transcript_id, token, m.start())
+        if seed % denom != 0:
+            return token
+        perturbed = _perturb_numeric_token(token)
+        return perturbed if perturbed is not None else token
+
+    return _DRIFT_TARGET_RE.sub(_repl, text)
+
+
 @dataclass
 class DraftLine:
     text: str
@@ -558,19 +638,35 @@ class DraftLine:
     salience: int = 1  # heuristic weight; used by critics to decide what to drop
 
 
-def _summarize(utterances: list[Utterance]) -> str:
+_BASELINE_SUMMARY_MAX_CHARS = 220
+_DEGRADED_SUMMARY_MAX_CHARS = 120
+
+
+def _summarize(
+    utterances: list[Utterance], transcript_id: str = "", quality: str = "baseline"
+) -> str:
     """Compose a single note-line summary from one or more utterances.
 
     Mock drafter is deliberately naive: it concatenates cleaned utterance text
     (truncated) rather than performing real clinical synthesis. This is the
     stub-quality behavior the eval harness is meant to score.
+
+    `quality="degraded"` truncates more aggressively (more paraphrase loss)
+    and raises the numeric-drift rate (see `_apply_numeric_drift`), modeling
+    a lower-quality drafter pass. Fully deterministic — the cutoff length and
+    drift rate are fixed constants per quality tier, no randomness involved.
+    `transcript_id` is only used (along with `quality`) to seed numeric
+    drift; it does not otherwise change composition.
     """
-    parts = [_clean_utterance_text(u.text) for u in utterances]
+    parts = [_clean_utterance_text(u.text, transcript_id=transcript_id, quality=quality) for u in utterances]
     parts = [p for p in parts if p]
     joined = " ".join(parts)
+    max_chars = (
+        _DEGRADED_SUMMARY_MAX_CHARS if quality == "degraded" else _BASELINE_SUMMARY_MAX_CHARS
+    )
     # trim to a reasonably concise line without cutting mid-word
-    if len(joined) > 220:
-        joined = joined[:220].rsplit(" ", 1)[0] + "..."
+    if len(joined) > max_chars:
+        joined = joined[:max_chars].rsplit(" ", 1)[0] + "..."
     return joined
 
 
@@ -599,11 +695,11 @@ def _is_procedural_narration(text: str) -> bool:
 
 
 def _draft_lines_for_section(
-    utterances: list[Utterance], section: str
+    utterances: list[Utterance], section: str, transcript_id: str = "", quality: str = "baseline"
 ) -> list[DraftLine]:
     lines: list[DraftLine] = []
     for u in utterances:
-        text = _summarize([u])
+        text = _summarize([u], transcript_id=transcript_id, quality=quality)
         if not text:
             continue
         if _is_procedural_narration(text):
@@ -639,11 +735,17 @@ def _drop_empty(lines: list[DraftLine]) -> list[DraftLine]:
 
 
 def _apply_seeded_imperfection(
-    lines: list[DraftLine], transcript_id: str, section: str
+    lines: list[DraftLine], transcript_id: str, section: str, quality: str = "baseline"
 ) -> list[DraftLine]:
-    """Deterministically (per transcript_id + section) skip one low-salience
-    line, when there are enough lines that dropping one still leaves content.
-    This models a realistic drafter miss, not a special-cased transcript rule.
+    """Deterministically (per transcript_id + section) skip one or more
+    low-salience lines, when there are enough lines that dropping them still
+    leaves content. This models a realistic drafter miss, not a special-cased
+    transcript rule.
+
+    `quality="degraded"` models a lower-quality drafter pass: it drops lines
+    at a higher rate (seed mod 2 instead of mod 3) and can drop up to 2
+    low-salience lines instead of 1. Still fully deterministic (seeded off
+    transcript_id + section only).
     """
     if len(lines) <= 1:
         return lines
@@ -651,11 +753,24 @@ def _apply_seeded_imperfection(
     low_salience_idxs = [i for i, ln in enumerate(lines) if ln.salience <= 1]
     if not low_salience_idxs:
         return lines
-    # only drop ~1 in 3 times (seeded) to keep clean/simple transcripts intact
-    if seed % 3 != 0:
+    degraded = quality == "degraded"
+    drop_modulus = 2 if degraded else 3
+    # only drop ~1-in-N times (seeded) to keep clean/simple transcripts intact
+    if seed % drop_modulus != 0:
         return lines
-    drop_idx = low_salience_idxs[seed % len(low_salience_idxs)]
-    return [ln for i, ln in enumerate(lines) if i != drop_idx]
+    max_drops = 2 if degraded else 1
+    n_drops = min(max_drops, len(low_salience_idxs))
+    if not degraded or n_drops <= 1:
+        drop_idxs = {low_salience_idxs[seed % len(low_salience_idxs)]}
+    else:
+        # deterministically pick n_drops distinct low-salience indices,
+        # walking the seed forward for each pick (no randomness).
+        drop_idxs = set()
+        cursor = seed
+        while len(drop_idxs) < n_drops:
+            drop_idxs.add(low_salience_idxs[cursor % len(low_salience_idxs)])
+            cursor = (cursor // 7) + 1
+    return [ln for i, ln in enumerate(lines) if i not in drop_idxs]
 
 
 def _merge_short_lines(lines: list[DraftLine], max_lines: int = 6) -> list[DraftLine]:
@@ -684,13 +799,13 @@ _SECTION_MAX_LINES = {"S": 6, "O": 8, "A": 6, "P": 6}
 
 
 def section_critic(
-    lines: list[DraftLine], transcript_id: str, section: str
+    lines: list[DraftLine], transcript_id: str, section: str, quality: str = "baseline"
 ) -> list[DraftLine]:
     """Per-section critic: de-dupe, drop empty, apply seeded imperfection,
     cap section length. Order matters and is fixed for determinism."""
     lines = _drop_empty(lines)
     lines = _dedupe_lines(lines)
-    lines = _apply_seeded_imperfection(lines, transcript_id, section)
+    lines = _apply_seeded_imperfection(lines, transcript_id, section, quality=quality)
     lines = _merge_short_lines(lines, max_lines=_SECTION_MAX_LINES.get(section, 6))
     return lines
 
@@ -711,7 +826,7 @@ _EVALUATIVE_HINT_RE = re.compile(
 )
 
 
-def _build_soap(transcript_text: str, transcript_id: str) -> dict:
+def _build_soap(transcript_text: str, transcript_id: str, quality: str = "baseline") -> dict:
     utterances = split_into_clauses(parse_utterances(transcript_text))
 
     buckets: dict[str, list[Utterance]] = {"S": [], "O": [], "A": [], "P": []}
@@ -740,18 +855,20 @@ def _build_soap(transcript_text: str, transcript_id: str) -> dict:
 
     soap: dict[str, list[dict]] = {}
     for section in SOAP_SECTIONS:
-        drafted = _draft_lines_for_section(buckets[section], section)
-        finalized = section_critic(drafted, transcript_id, section)
+        drafted = _draft_lines_for_section(buckets[section], section, transcript_id=transcript_id, quality=quality)
+        finalized = section_critic(drafted, transcript_id, section, quality=quality)
         soap[section] = [_line_to_dict(ln) for ln in finalized]
     return soap
 
 
-def _base_note(transcript_text: str, transcript_id: str, visit_type: str) -> dict:
+def _base_note(
+    transcript_text: str, transcript_id: str, visit_type: str, quality: str = "baseline"
+) -> dict:
     return {
         "transcript_id": transcript_id,
         "visit_type": visit_type,
         "synthetic": True,
-        "soap": _build_soap(transcript_text, transcript_id),
+        "soap": _build_soap(transcript_text, transcript_id, quality=quality),
     }
 
 
@@ -762,8 +879,10 @@ def _base_note(transcript_text: str, transcript_id: str, visit_type: str) -> dic
 class MockBackend:
     """Deterministic, offline, rule-based drafter + section-critics pipeline."""
 
-    def generate(self, transcript_text: str, transcript_id: str, visit_type: str) -> dict:
-        note = _base_note(transcript_text, transcript_id, visit_type)
+    def generate(
+        self, transcript_text: str, transcript_id: str, visit_type: str, quality: str = "baseline"
+    ) -> dict:
+        note = _base_note(transcript_text, transcript_id, visit_type, quality=quality)
         note["generated"] = True
         note["generator"] = "mock"
         return note
@@ -799,7 +918,9 @@ class APIBackend:
         "content, merge duplicates, keep spans accurate."
     )
 
-    def generate(self, transcript_text: str, transcript_id: str, visit_type: str) -> dict:
+    def generate(
+        self, transcript_text: str, transcript_id: str, visit_type: str, quality: str = "baseline"
+    ) -> dict:
         client = self._client()
         utterances = split_into_clauses(parse_utterances(transcript_text))
         buckets: dict[str, list[Utterance]] = {"S": [], "O": [], "A": [], "P": []}
@@ -809,7 +930,9 @@ class APIBackend:
 
         soap: dict[str, list[dict]] = {}
         for section in SOAP_SECTIONS:
-            drafted = _draft_lines_for_section(buckets.get(section, []), section)
+            drafted = _draft_lines_for_section(
+                buckets.get(section, []), section, transcript_id=transcript_id, quality=quality
+            )
             # Drafter pass (model call would refine `drafted` here in a full
             # implementation; kept structurally analogous to MockBackend so
             # the two backends are drop-in compatible).
@@ -819,7 +942,7 @@ class APIBackend:
                 messages=[{"role": "user", "content": self._DRAFTER_PROMPT}],
             )
             # Critic pass
-            finalized = section_critic(drafted, transcript_id, section)
+            finalized = section_critic(drafted, transcript_id, section, quality=quality)
             soap[section] = [_line_to_dict(ln) for ln in finalized]
 
         return {
@@ -840,12 +963,21 @@ def _select_backend():
     return MockBackend()
 
 
-def generate_note(transcript_text: str, transcript_id: str, visit_type: str) -> dict:
+def generate_note(
+    transcript_text: str, transcript_id: str, visit_type: str, quality: str = "baseline"
+) -> dict:
     """Generate a Note dict for `transcript_text`.
 
     Backend selection is env-gated: MockBackend (deterministic, offline) by
     default; APIBackend only when SCRIBEGATE_USE_API=1 and ANTHROPIC_API_KEY
     are both set.
+
+    `quality` ("baseline" | "degraded") is a fully backward-compatible knob:
+    omitting it (or passing "baseline" explicitly) reproduces byte-identical
+    v0.1 output. "degraded" models a lower-quality drafter pass — more
+    aggressive line-dropping, tighter paraphrase truncation, and a higher
+    (but still fully deterministic, hash-seeded) numeric-drift rate — for
+    exercising the eval harness's drift-detection / CI gate machinery.
     """
     backend = _select_backend()
-    return backend.generate(transcript_text, transcript_id, visit_type)
+    return backend.generate(transcript_text, transcript_id, visit_type, quality=quality)

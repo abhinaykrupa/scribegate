@@ -1,0 +1,132 @@
+# SYNTHETIC/EDUCATIONAL specification — not clinical software, not legal advice.
+#
+# ScribeGate v0.2 — UI strings for the consent-gated LIVE encounter capture.
+# This file is the single source of truth for every string the consent gate and
+# capture UI render. It is structured for direct consumption by the UI layer:
+# keys map to components, values are display text. No logic lives here.
+#
+# Context: v0.2 adds a browser mic → speech-to-text → eval-pipeline path. The mic
+# CANNOT arm until two-party consent is recorded to the append-only decision log.
+# All speech in this demo is synthetic or from consenting volunteers. No PHI.
+#
+# Tone contract: plain, precise, unhyped. An attorney should find it careful;
+# a clinician should find it respectful.
+
+# ---------------------------------------------------------------------------
+# banner — persistent demo disclaimer, shown above the capture UI at all times.
+# ---------------------------------------------------------------------------
+banner:
+  text: >
+    DEMO on synthetic and volunteer speech — not clinical software. In this demo,
+    audio is transcribed by your browser's built-in speech engine and is not sent
+    to a clinical-grade service. A production deployment would use on-premise or
+    BAA-covered ASR with speaker diarization, and would never run in a browser's
+    consumer speech engine.
+  short: "DEMO — synthetic/volunteer speech, browser speech engine, no PHI."
+
+# ---------------------------------------------------------------------------
+# consent_gate — the interstitial that must be cleared before the mic arms.
+# ---------------------------------------------------------------------------
+consent_gate:
+  title: "Recording consent — required before the microphone can arm"
+
+  explanation: >
+    Recording a clinical conversation is not a neutral act. In a number of US
+    states, the law requires that every party to a private conversation consent
+    before it may be recorded ("all-party" or "two-party" consent). Because
+    ScribeGate captures a spoken provider–patient exchange, this gate exists to
+    make consent explicit, mutual, and logged before any audio is captured. The
+    microphone stays disabled until both attestations below are checked.
+
+  attestations:
+    provider:
+      label: >
+        I am the provider (or a volunteer standing in for one) and I consent to
+        this conversation being recorded and transcribed for this demo.
+    patient:
+      label: >
+        I am the patient (or a volunteer standing in for one) and I consent to
+        this conversation being recorded and transcribed for this demo.
+
+  state_selector:
+    prompt: >
+      Select the state where this encounter is taking place. If it is an
+      all-party-consent state, the gate will remind you that every party's
+      consent is legally required, not merely courteous.
+    # Illustrative list of US states that generally require all-party consent to
+    # record a PRIVATE, IN-PERSON conversation — the situation ScribeGate models.
+    # Verified July 2026 against current recording-law summaries. Notes:
+    #   - Oregon is included: it requires all-party consent for in-person oral
+    #     communications (its one-party rule applies to electronic/phone only).
+    #   - Nevada is deliberately EXCLUDED for the in-person case: NRS 200.650
+    #     carries a participant exception, so a party to an in-person conversation
+    #     may record it — Nevada's all-party rule applies to telephone calls.
+    #   - Several listed states are "mixed" (e.g., Connecticut's criminal statute
+    #     is one-party for in-person but all-party for phone); they are included
+    #     here on the conservative side for a recorded clinical encounter.
+    # This yields 12 states. The list is illustrative, changes over time, and is
+    # NOT legal advice — see disclaimer below.
+    two_party_states:
+      - code: "CA"
+        name: "California"
+      - code: "CT"
+        name: "Connecticut"
+      - code: "DE"
+        name: "Delaware"
+      - code: "FL"
+        name: "Florida"
+      - code: "IL"
+        name: "Illinois"
+      - code: "MD"
+        name: "Maryland"
+      - code: "MA"
+        name: "Massachusetts"
+      - code: "MT"
+        name: "Montana"
+      - code: "NH"
+        name: "New Hampshire"
+      - code: "OR"
+        name: "Oregon"
+      - code: "PA"
+        name: "Pennsylvania"
+      - code: "WA"
+        name: "Washington"
+    disclaimer: >
+      This list is illustrative, not legal advice. It reflects a general reading
+      of state recording law for private in-person conversations as of July 2026;
+      statutes are amended, courts reinterpret them, and mixed rules exist (some
+      states differ for phone calls versus in-person, or carry participant
+      exceptions). A production deployment must confirm the current requirement
+      for each jurisdiction with counsel before recording a real encounter.
+
+  # Shown while either attestation is unchecked. The record button stays disabled.
+  blocked_message: >
+    The microphone will not arm until both consent attestations above are checked.
+    This is intentional: consent is a precondition of recording, not a setting you
+    can skip. Check both boxes to enable the record button.
+
+  # Shown once both boxes are checked, immediately before the mic arms.
+  logged_notice: >
+    Recording this consent. A consent event — provider attestation, patient
+    attestation, selected state, and a UTC timestamp — is written to the
+    append-only decision log before the microphone arms. The consent record and
+    the transcript it authorizes share the same audit trail.
+
+# ---------------------------------------------------------------------------
+# capture_ui — shown after consent is recorded and the mic is armed.
+# ---------------------------------------------------------------------------
+capture_ui:
+  speaker_toggle:
+    header: "Current speaker"
+    provider_label: "Provider"
+    patient_label: "Patient"
+  start_label: "Start recording"
+  stop_label: "Stop recording"
+  live_transcript_header: "Live transcript"
+  handoff_label: "Send transcript to eval pipeline"
+  quality_note: >
+    The demo speech engine does not separate speakers (no diarization). Speaker
+    labels come only from the Provider/Patient toggle you set as you talk — if the
+    toggle is wrong, the label is wrong, not the words. A production system treats
+    diarization quality as a first-class eval input, because speaker-attribution
+    errors corrupt the S/O sectioning of the note before the drafter ever runs.

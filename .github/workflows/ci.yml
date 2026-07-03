@@ -20,3 +20,21 @@ jobs:
         run: pip install -r requirements.txt
       - name: Run pytest
         run: pytest
+
+  eval-gate:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run baseline-quality pipeline over all transcripts
+        run: python -m scribegate.cli run --all
+      - name: Regenerate benchmark report
+        run: python -m scribegate.benchmark
+      - name: Check latest run against committed baseline floors
+        run: python -m scribegate.drift --check-baseline specs/baseline.json

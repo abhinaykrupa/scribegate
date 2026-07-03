@@ -65,13 +65,75 @@ def _fmt(x: float) -> str:
     return f"{x:.2f}"
 
 
-def _build_visit_type_table(results: list[dict]) -> str:
+def _group_by_visit_type(results: list[dict]) -> dict[str, list[dict]]:
     by_type: dict[str, list[dict]] = {}
     for r in results:
         by_type.setdefault(_visit_type_of(r), []).append(r)
+    return by_type
 
+
+def _ordered_visit_types(by_type: dict[str, list[dict]]) -> list[str]:
     ordered_types = [vt for vt in VISIT_TYPE_ORDER if vt in by_type]
     ordered_types += sorted(vt for vt in by_type if vt not in VISIT_TYPE_ORDER)
+    return ordered_types
+
+
+def _dim_means(group: list[dict]) -> dict[str, float]:
+    dim_means = {}
+    for dim in DIMENSIONS:
+        scores = [r["judge_result"]["scores"][dim] for r in group]
+        dim_means[dim] = mean(scores) if scores else 0.0
+    return dim_means
+
+
+def _agg_mean(group: list[dict]) -> float:
+    return mean(r["judge_result"]["aggregate"] for r in group) if group else 0.0
+
+
+def compute_summary(results: list[dict]) -> dict:
+    """Single source of truth for aggregation math, reused by build_markdown /
+    _build_visit_type_table and by cli.append_history_row (via the caller,
+    which merges in ts/tag/quality — compute_summary itself stays agnostic
+    of those run-metadata fields, taking only the result payloads).
+
+    Returns exactly:
+        {"overall_aggregate": float,
+         "per_visit_type": {vt: float, ...},   # one of the 4 canonical types
+         "per_dimension": {dim: float, ...},   # mean *aggregate-normalized*
+                                                # score (0..1) per dimension
+         "n_notes": int,
+         "auto_accept_rate": float}
+    """
+    n_notes = len(results)
+    overall_aggregate = _agg_mean(results)
+
+    by_type = _group_by_visit_type(results)
+    per_visit_type = {vt: _agg_mean(by_type.get(vt, [])) for vt in VISIT_TYPE_ORDER}
+
+    per_dimension = {}
+    for dim in DIMENSIONS:
+        # Normalize each 1-5 score to 0..1 the same way aggregate is derived
+        # (per specs/INTERFACES.md: aggregate = (mean(scores) - 1) / 4), so
+        # per_dimension values sit on the same 0..1 scale as overall_aggregate
+        # and per_visit_type — directly comparable for drift detection.
+        scores = [r["judge_result"]["scores"][dim] for r in results]
+        per_dimension[dim] = (mean(scores) - 1) / 4 if scores else 0.0
+
+    n_auto_accept = sum(1 for r in results if r.get("route") == "auto_accept")
+    auto_accept_rate = (n_auto_accept / n_notes) if n_notes else 0.0
+
+    return {
+        "overall_aggregate": overall_aggregate,
+        "per_visit_type": per_visit_type,
+        "per_dimension": per_dimension,
+        "n_notes": n_notes,
+        "auto_accept_rate": auto_accept_rate,
+    }
+
+
+def _build_visit_type_table(results: list[dict]) -> str:
+    by_type = _group_by_visit_type(results)
+    ordered_types = _ordered_visit_types(by_type)
 
     header = (
         "| Visit Type | N | Completeness | Hallucination | Coding Plausibility | "
@@ -82,11 +144,8 @@ def _build_visit_type_table(results: list[dict]) -> str:
 
     for vt in ordered_types:
         group = by_type[vt]
-        dim_means = {}
-        for dim in DIMENSIONS:
-            scores = [r["judge_result"]["scores"][dim] for r in group]
-            dim_means[dim] = mean(scores) if scores else 0.0
-        agg_mean = mean(r["judge_result"]["aggregate"] for r in group) if group else 0.0
+        dim_means = _dim_means(group)
+        agg_mean = _agg_mean(group)
         route_counts = {rt: sum(1 for r in group if r.get("route") == rt) for rt in ROUTES}
         rows.append(
             f"| {vt} | {len(group)} | {_fmt(dim_means['completeness'])} | "

@@ -5,7 +5,7 @@ from statistics import mean
 
 import pytest
 
-from scribegate.judge import judge_note
+from scribegate.judge import judge_note, judge_note_reference_free
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 GOLDEN_DIR = DATA_DIR / "golden_notes"
@@ -336,3 +336,86 @@ def test_default_path_never_requires_api(monkeypatch):
     # no network access is available in this environment.
     result = judge_note(golden, golden, transcript)
     assert result["scores"]["completeness"] == 5
+
+
+# ---------------------------------------------------------------------------
+# judge_note_reference_free — reference-free judging (no golden note).
+# ---------------------------------------------------------------------------
+
+def test_reference_free_return_shape_is_valid():
+    golden = _load_golden(GLAUCOMA_05)
+    transcript = _load_transcript(GLAUCOMA_05)
+
+    result = judge_note_reference_free(golden, transcript)
+
+    assert set(result.keys()) == {"scores", "aggregate", "rationales"}
+
+    assert set(result["scores"].keys()) == {
+        "completeness", "hallucination", "coding_plausibility", "terminology"
+    }
+    for dim, score in result["scores"].items():
+        assert isinstance(score, int)
+        assert 1 <= score <= 5
+
+    assert set(result["rationales"].keys()) == {
+        "completeness", "hallucination", "coding_plausibility", "terminology"
+    }
+    for dim, rationale in result["rationales"].items():
+        assert isinstance(rationale, str)
+        assert len(rationale) > 0
+
+    assert "reference-free mode" in result["rationales"]["completeness"]
+
+    assert isinstance(result["aggregate"], float)
+    assert 0.0 <= result["aggregate"] <= 1.0
+
+
+def test_reference_free_well_covered_transcript_scores_completeness_reasonably_high():
+    golden = _load_golden(GLAUCOMA_05)
+    transcript = _load_transcript(GLAUCOMA_05)
+
+    # The golden note, by construction, covers its own transcript's
+    # clinically-salient content well — using it as the "generated" note
+    # exercises the well-covered case for reference-free completeness.
+    result = judge_note_reference_free(golden, transcript)
+
+    assert result["scores"]["completeness"] >= 3
+
+
+def test_reference_free_sparse_transcript_scores_completeness_lower():
+    transcript = _load_transcript(GLAUCOMA_05)
+
+    well_covered_golden = _load_golden(GLAUCOMA_05)
+    well_covered_result = judge_note_reference_free(well_covered_golden, transcript)
+
+    sparse_generated = {
+        "soap": {
+            "S": [{"text": "Patient seen.", "spans": []}],
+            "O": [],
+            "A": [],
+            "P": [],
+        }
+    }
+    sparse_result = judge_note_reference_free(sparse_generated, transcript)
+
+    assert sparse_result["scores"]["completeness"] < well_covered_result["scores"]["completeness"]
+    assert sparse_result["scores"]["completeness"] <= 2
+
+
+def test_reference_free_fabricated_iop_value_scores_low_hallucination_no_golden():
+    golden = _load_golden(GLAUCOMA_05)
+    transcript = _load_transcript(GLAUCOMA_05)
+
+    generated = copy.deepcopy(golden)
+    # Same mutation pattern as test_fabricated_iop_value_scores_low_hallucination:
+    # replace the O line's IOP text with a fabricated value and point the span
+    # at unrelated transcript text (the header line) so there is no
+    # legitimate support for the new number.
+    generated["soap"]["O"][0] = {
+        "text": "IOP 47 mmHg OD / 45 mmHg OS (GAT); fabricated reading.",
+        "spans": [[0, 40]],  # header line, unrelated to IOP numbers
+    }
+
+    result = judge_note_reference_free(generated, transcript)
+
+    assert result["scores"]["hallucination"] <= 2

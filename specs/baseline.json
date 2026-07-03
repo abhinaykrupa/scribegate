@@ -1,0 +1,9 @@
+{
+  "overall_aggregate": 0.786,
+  "per_dimension": {
+    "completeness": 0.458,
+    "hallucination": 0.857,
+    "coding_plausibility": 0.895,
+    "terminology": 0.932
+  }
+}

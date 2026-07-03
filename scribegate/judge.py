@@ -16,10 +16,10 @@ SCRIBEGATE_USE_API=1 and ANTHROPIC_API_KEY are both set; `anthropic` is
 imported lazily inside APIJudge so this module never requires the package (or
 network) at import time or in the default path.
 
-scribegate.normalizer is currently a stub (just a TODO docstring — no
-functions/classes). We import it defensively and always have a working
-regex-based fallback terminology checker so this module functions correctly
-today, independent of when T3 lands.
+scribegate.normalizer is fully implemented (T3 landed) and is the primary
+terminology-checking path via check_note. We still import it defensively
+(try/except) and keep a regex-based fallback terminology checker so this
+module degrades gracefully rather than crashing if that import ever fails.
 """
 
 from __future__ import annotations
@@ -899,11 +899,10 @@ _MALFORMED_LATERALITY_RE = re.compile(r"\bO\.\s*D\.|\bO\.\s*S\.|\bO\.\s*U\.", re
 
 
 def _fallback_terminology_violations(generated: dict) -> list[dict]:
-    """Internal regex-based terminology checker, used when
-    scribegate.normalizer.check_note is unavailable (current state — the
-    normalizer module is a stub). Mirrors the spirit of terminology.yaml:
-    VA denominator plausibility, IOP range sanity, laterality casing, axis
-    range."""
+    """Internal regex-based terminology checker, used only as a fallback if
+    scribegate.normalizer.check_note is unavailable (e.g. the import fails).
+    Mirrors the spirit of terminology.yaml: VA denominator plausibility, IOP
+    range sanity, laterality casing, axis range."""
     violations: list[dict] = []
     soap = generated.get("soap", {}) if generated else {}
 
@@ -1270,3 +1269,183 @@ def judge_note(generated: dict, golden: dict, transcript_text: str) -> dict:
     if use_api and has_key:
         return APIJudge().judge(generated, golden, transcript_text)
     return _mock_judge_note(generated, golden, transcript_text)
+
+
+# ---------------------------------------------------------------------------
+# Reference-free judging (no golden note available — e.g. a live/ad-hoc
+# encounter capture with no hand-authored reference note to compare against)
+# ---------------------------------------------------------------------------
+
+# Minimum content-word Jaccard overlap between a salient transcript utterance
+# and a generated SOAP line for that line to count as "covering" the
+# utterance, for reference-free completeness scoring. Kept modest (same
+# spirit as _JACCARD_ALIGN_THRESHOLD) since utterance phrasing and note
+# phrasing routinely diverge in wording while covering the same content.
+_REFERENCE_FREE_COVERAGE_THRESHOLD = 0.15  # tuned empirically: see tests/test_judge.py
+
+
+def _split_transcript_into_chunks(transcript_text):
+    """Split transcript_text into utterance-like chunks for reference-free
+    completeness scoring: skip the header/comment line(s) (starting with
+    '#'), then treat each remaining non-empty line (one "SPEAKER: ..." turn)
+    as a single chunk. Kept at turn-granularity (rather than further
+    splitting each turn into individual sentences) so chunk-level granularity
+    stays comparable to a SOAP note's own line granularity — golden/generated
+    notes routinely fuse several spoken clauses into one compact clinical
+    line, so per-sentence chunking would fragment the transcript far more
+    finely than any note could ever match, systematically depressing
+    coverage_fraction regardless of note quality. Deterministic, stdlib-only,
+    never raises on empty/malformed input."""
+    chunks = []
+    for raw_line in (transcript_text or "").splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#"):
+            continue
+        # Strip a leading "SPEAKER:" prefix if present (DOCTOR/PATIENT/TECH),
+        # but keep the body even if the prefix doesn't match (defensive).
+        m = re.match(r"^(?:DOCTOR|PATIENT|TECH)\s*:\s*(.*)$", line)
+        body = m.group(1) if m else line
+        body = body.strip()
+        if body:
+            chunks.append(body)
+    return chunks
+
+
+def _is_clinically_salient(chunk_text):
+    """A chunk is "clinically salient" if it carries either a numeric token
+    (per _extract_numeric_tokens) or at least 2 content words (per
+    _content_words) — see judge_note_reference_free docstring."""
+    if _extract_numeric_tokens(chunk_text):
+        return True
+    return len(_content_words(chunk_text)) >= 2
+
+
+def _reference_free_completeness_anchor(fraction):
+    """Deterministic 1-5 bucketing of coverage_fraction for reference-free
+    completeness scoring. Simple, monotonic, never crashes."""
+    if fraction >= 0.75:
+        return 5
+    if fraction > 0.60:
+        return 4
+    if fraction >= 0.40:
+        return 3
+    if fraction >= 0.20:
+        return 2
+    return 1
+
+
+def _score_completeness_reference_free(generated, transcript_text):
+    """Reference-free completeness: does the generated note's SOAP content
+    cover the clinically-salient utterances found directly in the
+    transcript, with no golden note to compare against?
+
+    Returns (score: int 1-5, rationale: str) where rationale always contains
+    the literal substring "reference-free mode". Never raises.
+    """
+    generated = generated or {}
+    soap = generated.get("soap", {}) if isinstance(generated, dict) else {}
+    gen_lines = _all_lines(soap) if isinstance(soap, dict) else []
+    gen_line_words = [_content_words(_line_text(line)) for (_s, _i, line) in gen_lines]
+    gen_line_texts = [_line_text(line) for (_s, _i, line) in gen_lines]
+
+    chunks = _split_transcript_into_chunks(transcript_text)
+    salient_chunks = [c for c in chunks if _is_clinically_salient(c)]
+    total_salient = len(salient_chunks)
+
+    if total_salient == 0:
+        return 5, (
+            "reference-free mode: no clinically-salient transcript utterances "
+            "detected; treated as fully covered."
+        )
+
+    covered_count = 0
+    for chunk in salient_chunks:
+        chunk_words = _content_words(chunk)
+        covered = False
+        for line_words, line_text in zip(gen_line_words, gen_line_texts):
+            if _jaccard(chunk_words, line_words) >= _REFERENCE_FREE_COVERAGE_THRESHOLD:
+                covered = True
+                break
+            if _numeric_facts_agree(chunk, line_text):
+                covered = True
+                break
+        if covered:
+            covered_count += 1
+
+    fraction = covered_count / total_salient
+    score = _reference_free_completeness_anchor(fraction)
+    rationale = (
+        f"reference-free mode: covered {covered_count}/{total_salient} "
+        "clinically-salient transcript utterances."
+    )
+    return score, rationale
+
+
+def judge_note_reference_free(generated, transcript_text):
+    """Judge a generated SOAP note against ONLY the source transcript — no
+    golden reference note available (e.g. an ad-hoc / live encounter capture
+    with no hand-authored golden note to compare against).
+
+    Same return shape as judge_note:
+        {
+          "scores": {"completeness": int, "hallucination": int,
+                     "coding_plausibility": int, "terminology": int},  # 1-5
+          "aggregate": float,   # (mean(scores) - 1) / 4  -> 0..1
+          "rationales": {dim: "one-line reason"}
+        }
+
+    Dimension strategy:
+      - hallucination: reuses score_hallucination against an alignment
+        computed with an empty golden note (align_notes(generated, {})) —
+        gold_lines/gen_to_gold are empty, so no line is treated as
+        "superseded" via gold alignment; hallucination scoring falls back
+        entirely to numeric-token support + span-support checks against the
+        transcript, exactly the reference-free signal wanted here.
+      - coding_plausibility: reuses score_coding_plausibility(generated, {})
+        — the gold_len == 0 branch (length_in_band = True) is handled
+        gracefully by that function already.
+      - terminology: reuses score_terminology(generated, transcript_text)
+        unchanged (it never needed a golden note).
+      - completeness: NEW logic (_score_completeness_reference_free) — splits
+        the transcript into utterance-like chunks, filters to clinically
+        salient ones, and checks word-overlap/numeric-fact coverage against
+        the generated note's own lines.
+
+    Never raises on any input (empty transcript_text, empty generated note,
+    missing "soap" key, etc.) — always returns valid int 1-5 scores and
+    non-empty rationale strings for all 4 dimensions, and a float aggregate
+    in [0,1] via the same _aggregate() helper used by judge_note.
+    """
+    generated = generated or {}
+    transcript_text = transcript_text or ""
+
+    empty_golden = {}
+    alignment = align_notes(generated, empty_golden)
+
+    completeness_score, completeness_rationale = _score_completeness_reference_free(
+        generated, transcript_text
+    )
+    hallucination_score, hallucination_rationale = score_hallucination(
+        generated, transcript_text, alignment
+    )
+    terminology_score, terminology_rationale = score_terminology(generated, transcript_text)
+    coding_score, coding_rationale = score_coding_plausibility(generated, empty_golden)
+
+    scores = {
+        "completeness": completeness_score,
+        "hallucination": hallucination_score,
+        "coding_plausibility": coding_score,
+        "terminology": terminology_score,
+    }
+    rationales = {
+        "completeness": completeness_rationale,
+        "hallucination": hallucination_rationale,
+        "coding_plausibility": coding_rationale,
+        "terminology": terminology_rationale,
+    }
+
+    return {
+        "scores": scores,
+        "aggregate": _aggregate(scores),
+        "rationales": rationales,
+    }

@@ -25,14 +25,17 @@ from scribegate.generator import generate_note, visit_type_for
 from scribegate.normalizer import check_note
 from scribegate.judge import judge_note
 from scribegate.router import decide
+from scribegate.benchmark import compute_summary
 
 _REPO_ROOT = Path(__file__).resolve().parent.parent
 _DATA_DIR = _REPO_ROOT / "data"
 _TRANSCRIPT_DIR = _DATA_DIR / "transcripts"
 _GOLDEN_DIR = _DATA_DIR / "golden_notes"
 _DEFAULT_RESULTS_DIR = _DATA_DIR / "results"
+_DEFAULT_HISTORY_PATH = _DEFAULT_RESULTS_DIR / "history.jsonl"
 
 DECISION_LOG_NAME = "decision_log.jsonl"
+HISTORY_NAME = "history.jsonl"
 
 
 def _utc_now_iso() -> str:
@@ -76,15 +79,19 @@ def process_transcript(
     transcript_id: str,
     transcript_dir: Path = _TRANSCRIPT_DIR,
     golden_dir: Path = _GOLDEN_DIR,
+    quality: str = "baseline",
 ) -> dict:
     """Run the full generate -> normalize -> judge -> route pipeline for one
     transcript id. Returns the result payload written to
     data/results/{id}.json (without timestamps merged yet — caller adds
-    those so the same payload is reusable/testable)."""
+    those so the same payload is reusable/testable).
+
+    `quality` ("baseline" | "degraded") is threaded straight through to
+    `generate_note` — see generator.py for what each tier changes."""
     transcript_text = _load_transcript_text(transcript_id, transcript_dir)
     visit_type = visit_type_for(transcript_id)
 
-    generated_note = generate_note(transcript_text, transcript_id, visit_type)
+    generated_note = generate_note(transcript_text, transcript_id, visit_type, quality=quality)
     violations = check_note(generated_note, transcript=transcript_text)
 
     golden = _load_golden(transcript_id, golden_dir)
@@ -161,19 +168,58 @@ def run(
     transcript_dir: Path = _TRANSCRIPT_DIR,
     golden_dir: Path = _GOLDEN_DIR,
     stream=None,
+    quality: str = "baseline",
 ) -> list[dict]:
     """Run the pipeline for each transcript id (deterministic order as
     given), writing results + appending to the decision log. Returns the
-    list of result payloads (as written, incl. timestamps)."""
+    list of result payloads (as written, incl. timestamps).
+
+    `quality` is threaded through to `process_transcript` -> `generate_note`
+    for every transcript id in this run."""
     stream = stream or sys.stdout
     results = []
     for transcript_id in transcript_ids:
-        result = process_transcript(transcript_id, transcript_dir, golden_dir)
+        result = process_transcript(transcript_id, transcript_dir, golden_dir, quality=quality)
         _write_result_json(result, results_dir)
         _append_decision_log(result, results_dir)
         print(_summary_line(result), file=stream)
         results.append(result)
     return results
+
+
+def append_history_row(
+    results: list[dict],
+    tag: str,
+    quality: str,
+    history_path: Path = _DEFAULT_HISTORY_PATH,
+) -> Path:
+    """Compute a summary for `results` (via `benchmark.compute_summary`) and
+    append one JSON line to `history_path`, merging in run metadata
+    (`ts`, `tag`, `quality`) that `compute_summary` intentionally does not
+    know about — it operates purely on result payloads so it stays reusable
+    by benchmark.py's markdown builder without any run-provenance coupling.
+
+    Approach: history.jsonl is an unbounded append-only log (same append-only
+    convention as decision_log.jsonl) rather than a single mutable "latest
+    summary" file — each `cli.py run` invocation contributes exactly one row,
+    so a sequence of runs (e.g. baseline then degraded) naturally accumulates
+    a time series that scribegate.drift can read with a rolling window,
+    without needing to reconstruct history from individual per-transcript
+    result files (which get overwritten on every run and don't retain
+    superseded runs' aggregate scores).
+    """
+    summary = compute_summary(results)
+    row = dict(summary)
+    row["ts"] = _utc_now_iso()
+    row["tag"] = tag
+    row["quality"] = quality
+
+    history_path = Path(history_path)
+    history_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(history_path, "a", encoding="utf-8") as fh:
+        fh.write(json.dumps(row, sort_keys=False))
+        fh.write("\n")
+    return history_path
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -202,6 +248,24 @@ def build_parser() -> argparse.ArgumentParser:
         default=str(_GOLDEN_DIR),
         help=argparse.SUPPRESS,
     )
+    run_parser.add_argument(
+        "--quality",
+        choices=("baseline", "degraded"),
+        default="baseline",
+        help="Generator quality tier to use (default: baseline).",
+    )
+    run_parser.add_argument(
+        "--tag",
+        metavar="TEXT",
+        default=None,
+        help="Label for this run's history.jsonl row (default: falls back to --quality).",
+    )
+    run_parser.add_argument(
+        "--history-path",
+        metavar="PATH",
+        default=None,
+        help=argparse.SUPPRESS,
+    )
 
     return parser
 
@@ -214,13 +278,29 @@ def main(argv: list[str] | None = None) -> int:
         transcript_dir = Path(args.transcript_dir)
         golden_dir = Path(args.golden_dir)
         results_dir = Path(args.results_dir)
+        quality = args.quality
+        tag = args.tag if args.tag else quality
+        # history-path defaults to <results-dir>/history.jsonl (not a fixed
+        # repo-root path) so that overriding --results-dir (as tests do, to
+        # isolate runs into tmp_path) also isolates the history file — a
+        # fixed absolute default would otherwise let any test that exercises
+        # cli.main(["run", ...]) silently append rows to the real repo's
+        # data/results/history.jsonl.
+        history_path = Path(args.history_path) if args.history_path else results_dir / HISTORY_NAME
 
         if args.all:
             transcript_ids = discover_transcript_ids(transcript_dir)
         else:
             transcript_ids = [args.transcript]
 
-        run(transcript_ids, results_dir=results_dir, transcript_dir=transcript_dir, golden_dir=golden_dir)
+        results = run(
+            transcript_ids,
+            results_dir=results_dir,
+            transcript_dir=transcript_dir,
+            golden_dir=golden_dir,
+            quality=quality,
+        )
+        append_history_row(results, tag=tag, quality=quality, history_path=history_path)
         return 0
 
     parser.error(f"unknown command: {args.command}")
