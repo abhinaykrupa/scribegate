@@ -35,7 +35,9 @@ render_sidebar_wordmark()
 render_banner()
 
 pages = [
-    st.Page(overview.render, title="Overview", url_path="overview", default=True),
+    # Default page always serves at "/" — an explicit url_path would be dead
+    # (hitting it triggers Streamlit's "Page not found" toast).
+    st.Page(overview.render, title="Overview", default=True),
     st.Page(analytics.render, title="Analytics", url_path="analytics"),
     st.Page(drift.render, title="Drift", url_path="drift"),
     st.Page(review_queue.render, title="Review queue", url_path="review-queue"),

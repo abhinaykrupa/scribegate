@@ -145,8 +145,10 @@ def _render_roi_section(results_list: list[dict]) -> None:
         st.metric("Hours saved / month", f"{roi['hours_saved_per_month']:.1f}")
 
     st.markdown("**Assumptions**")
+    # Values mix numbers and prose (e.g. the methodology note) — cast to str so
+    # Streamlit's Arrow serialization never fails on a mixed-type object column.
     assumptions_df = pd.DataFrame(
-        [{"key": k, "value": v} for k, v in roi.get("assumptions", {}).items()]
+        [{"key": k, "value": str(v)} for k, v in roi.get("assumptions", {}).items()]
     )
     st.dataframe(assumptions_df, use_container_width=True, hide_index=True)
 

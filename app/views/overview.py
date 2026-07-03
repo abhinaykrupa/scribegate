@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import glob
 import os
+import re
 
 import pandas as pd
 import streamlit as st
@@ -17,10 +18,19 @@ from app.common import GOLDEN_DIR, load_benchmark_md, load_results
 from scribegate import corrections
 from scribegate.analytics import routing_summary
 
-# Filled in once the full pytest suite is green after Parts A/B/C land — kept
-# as a module-level constant so it's a single, auditable source of truth for
-# the "tests passing" headline metric.
-TESTS_PASSING = "223 / 223"
+def _count_tests() -> int:
+    """Count test functions by scanning tests/*.py — cheap, dynamic, and never
+    goes stale the way a hardcoded headline number would."""
+    tests_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "tests")
+    count = 0
+    for path in glob.glob(os.path.join(tests_dir, "test_*.py")):
+        try:
+            with open(path, encoding="utf-8") as fh:
+                src = fh.read()
+        except OSError:
+            continue
+        count += len(re.findall(r"^\s*def test_", src, flags=re.MULTILINE))
+    return count
 
 
 def render() -> None:
@@ -55,7 +65,7 @@ def render() -> None:
     with m2:
         st.metric("Auto-accept rate", f"{auto_accept_rate * 100:.1f}%")
     with m3:
-        st.metric("Tests passing", TESTS_PASSING)
+        st.metric("Test functions", f"{_count_tests()}")
     with m4:
         st.metric("Golden-set size", golden_set_size)
 
