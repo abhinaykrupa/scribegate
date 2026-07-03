@@ -79,3 +79,13 @@ def test_demo_script_glaucoma_05_line_matches_fixture():
 
     matching_line = next(line for line in plan_lines if line["text"] == quoted_line)
     assert len(matching_line["spans"]) == 5
+
+
+def test_app_script_executes_without_exception():
+    """Regression: st.Page url_path collisions (all views expose `render`)
+    only surface when the script actually runs — health checks don't catch it."""
+    pytest.importorskip("streamlit")
+    from streamlit.testing.v1 import AppTest
+
+    at = AppTest.from_file(os.path.join(REPO_ROOT, "app", "streamlit_app.py"), default_timeout=30).run()
+    assert not at.exception, f"app script raised: {at.exception}"

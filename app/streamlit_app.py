@@ -35,13 +35,13 @@ render_sidebar_wordmark()
 render_banner()
 
 pages = [
-    st.Page(overview.render, title="Overview", default=True),
-    st.Page(analytics.render, title="Analytics"),
-    st.Page(drift.render, title="Drift"),
-    st.Page(review_queue.render, title="Review queue"),
-    st.Page(provenance.render, title="Provenance"),
-    st.Page(live_encounter.render, title="Live encounter"),
-    st.Page(about.render, title="About"),
+    st.Page(overview.render, title="Overview", url_path="overview", default=True),
+    st.Page(analytics.render, title="Analytics", url_path="analytics"),
+    st.Page(drift.render, title="Drift", url_path="drift"),
+    st.Page(review_queue.render, title="Review queue", url_path="review-queue"),
+    st.Page(provenance.render, title="Provenance", url_path="provenance"),
+    st.Page(live_encounter.render, title="Live encounter", url_path="live-encounter"),
+    st.Page(about.render, title="About", url_path="about"),
 ]
 
 pg = st.navigation(pages)
