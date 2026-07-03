@@ -17,6 +17,7 @@ from __future__ import annotations
 import importlib
 import json
 import os
+import sys
 
 import pytest
 
@@ -89,3 +90,45 @@ def test_app_script_executes_without_exception():
 
     at = AppTest.from_file(os.path.join(REPO_ROOT, "app", "streamlit_app.py"), default_timeout=30).run()
     assert not at.exception, f"app script raised: {at.exception}"
+
+
+VIEW_MODULES_FOR_RENDER_SWEEP = [
+    "overview",
+    "analytics",
+    "drift",
+    "review_queue",
+    "provenance",
+    "live_encounter",
+    "about",
+]
+
+
+@pytest.mark.parametrize("view_name", VIEW_MODULES_FOR_RENDER_SWEEP)
+def test_view_render_survives_without_matplotlib(view_name, monkeypatch):
+    """Regression for the matplotlib-ImportError crash class (analytics.py's
+    df.style.background_gradient(cmap=...) raises ImportError when
+    matplotlib isn't installed, and pandas' .style accessor itself imports
+    matplotlib-adjacent machinery lazily). Simulate a minimal environment
+    that lacks matplotlib entirely by blocking the import at the
+    sys.modules level, then require every view's render() to still
+    complete without raising — pages must degrade gracefully, not crash."""
+    pytest.importorskip("streamlit")
+
+    # Block matplotlib (and any submodule import, e.g. matplotlib.pyplot)
+    # by making sys.modules lookups for it resolve to None, which forces
+    # Python's import machinery to raise ImportError, and clear any already
+    # -imported matplotlib modules so the blocked state actually takes
+    # effect for code that imports it lazily inside render().
+    for mod_name in list(sys.modules):
+        if mod_name == "matplotlib" or mod_name.startswith("matplotlib."):
+            monkeypatch.delitem(sys.modules, mod_name, raising=False)
+    monkeypatch.setitem(sys.modules, "matplotlib", None)
+    monkeypatch.setitem(sys.modules, "matplotlib.pyplot", None)
+    monkeypatch.setitem(sys.modules, "matplotlib.colors", None)
+
+    module = importlib.import_module(f"app.views.{view_name}")
+    importlib.reload(module)
+    try:
+        module.render()
+    except Exception as exc:  # noqa: BLE001 - intentional broad catch to report which view broke
+        pytest.fail(f"app.views.{view_name}.render() raised with matplotlib blocked: {exc!r}")

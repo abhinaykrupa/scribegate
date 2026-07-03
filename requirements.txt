@@ -3,4 +3,5 @@ pytest
 streamlit
 anthropic
 pandas
+matplotlib
 streamlit-mic-recorder

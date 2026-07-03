@@ -72,7 +72,15 @@ def render() -> None:
         df = pd.DataFrame(series)
         if "ts" not in df.columns or "value" not in df.columns:
             continue
-        df = df.set_index("ts")[["value"]].rename(columns={"value": metric})
+        # Metric keys look like "visit_type:comprehensive_exam" or
+        # "dimension:completeness". Altair's shorthand encoding treats text
+        # after a ":" in a column name as a type-code suffix (O/N/Q/T/G), so
+        # charting a column literally named e.g. "visit_type:comprehensive_exam"
+        # raises ValueError: "comprehensive_exam" is not one of the valid
+        # encoding data types. Use a colon-free display label as the column
+        # name for charting; keep `metric` (with the colon) for the heading.
+        chart_label = metric.replace(":", " / ")
+        df = df.set_index("ts")[["value"]].rename(columns={"value": chart_label})
         st.markdown(f"**{metric}**")
         st.line_chart(df)
 

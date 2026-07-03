@@ -17,6 +17,19 @@ from scribegate import analytics
 from scribegate.analytics import RoiParams, dimension_matrix, failure_modes, roi_model, routing_summary
 
 
+def _matplotlib_available() -> bool:
+    """pandas Styler.background_gradient() imports matplotlib lazily and
+    raises ImportError if it isn't installed. matplotlib is an optional
+    dependency (heavy, not needed for the rest of the app), so probe for it
+    explicitly rather than letting the page crash on a bare/minimal
+    environment that lacks it."""
+    try:
+        import matplotlib  # noqa: F401
+    except ImportError:
+        return False
+    return True
+
+
 def _render_dimension_heatmap(results_list: list[dict]) -> None:
     st.subheader("Dimension matrix (visit type x dimension)")
     matrix = dimension_matrix(results_list)
@@ -28,8 +41,12 @@ def _render_dimension_heatmap(results_list: list[dict]) -> None:
     df = pd.DataFrame(grid).set_index("visit_type")
     dims = matrix.get("dimensions", [])
     display_cols = [c for c in dims if c in df.columns]
-    styled = df[display_cols].style.background_gradient(cmap="RdYlGn", vmin=1, vmax=5)
-    st.dataframe(styled, use_container_width=True)
+    if _matplotlib_available():
+        styled = df[display_cols].style.background_gradient(cmap="RdYlGn", vmin=1, vmax=5)
+        st.dataframe(styled, use_container_width=True)
+    else:
+        st.caption("(Install matplotlib for color-graded cells; showing plain values.)")
+        st.dataframe(df[display_cols], use_container_width=True)
     st.caption("Cell values are mean judge scores (1-5) per visit type; n = transcript count per visit type.")
     st.dataframe(df[["n"]], use_container_width=True)
 
