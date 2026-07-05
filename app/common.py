@@ -110,6 +110,110 @@ def load_benchmark_md() -> str | None:
         return fh.read()
 
 
+# ---------------------------------------------------------------------------
+# Cold-start self-seeding (Streamlit Cloud: data/results/*.json is gitignored,
+# so a fresh deploy starts with an empty results dir and every view renders
+# its empty state; this makes the app generate its own demo results in-
+# process on first load, rather than requiring a human to run the CLI).
+# ---------------------------------------------------------------------------
+
+# Module-level cache of results dirs already confirmed fully-seeded THIS
+# PROCESS, keyed by the resolved results_dir string (never a bare no-arg
+# flag) so it can never suppress the cheap filesystem check for a different
+# results_dir (e.g. two separate tmp_path dirs used by two tests in the same
+# pytest process stay fully isolated).
+_SEEDED_DIRS: set[str] = set()
+
+
+def _is_fully_seeded(results_dir: str) -> bool:
+    """Cheap correctness check: does results_dir contain a result JSON for
+    every transcript id scribegate.cli knows about? glob/exists only — never
+    touches mtimes of existing files."""
+    if not os.path.isdir(results_dir):
+        return False
+    from scribegate import cli as scribegate_cli
+
+    transcript_ids = scribegate_cli.discover_transcript_ids()
+    if not transcript_ids:
+        # No bundled transcripts to seed from at all — nothing to do, treat
+        # as "seeded" (no-op) rather than looping forever.
+        return True
+    return all(
+        os.path.exists(os.path.join(results_dir, f"{tid}.json"))
+        for tid in transcript_ids
+    )
+
+
+def _seed_results(results_dir: str) -> None:
+    """Actually run the pipeline for every bundled transcript and rebuild
+    benchmark.md, writing into results_dir. No return value — callers check
+    the filesystem afterward via _is_fully_seeded."""
+    from pathlib import Path
+
+    from scribegate import benchmark as scribegate_benchmark
+    from scribegate import cli as scribegate_cli
+
+    results_dir_path = Path(results_dir)
+    scribegate_cli.run_all(results_dir=results_dir_path)
+    scribegate_benchmark.main(["--results-dir", str(results_dir_path)])
+
+
+def ensure_results(results_dir: str | None = None) -> bool:
+    """Self-seed data/results on cold start so the app never shows an empty
+    dashboard just because Streamlit Cloud's gitignored data/results/ hasn't
+    been populated yet (a fresh deploy starts with no result JSONs at all).
+
+    Resolves the effective results dir at CALL TIME (not solely from the
+    module-level RESULTS_DIR constant) so callers/tests can override it
+    explicitly, and so an env var change between calls is honored:
+        results_dir = results_dir or os.environ.get("SCRIBEGATE_RESULTS_DIR") or RESULTS_DIR
+
+    Returns True if this call actually seeded (ran the pipeline), False if
+    it was a no-op because results_dir already has a result JSON for every
+    bundled transcript id.
+
+    "Run at most once per dir" guard: the cheap filesystem check
+    (_is_fully_seeded) always runs first and is the sole source of truth for
+    correctness — it's what lets this function be called on every Streamlit
+    rerun without re-seeding. A module-level `_SEEDED_DIRS` set, keyed by the
+    resolved results_dir path, is consulted before even that cheap check
+    purely as a same-process speed-up (skip the glob if we already proved
+    this exact dir was fully seeded earlier in this process) — it never
+    substitutes for the check across different results_dir values, so two
+    tests using different tmp_path dirs in the same pytest process remain
+    fully isolated.
+    """
+    resolved_dir = results_dir or os.environ.get("SCRIBEGATE_RESULTS_DIR") or RESULTS_DIR
+    resolved_dir = str(resolved_dir)
+
+    if resolved_dir in _SEEDED_DIRS:
+        return False
+
+    if _is_fully_seeded(resolved_dir):
+        _SEEDED_DIRS.add(resolved_dir)
+        return False
+
+    # Only wrap in st.spinner when there's an active Streamlit script-run
+    # context (plain pytest calls / non-Streamlit callers have none) —
+    # st.spinner (and most st.* calls) raise/no-op oddly without one.
+    ctx = None
+    try:
+        from streamlit.runtime.scriptrunner import get_script_run_ctx
+
+        ctx = get_script_run_ctx()
+    except Exception:
+        ctx = None
+
+    if ctx is not None:
+        with st.spinner("First run — generating demo results..."):
+            _seed_results(resolved_dir)
+    else:
+        _seed_results(resolved_dir)
+
+    _SEEDED_DIRS.add(resolved_dir)
+    return True
+
+
 def append_decision(transcript_id: str, decision: str, reviewer: str = "demo-user") -> dict:
     """Append a reviewer decision line to data/results/decision_log.jsonl and
     return the record written. Pure I/O, no Streamlit state touched here."""

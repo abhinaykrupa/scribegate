@@ -37,13 +37,21 @@ if _REPO_ROOT not in sys.path:
 
 import streamlit as st
 
-from app.common import render_banner, render_sidebar_wordmark
+from app.common import ensure_results, render_banner, render_sidebar_wordmark
 from app.views import about, analytics, drift, live_encounter, overview, provenance, review_queue
 
 st.set_page_config(page_title="ScribeGate", layout="wide")
 
 render_sidebar_wordmark()
 render_banner()
+
+try:
+    ensure_results()
+except Exception as exc:  # noqa: BLE001 - must never block page render
+    st.error(
+        f"Demo data seeding failed: {exc}\n\n"
+        "Run manually: python -m scribegate.cli run --all"
+    )
 
 pages = [
     # Default page always serves at "/" — an explicit url_path would be dead

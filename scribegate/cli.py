@@ -222,6 +222,46 @@ def append_history_row(
     return history_path
 
 
+def run_all(
+    results_dir: Path | None = None,
+    transcript_dir: Path | None = None,
+    golden_dir: Path | None = None,
+    quality: str = "baseline",
+    tag: str | None = None,
+    stream=None,
+) -> list[dict]:
+    """Discover every bundled transcript id and run the full pipeline for
+    each, writing results + decision log + one history.jsonl row — the same
+    work `main()`'s `run --all` branch performs, factored out so callers
+    other than the CLI (e.g. app/common.py's cold-start self-seed) can invoke
+    it in-process without shelling out.
+
+    Any of `results_dir` / `transcript_dir` / `golden_dir` left as None fall
+    back to this module's defaults (data/results, data/transcripts,
+    data/golden_notes respectively). `tag` defaults to `quality` (same
+    fallback `main()` uses for --tag)."""
+    results_dir = Path(results_dir) if results_dir is not None else _DEFAULT_RESULTS_DIR
+    transcript_dir = Path(transcript_dir) if transcript_dir is not None else _TRANSCRIPT_DIR
+    golden_dir = Path(golden_dir) if golden_dir is not None else _GOLDEN_DIR
+
+    transcript_ids = discover_transcript_ids(transcript_dir)
+    results = run(
+        transcript_ids,
+        results_dir=results_dir,
+        transcript_dir=transcript_dir,
+        golden_dir=golden_dir,
+        stream=stream,
+        quality=quality,
+    )
+    append_history_row(
+        results,
+        tag=(tag or quality),
+        quality=quality,
+        history_path=results_dir / HISTORY_NAME,
+    )
+    return results
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="python -m scribegate.cli")
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -289,10 +329,16 @@ def main(argv: list[str] | None = None) -> int:
         history_path = Path(args.history_path) if args.history_path else results_dir / HISTORY_NAME
 
         if args.all:
-            transcript_ids = discover_transcript_ids(transcript_dir)
-        else:
-            transcript_ids = [args.transcript]
+            run_all(
+                results_dir=results_dir,
+                transcript_dir=transcript_dir,
+                golden_dir=golden_dir,
+                quality=quality,
+                tag=tag,
+            )
+            return 0
 
+        transcript_ids = [args.transcript]
         results = run(
             transcript_ids,
             results_dir=results_dir,

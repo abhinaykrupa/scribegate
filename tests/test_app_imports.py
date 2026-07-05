@@ -14,10 +14,12 @@ Two concerns:
 
 from __future__ import annotations
 
+import glob
 import importlib
 import json
 import os
 import sys
+import time
 
 import pytest
 
@@ -132,3 +134,98 @@ def test_view_render_survives_without_matplotlib(view_name, monkeypatch):
         module.render()
     except Exception as exc:  # noqa: BLE001 - intentional broad catch to report which view broke
         pytest.fail(f"app.views.{view_name}.render() raised with matplotlib blocked: {exc!r}")
+
+
+# ---------------------------------------------------------------------------
+# Cold-start self-seeding (app.common.ensure_results)
+# ---------------------------------------------------------------------------
+
+def test_ensure_results_seeds_empty_dir(tmp_path, monkeypatch):
+    """First call against an empty tmp_path must seed a result JSON for
+    every bundled transcript id, plus benchmark.md."""
+    monkeypatch.setenv("SCRIBEGATE_RESULTS_DIR", str(tmp_path))
+    import app.common as app_common
+    import scribegate.cli as cli
+
+    start = time.monotonic()
+    seeded = app_common.ensure_results(results_dir=str(tmp_path))
+    elapsed = time.monotonic() - start
+    print(f"ensure_results cold-start seed took {elapsed:.2f}s")
+
+    assert seeded is True
+
+    expected_ids = cli.discover_transcript_ids()
+    for tid in expected_ids:
+        assert os.path.exists(os.path.join(str(tmp_path), f"{tid}.json")), (
+            f"missing seeded result for {tid}"
+        )
+
+    benchmark_path = os.path.join(str(tmp_path), "benchmark.md")
+    assert os.path.exists(benchmark_path), "benchmark.md must be written by ensure_results"
+
+
+def test_ensure_results_is_noop_when_already_seeded(tmp_path, monkeypatch):
+    """Calling ensure_results again against an already-fully-seeded dir must
+    not touch any file (mtimes unchanged) and must return False."""
+    monkeypatch.setenv("SCRIBEGATE_RESULTS_DIR", str(tmp_path))
+    import app.common as app_common
+
+    first = app_common.ensure_results(results_dir=str(tmp_path))
+    assert first is True
+
+    files_before = sorted(glob.glob(os.path.join(str(tmp_path), "*")))
+    mtimes_before = {p: os.stat(p).st_mtime_ns for p in files_before}
+
+    second = app_common.ensure_results(results_dir=str(tmp_path))
+    assert second is False
+
+    files_after = sorted(glob.glob(os.path.join(str(tmp_path), "*")))
+    mtimes_after = {p: os.stat(p).st_mtime_ns for p in files_after}
+
+    assert files_before == files_after
+    assert mtimes_before == mtimes_after
+
+
+def test_ensure_results_repeat_call_files_still_valid_json(tmp_path, monkeypatch):
+    """Repeat call against an already-populated dir doesn't error, doesn't
+    change file count, and every per-transcript result JSON still parses."""
+    monkeypatch.setenv("SCRIBEGATE_RESULTS_DIR", str(tmp_path))
+    import app.common as app_common
+    import scribegate.cli as cli
+
+    app_common.ensure_results(results_dir=str(tmp_path))
+    count_before = len(glob.glob(os.path.join(str(tmp_path), "*.json")))
+
+    app_common.ensure_results(results_dir=str(tmp_path))
+    count_after = len(glob.glob(os.path.join(str(tmp_path), "*.json")))
+
+    assert count_before == count_after
+
+    expected_ids = cli.discover_transcript_ids()
+    for tid in expected_ids:
+        with open(os.path.join(str(tmp_path), f"{tid}.json"), "r", encoding="utf-8") as fh:
+            data = json.load(fh)
+        assert data["transcript_id"] == tid
+
+
+def test_app_cold_start_self_seeds_via_apptest(tmp_path, monkeypatch):
+    """End-to-end regression: on a fresh/empty results dir (simulating a
+    Streamlit Cloud deploy where data/results/*.json is gitignored), just
+    running the app script must self-seed results in-process, without
+    raising, via AppTest — the same harness used by
+    test_app_script_executes_without_exception."""
+    monkeypatch.setenv("SCRIBEGATE_RESULTS_DIR", str(tmp_path))
+    from streamlit.testing.v1 import AppTest
+
+    at = AppTest.from_file(os.path.join(REPO_ROOT, "app", "streamlit_app.py"), default_timeout=30).run()
+    assert not at.exception, f"app script raised: {at.exception}"
+
+    import scribegate.cli as cli
+
+    expected_ids = cli.discover_transcript_ids()
+    seeded_ids = sorted(
+        os.path.splitext(os.path.basename(p))[0]
+        for p in glob.glob(os.path.join(str(tmp_path), "*.json"))
+    )
+    for tid in expected_ids:
+        assert tid in seeded_ids, f"AppTest cold start did not seed {tid}"
