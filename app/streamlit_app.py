@@ -24,6 +24,17 @@ data/ and specs/ files. stdlib + streamlit + pandas + pyyaml only. Run with:
 
 from __future__ import annotations
 
+import os
+import sys
+
+# Streamlit Cloud runs the script with sys.path[0] = the script's own dir
+# (app/), so repo-root imports like `app.common` and `scribegate.*` fail
+# unless the repo root is on sys.path. Locally (run from repo root) this
+# insert is a harmless no-op duplicate.
+_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _REPO_ROOT not in sys.path:
+    sys.path.insert(0, _REPO_ROOT)
+
 import streamlit as st
 
 from app.common import render_banner, render_sidebar_wordmark
