@@ -7,8 +7,12 @@ matching event is appended to data/results/decision_log.jsonl for the
 shared audit trail (see audit.py, which reads both).
 
 Corrections can later be merged into a "candidate golden" note
-(build_candidate_golden) for potential promotion into data/golden_notes/
-by a human maintainer — that promotion step is out of scope here.
+(build_candidate_golden) for promotion into a generation overlay under
+data/results/golden_generations/gen_{N}/ (see promote_candidate /
+promote_all_candidates below) — data/golden_notes/ itself (gen-0) is never
+modified; it stays the pristine base that every generation overlays on top
+of. See active_golden_dir / load_golden_note for the overlay resolver, and
+scribegate/moat.py for the metrics/demo layer built on top of this.
 
 stdlib only: json, os, hashlib, difflib, pathlib, datetime, copy.
 
@@ -32,11 +36,15 @@ from pathlib import Path
 
 _REPO_ROOT = Path(__file__).resolve().parent.parent
 _DEFAULT_RESULTS_DIR = _REPO_ROOT / "data" / "results"
+_TRANSCRIPT_DIR = _REPO_ROOT / "data" / "transcripts"
+_GOLDEN_DIR = _REPO_ROOT / "data" / "golden_notes"  # gen-0, pristine, never written to
 
 _VALID_SECTIONS = ("S", "O", "A", "P")
 
 CANDIDATE_GOLDEN_NAME = "candidate_golden.jsonl"
 DECISION_LOG_NAME = "decision_log.jsonl"
+GOLDEN_GENERATIONS_DIRNAME = "golden_generations"
+GENERATION_MANIFEST_NAME = "generation.json"
 
 
 def _results_dir() -> Path:
@@ -242,6 +250,234 @@ def build_candidate_golden(transcript_id: str) -> dict | None:
     note["source_corrections"] = [c["correction_id"] for c in corrections]
 
     return note
+
+
+def _load_transcript_text(transcript_id: str) -> str:
+    path = _TRANSCRIPT_DIR / f"{transcript_id}.txt"
+    with open(path, "r", encoding="utf-8") as fh:
+        return fh.read()
+
+
+# ---------------------------------------------------------------------------
+# Generation model (V1 "data moat"): gen-0 is data/golden_notes/ (pristine,
+# never modified). Promotions write ONLY the changed golden notes into a new
+# data/results/golden_generations/gen_{N}/ overlay directory alongside a
+# generation.json manifest. active_golden_dir()/load_golden_note() resolve a
+# transcript's CURRENT golden by walking gen_N -> gen_{N-1} -> ... -> gen_0,
+# returning the first generation that actually has an override file for that
+# transcript_id (or gen-0 itself if none do) — classic overlay/copy-on-write
+# semantics, so a generation only needs to contain the notes it changed.
+# ---------------------------------------------------------------------------
+
+def _golden_generations_root() -> Path:
+    return _results_dir() / GOLDEN_GENERATIONS_DIRNAME
+
+
+def _generation_dir(n: int) -> Path:
+    return _golden_generations_root() / f"gen_{n}"
+
+
+def list_generations() -> list[int]:
+    """Sorted list of generation numbers (>=1) that have an actual
+    generation.json manifest under <results_dir>/golden_generations/gen_{N}/.
+    Empty list if no promotions have happened yet. A gen_0/ directory may
+    exist purely as a benchmark-summary cache (see moat.rebenchmark_generation)
+    but is deliberately NOT counted here — it never represents a real
+    promotion and has no manifest."""
+    root = _golden_generations_root()
+    if not root.exists():
+        return []
+
+    gens = []
+    for p in root.iterdir():
+        if not p.is_dir() or not p.name.startswith("gen_"):
+            continue
+        suffix = p.name[len("gen_"):]
+        if suffix.isdigit() and int(suffix) >= 1 and (p / GENERATION_MANIFEST_NAME).exists():
+            gens.append(int(suffix))
+    return sorted(gens)
+
+
+def latest_generation() -> int | None:
+    """Highest promoted generation number, or None if no promotions exist yet."""
+    gens = list_generations()
+    return gens[-1] if gens else None
+
+
+def active_golden_dir(
+    transcript_id: str,
+    generation: int | None = None,
+    base_golden_dir: Path | None = None,
+) -> Path:
+    """Resolve the directory that holds the CURRENTLY ACTIVE golden file for
+    `transcript_id` at `generation` (default: latest promoted generation, or
+    gen-0 if none exist). Walks gen_N -> gen_{N-1} -> ... -> gen_1, returning
+    the first generation directory that actually contains a
+    {transcript_id}.json override; falls back to `base_golden_dir` (default:
+    the pristine data/golden_notes/, i.e. gen-0) if no generation up to and
+    including `generation` overrides this transcript.
+
+    This is intentionally per-transcript (not "the one active dir for
+    everything") because a generation overlay only contains the notes it
+    changed — different transcripts can have their most-recent override in
+    different generations.
+    """
+    base = Path(base_golden_dir) if base_golden_dir is not None else _GOLDEN_DIR
+    gen = generation if generation is not None else latest_generation()
+
+    n = gen
+    while n is not None and n >= 1:
+        candidate_dir = _generation_dir(n)
+        if (candidate_dir / f"{transcript_id}.json").exists():
+            return candidate_dir
+        n -= 1
+
+    return base
+
+
+def load_golden_note(
+    transcript_id: str,
+    generation: int | None = None,
+    base_golden_dir: Path | None = None,
+) -> dict | None:
+    """Load the currently-active golden note dict for `transcript_id` at
+    `generation` (see active_golden_dir for resolution order). Returns None
+    if no golden file exists anywhere in the resolved chain (mirrors
+    cli._load_golden's None-safety for transcripts with no golden reference)."""
+    d = active_golden_dir(transcript_id, generation=generation, base_golden_dir=base_golden_dir)
+    path = d / f"{transcript_id}.json"
+    if not path.exists():
+        return None
+    with open(path, "r", encoding="utf-8") as fh:
+        return json.load(fh)
+
+
+def _validate_note_spans_in_bounds(note: dict, transcript_text: str, transcript_id: str) -> None:
+    """Raise ValueError (first failure found, never swallowed) if any SOAP
+    line's span in `note` is corrupt or falls outside [0, len(transcript_text)]
+    — the guard that stops a corrupted candidate golden (e.g. stale spans left
+    over from a bad merge) from ever being promoted into a generation overlay."""
+    text_len = len(transcript_text)
+    soap = note.get("soap", {}) if note else {}
+    for section in _VALID_SECTIONS:
+        lines = soap.get(section) or []
+        for idx, line in enumerate(lines):
+            if not isinstance(line, dict):
+                continue
+            for span in line.get("spans", []) or []:
+                if not (isinstance(span, (list, tuple)) and len(span) == 2):
+                    raise ValueError(
+                        f"corrupt span {span!r} in {transcript_id}/{section}[{idx}]: "
+                        f"expected a 2-element [start, end] pair"
+                    )
+                start, end = span
+                if not (isinstance(start, int) and isinstance(end, int)):
+                    raise ValueError(
+                        f"corrupt span {span!r} in {transcript_id}/{section}[{idx}]: "
+                        f"start/end must be integers, got {type(start).__name__}/{type(end).__name__}"
+                    )
+                if not (0 <= start <= end <= text_len):
+                    raise ValueError(
+                        f"span {span!r} in {transcript_id}/{section}[{idx}] out of bounds "
+                        f"for transcript_id={transcript_id!r} (transcript length {text_len})"
+                    )
+
+
+def _clean_golden_payload(candidate: dict) -> dict:
+    """Strip generation-bookkeeping-only fields (candidate flag, source
+    correction ids, generator provenance) off a build_candidate_golden()
+    result so the file written into a generation overlay has the same shape
+    as a hand-authored data/golden_notes/*.json fixture."""
+    cleaned = copy.deepcopy(candidate)
+    for key in ("candidate", "source_corrections", "generated", "generator"):
+        cleaned.pop(key, None)
+    return cleaned
+
+
+def _promote_batch(transcript_ids: list[str], reviewer: str, note: str = "") -> dict:
+    """Shared implementation for promote_candidate/promote_all_candidates:
+    one promotion batch = one NEW generation directory containing every
+    transcript_id's candidate golden (validated), plus a manifest and a
+    single decision-log "promotion" event covering the whole batch."""
+    if not transcript_ids:
+        raise ValueError("no transcript ids given to promote")
+
+    to_write: dict[str, dict] = {}
+    source_corrections: dict[str, list[str]] = {}
+    for transcript_id in transcript_ids:
+        candidate = build_candidate_golden(transcript_id)
+        if candidate is None:
+            raise ValueError(
+                f"no candidate golden available for transcript_id={transcript_id!r} "
+                "(no corrections recorded for it)"
+            )
+        transcript_text = _load_transcript_text(transcript_id)
+        _validate_note_spans_in_bounds(candidate, transcript_text, transcript_id)
+
+        source_corrections[transcript_id] = list(candidate.get("source_corrections", []))
+        to_write[transcript_id] = _clean_golden_payload(candidate)
+
+    next_gen = (latest_generation() or 0) + 1
+    gen_dir = _generation_dir(next_gen)
+    gen_dir.mkdir(parents=True, exist_ok=True)
+
+    for transcript_id, payload in to_write.items():
+        out_path = gen_dir / f"{transcript_id}.json"
+        with open(out_path, "w", encoding="utf-8") as fh:
+            json.dump(payload, fh, indent=2, sort_keys=False)
+            fh.write("\n")
+
+    ts = _utc_now_iso()
+    promoted_ids = sorted(to_write.keys())
+    manifest = {
+        "gen": next_gen,
+        "ts": ts,
+        "reviewer": reviewer,
+        "note": note,
+        "promoted": promoted_ids,
+        "source_corrections": source_corrections,
+    }
+    manifest_path = gen_dir / GENERATION_MANIFEST_NAME
+    with open(manifest_path, "w", encoding="utf-8") as fh:
+        json.dump(manifest, fh, indent=2, sort_keys=False)
+        fh.write("\n")
+
+    log_entry = {
+        "ts": ts,
+        "event": "promotion",
+        "gen": next_gen,
+        "reviewer": reviewer,
+        "promoted": promoted_ids,
+        "note": note,
+    }
+    decision_log_path = _results_dir() / DECISION_LOG_NAME
+    with open(decision_log_path, "a", encoding="utf-8") as fh:
+        fh.write(json.dumps(log_entry, sort_keys=False))
+        fh.write("\n")
+
+    return manifest
+
+
+def promote_candidate(transcript_id: str, reviewer: str, note: str = "") -> dict:
+    """Promote the single candidate golden for `transcript_id` (built fresh
+    from all corrections recorded for it) into a new generation. One call =
+    one new generation containing exactly this transcript's overlay. Returns
+    the generation manifest dict ({gen, ts, reviewer, promoted, source_corrections}).
+    Raises ValueError if there are no corrections recorded for this transcript
+    (build_candidate_golden would return None) or if any span in the merged
+    candidate is out of bounds for the transcript text."""
+    return _promote_batch([transcript_id], reviewer, note)
+
+
+def promote_all_candidates(reviewer: str, note: str = "") -> dict:
+    """Promote candidate goldens for EVERY transcript_id that currently has
+    at least one recorded correction, all as ONE new generation (one
+    promotion batch = one generation, per the module contract). Raises
+    ValueError if no corrections have been recorded for any transcript."""
+    ids = sorted({r["transcript_id"] for r in list_corrections()})
+    if not ids:
+        raise ValueError("no corrections recorded for any transcript; nothing to promote")
+    return _promote_batch(ids, reviewer, note)
 
 
 def diff_lines(original: str, corrected: str) -> str:

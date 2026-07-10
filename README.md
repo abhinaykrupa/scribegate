@@ -41,6 +41,8 @@ Mock mode is deterministic by default. Claude API backends are never required an
 - **Overview:** Dashboard landing page showing synthetic-data banner and key metrics.
 - **Analytics:** Per-visit-type benchmark summary, mean scores, and routing breakdown (auto_accept / review / regenerate).
 - **Drift:** Rolling-window quality regression detection and alert status.
+- **Data moat:** Moat curve (aggregate + auto-accept rate per golden generation), headline golden-set/correction/benchmark-lift metrics, and a "Promote pending candidates" button that closes the correction -> promotion -> new generation -> re-benchmark loop live.
+- **Judge calibration:** Mean CI95 width per visit type from the probabilistic-judge instrumentation, CI-aware vs. point-estimate routing deltas, and a per-case table.
 - **Review queue:** Generated notes routed to `review` (0.60–0.85 aggregate); click to view provenance and make line-level corrections.
 - **Provenance:** Click any SOAP line to highlight the exact transcript character spans it traces to (one or many spans stitched into a single line).
 - **Live encounter:** Browser mic input → speech-to-text → eval pipeline; **microphone disabled until provider and patient consent is both recorded to the audit log.**
@@ -61,13 +63,13 @@ python -m scribegate.cli run --all
 # Aggregate per-visit-type benchmark report
 python -m scribegate.benchmark
 
-# Launch interactive dashboard (7-page demo app — see Feature Tour)
+# Launch interactive dashboard (9-page demo app — see Feature Tour)
 streamlit run app/streamlit_app.py
 
 # optional: mic capture with browser speech engine (streamlit-mic-recorder in requirements)
 # demo works fully via text entry without a mic; Chrome recommended if using mic
 
-# Run full test suite (223 tests)
+# Run full test suite (291 tests)
 python -m pytest -q
 ```
 
@@ -103,6 +105,8 @@ scribegate/
   analytics.py                  # Per-visit-type ROI and failure-mode analytics
   corrections.py                # Reviewer line-level corrections → candidate golden examples
   audit.py                      # Dossier assembly: note + scores + corrections + hashes
+  moat.py                       # Golden-set generations: promotion, re-benchmark, moat curve
+  calibration.py                # Probabilistic-judge sampling, CI95, CI-aware routing
 
 specs/
   INTERFACES.md                 # Data shapes and module contracts (frozen)
@@ -129,7 +133,7 @@ app/
 .streamlit/                     # Streamlit config (secrets, theme)
 
 tests/
-  test_*.py                     # 223 unit & integration tests (mock-only, no API calls)
+  test_*.py                     # 291 unit & integration tests (mock-only, no API calls)
 ```
 
 ## What This Is Not

@@ -1,6 +1,6 @@
-"""ScribeGate demo UI (v0.2) — thin multi-page entry point.
+"""ScribeGate demo UI (v0.3) — thin multi-page entry point.
 
-Seven pages (via st.navigation/st.Page, dispatching to app/views/*.py's
+Nine pages (via st.navigation/st.Page, dispatching to app/views/*.py's
 render() functions):
     1. Overview        — headline metrics, per-visit-type/per-transcript
                           tables, routing chart.
@@ -8,13 +8,18 @@ render() functions):
                           slider panel.
     3. Drift            — score time series, regression alerts, CI gate
                           explainer.
-    4. Review queue     — worst-first review, approve/reject, line-level
+    4. Data moat        — moat curve (aggregate + auto-accept rate per
+                          golden generation), generations table, promote-
+                          pending-candidates button.
+    5. Judge calibration — mean CI95 width per visit type, CI-aware vs
+                          point-estimate routing deltas, per-case table.
+    6. Review queue     — worst-first review, approve/reject, line-level
                           corrections, candidate-golden diffs.
-    5. Provenance       — click a note line, see the exact transcript
+    7. Provenance       — click a note line, see the exact transcript
                           span(s) that support it; audit dossier export.
-    6. Live encounter   — consent-gated mic/text capture -> generate ->
+    8. Live encounter   — consent-gated mic/text capture -> generate ->
                           judge (reference-free) -> route -> provenance.
-    7. About            — README excerpts, links, production-path/demo-
+    9. About            — README excerpts, links, production-path/demo-
                           script expanders.
 
 Zero API keys, zero network by default: everything is read from bundled
@@ -38,7 +43,17 @@ if _REPO_ROOT not in sys.path:
 import streamlit as st
 
 from app.common import ensure_results, render_banner, render_sidebar_wordmark
-from app.views import about, analytics, drift, live_encounter, overview, provenance, review_queue
+from app.views import (
+    about,
+    analytics,
+    calibration,
+    drift,
+    live_encounter,
+    moat,
+    overview,
+    provenance,
+    review_queue,
+)
 
 st.set_page_config(page_title="ScribeGate", layout="wide")
 
@@ -59,6 +74,8 @@ pages = [
     st.Page(overview.render, title="Overview", default=True),
     st.Page(analytics.render, title="Analytics", url_path="analytics"),
     st.Page(drift.render, title="Drift", url_path="drift"),
+    st.Page(moat.render, title="Data moat", url_path="data-moat"),
+    st.Page(calibration.render, title="Judge calibration", url_path="judge-calibration"),
     st.Page(review_queue.render, title="Review queue", url_path="review-queue"),
     st.Page(provenance.render, title="Provenance", url_path="provenance"),
     st.Page(live_encounter.render, title="Live encounter", url_path="live-encounter"),

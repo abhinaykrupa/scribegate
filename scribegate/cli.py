@@ -26,6 +26,7 @@ from scribegate.normalizer import check_note
 from scribegate.judge import judge_note
 from scribegate.router import decide
 from scribegate.benchmark import compute_summary
+from scribegate.corrections import load_golden_note
 
 _REPO_ROOT = Path(__file__).resolve().parent.parent
 _DATA_DIR = _REPO_ROOT / "data"
@@ -54,12 +55,24 @@ def _load_transcript_text(transcript_id: str, transcript_dir: Path = _TRANSCRIPT
         return fh.read()
 
 
-def _load_golden(transcript_id: str, golden_dir: Path = _GOLDEN_DIR) -> dict | None:
-    path = golden_dir / f"{transcript_id}.json"
-    if not path.exists():
-        return None
-    with open(path, "r", encoding="utf-8") as fh:
-        return json.load(fh)
+def _load_golden(
+    transcript_id: str,
+    golden_dir: Path = _GOLDEN_DIR,
+    golden_generation: int | None = None,
+) -> dict | None:
+    """Resolve `transcript_id`'s golden note via the generation-overlay
+    resolver (scribegate.corrections.load_golden_note): walks
+    gen_{golden_generation} -> ... -> gen_1 -> `golden_dir` (gen-0), returning
+    the first generation that has an override for this transcript, or the
+    gen-0 file at `golden_dir` if none do.
+
+    `golden_generation=None` means "latest promoted generation" (or gen-0 if
+    none exist yet) — since a fresh repo/tmp results dir has no
+    golden_generations/ directory at all, this resolves to exactly the old
+    behavior (read straight from `golden_dir`), so default pipeline output is
+    byte-identical to pre-V1 behavior whenever no generations have been
+    promoted."""
+    return load_golden_note(transcript_id, generation=golden_generation, base_golden_dir=golden_dir)
 
 
 def _violation_to_dict(v) -> dict:
@@ -80,6 +93,7 @@ def process_transcript(
     transcript_dir: Path = _TRANSCRIPT_DIR,
     golden_dir: Path = _GOLDEN_DIR,
     quality: str = "baseline",
+    golden_generation: int | None = None,
 ) -> dict:
     """Run the full generate -> normalize -> judge -> route pipeline for one
     transcript id. Returns the result payload written to
@@ -87,14 +101,18 @@ def process_transcript(
     those so the same payload is reusable/testable).
 
     `quality` ("baseline" | "degraded") is threaded straight through to
-    `generate_note` — see generator.py for what each tier changes."""
+    `generate_note` — see generator.py for what each tier changes.
+
+    `golden_generation` selects which promoted generation's overlay to judge
+    against (default: latest promoted generation, or gen-0/`golden_dir` if
+    none have been promoted yet — see corrections.active_golden_dir)."""
     transcript_text = _load_transcript_text(transcript_id, transcript_dir)
     visit_type = visit_type_for(transcript_id)
 
     generated_note = generate_note(transcript_text, transcript_id, visit_type, quality=quality)
     violations = check_note(generated_note, transcript=transcript_text)
 
-    golden = _load_golden(transcript_id, golden_dir)
+    golden = _load_golden(transcript_id, golden_dir, golden_generation=golden_generation)
     if golden is not None:
         judge_result = judge_note(generated_note, golden, transcript_text)
     else:
@@ -169,17 +187,22 @@ def run(
     golden_dir: Path = _GOLDEN_DIR,
     stream=None,
     quality: str = "baseline",
+    golden_generation: int | None = None,
 ) -> list[dict]:
     """Run the pipeline for each transcript id (deterministic order as
     given), writing results + appending to the decision log. Returns the
     list of result payloads (as written, incl. timestamps).
 
     `quality` is threaded through to `process_transcript` -> `generate_note`
-    for every transcript id in this run."""
+    for every transcript id in this run. `golden_generation` is threaded
+    through to `process_transcript` -> `_load_golden` for every transcript id
+    (default None => latest promoted generation, or gen-0 if none exist)."""
     stream = stream or sys.stdout
     results = []
     for transcript_id in transcript_ids:
-        result = process_transcript(transcript_id, transcript_dir, golden_dir, quality=quality)
+        result = process_transcript(
+            transcript_id, transcript_dir, golden_dir, quality=quality, golden_generation=golden_generation
+        )
         _write_result_json(result, results_dir)
         _append_decision_log(result, results_dir)
         print(_summary_line(result), file=stream)
@@ -229,6 +252,7 @@ def run_all(
     quality: str = "baseline",
     tag: str | None = None,
     stream=None,
+    golden_generation: int | None = None,
 ) -> list[dict]:
     """Discover every bundled transcript id and run the full pipeline for
     each, writing results + decision log + one history.jsonl row — the same
@@ -239,7 +263,12 @@ def run_all(
     Any of `results_dir` / `transcript_dir` / `golden_dir` left as None fall
     back to this module's defaults (data/results, data/transcripts,
     data/golden_notes respectively). `tag` defaults to `quality` (same
-    fallback `main()` uses for --tag)."""
+    fallback `main()` uses for --tag). `golden_generation` (default None =>
+    latest promoted generation, or gen-0/pristine if none exist yet) selects
+    which generation-overlay of the golden set to judge against — passing
+    None here reproduces pre-V1 behavior exactly whenever no generations have
+    been promoted, since the overlay resolver falls straight through to
+    `golden_dir` in that case."""
     results_dir = Path(results_dir) if results_dir is not None else _DEFAULT_RESULTS_DIR
     transcript_dir = Path(transcript_dir) if transcript_dir is not None else _TRANSCRIPT_DIR
     golden_dir = Path(golden_dir) if golden_dir is not None else _GOLDEN_DIR
@@ -252,6 +281,7 @@ def run_all(
         golden_dir=golden_dir,
         stream=stream,
         quality=quality,
+        golden_generation=golden_generation,
     )
     append_history_row(
         results,
@@ -306,6 +336,14 @@ def build_parser() -> argparse.ArgumentParser:
         default=None,
         help=argparse.SUPPRESS,
     )
+    run_parser.add_argument(
+        "--golden-gen",
+        metavar="N",
+        type=int,
+        default=None,
+        dest="golden_gen",
+        help="Golden generation to judge against (default: latest promoted generation, or gen-0 if none exist).",
+    )
 
     return parser
 
@@ -335,6 +373,7 @@ def main(argv: list[str] | None = None) -> int:
                 golden_dir=golden_dir,
                 quality=quality,
                 tag=tag,
+                golden_generation=args.golden_gen,
             )
             return 0
 
@@ -345,6 +384,7 @@ def main(argv: list[str] | None = None) -> int:
             transcript_dir=transcript_dir,
             golden_dir=golden_dir,
             quality=quality,
+            golden_generation=args.golden_gen,
         )
         append_history_row(results, tag=tag, quality=quality, history_path=history_path)
         return 0
