@@ -4,5 +4,4 @@ streamlit
 anthropic
 openai  # optional: DeepSeek fallback provider (OpenAI-compatible client)
 pandas
-matplotlib
 streamlit-mic-recorder
