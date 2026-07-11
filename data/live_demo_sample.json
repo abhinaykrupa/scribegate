@@ -1,0 +1,137 @@
+{
+  "sample": true,
+  "sample_note": "This is a bundled MOCK-GENERATED example, not a real live API run — shown so the Live mode page is never empty when no ANTHROPIC_API_KEY / budget is configured. Shape matches scribegate.live.run_live_note()'s real return value exactly.",
+  "transcript_id": "glaucoma_05",
+  "visit_type": "glaucoma_followup",
+  "drafter_model": "claude-haiku-4-5",
+  "judge_model": "claude-haiku-4-5",
+  "judge_samples_requested": 3,
+  "judge_samples_collected": 3,
+  "generated_note": {
+    "transcript_id": "glaucoma_05",
+    "visit_type": "glaucoma_followup",
+    "synthetic": true,
+    "soap": {
+      "S": [
+        {
+          "text": "Patient reports adherence is imperfect, especially the midday brimonidine dose.",
+          "spans": [[397, 477]],
+          "span_confidence": "high"
+        },
+        {
+          "text": "Reading vision on the right feels like more effort lately.",
+          "spans": [[1008, 1086]],
+          "span_confidence": "high"
+        }
+      ],
+      "O": [
+        {
+          "text": "IOP 26 mmHg OD (up from 21), 24 mmHg OS. Goldmann.",
+          "spans": [[640, 709]],
+          "span_confidence": "high"
+        },
+        {
+          "text": "Cup-to-disc 0.85 OD (progressed from 0.80), 0.80 OS stable. No fresh disc hemorrhage.",
+          "spans": [[1115, 1259]],
+          "span_confidence": "high"
+        },
+        {
+          "text": "Humphrey 24-2: right superior defect deepened vs. 4 months prior. OCT RNFL: progressive inferior thinning OD.",
+          "spans": [[1392, 1575]],
+          "span_confidence": "low"
+        }
+      ],
+      "A": [
+        {
+          "text": "Progressing POAG OD despite maximal medical therapy on 3 agents.",
+          "spans": [[1768, 1964]],
+          "span_confidence": "high"
+        }
+      ],
+      "P": [
+        {
+          "text": "Refer to glaucoma surgeon for trabeculectomy vs. drainage device evaluation; continue latanoprost/timolol/brimonidine unchanged pending surgery; target evaluation within 2 weeks.",
+          "spans": [[2003, 2176], [2638, 2719]],
+          "span_confidence": "high"
+        }
+      ]
+    },
+    "generated": true,
+    "generator": "api",
+    "drafter_model": "claude-haiku-4-5"
+  },
+  "golden_used": true,
+  "violations": [],
+  "judge_sampled": {
+    "samples": [
+      {
+        "scores": {"completeness": 4, "hallucination": 5, "coding_plausibility": 4, "terminology": 5},
+        "aggregate": 0.9,
+        "rationales": {
+          "completeness": "covered the adherence gap, IOP trend, disc/field/OCT progression, and surgical plan.",
+          "hallucination": "every line traces to a transcript span; no fabricated values.",
+          "coding_plausibility": "supports a progressing POAG code with surgical referral.",
+          "terminology": "no terminology issues found (normalizer)."
+        }
+      },
+      {
+        "scores": {"completeness": 4, "hallucination": 5, "coding_plausibility": 4, "terminology": 4},
+        "aggregate": 0.875,
+        "rationales": {
+          "completeness": "minor: prior IOP baseline (21/20) not restated in the note.",
+          "hallucination": "no fabricated detail found.",
+          "coding_plausibility": "supports the referral-level code.",
+          "terminology": "one abbreviation (OU) used without full expansion."
+        }
+      },
+      {
+        "scores": {"completeness": 5, "hallucination": 5, "coding_plausibility": 4, "terminology": 5},
+        "aggregate": 0.95,
+        "rationales": {
+          "completeness": "matches all golden reference lines within tolerance.",
+          "hallucination": "no fabricated detail found.",
+          "coding_plausibility": "supports the referral-level code.",
+          "terminology": "no terminology issues found (normalizer)."
+        }
+      }
+    ],
+    "mean_scores": {"completeness": 4.333, "hallucination": 5.0, "coding_plausibility": 4.0, "terminology": 4.667},
+    "std_scores": {"completeness": 0.471, "hallucination": 0.0, "coding_plausibility": 0.0, "terminology": 0.471},
+    "aggregate_mean": 0.9083,
+    "aggregate_std": 0.031,
+    "ci95": [0.879, 0.938],
+    "agreement": {"completeness": 1.0, "hallucination": 1.0, "coding_plausibility": 1.0, "terminology": 0.667},
+    "flags": [],
+    "difficulty": null
+  },
+  "route_result": {
+    "route": "auto_accept",
+    "ci_lower": 0.879,
+    "ci_upper": 0.938,
+    "aggregate_mean": 0.9083,
+    "reasons": ["CI95 lower bound 0.879 >= 0.85 auto-accept threshold; no error-severity violations"],
+    "routing_delta": {
+      "point_route": "auto_accept",
+      "ci_route": "auto_accept",
+      "changed": false,
+      "explanation": "Point-estimate and CI-aware routing agree on this run: both clear the 0.85 auto-accept bar."
+    }
+  },
+  "route": "auto_accept",
+  "budget_exhausted": false,
+  "partial": false,
+  "transcript_text": "# SYNTHETIC TRANSCRIPT — no PHI. Visit type: glaucoma follow-up. ID: glaucoma_05\nDOCTOR: Come on in. So you're here for your glaucoma follow-up. You've got primary open-angle glaucoma in both eyes, and you're currently on three drops — latanoprost at bedtime, timolol twice a day, and brimonidine twice a day, all both eyes. That's a heavy regimen. How's it going?\nPATIENT: Hi doctor. It's a lot. I try, but with three different drops on different schedules I know I miss some. Especially the midday brimonidine dose.\nDOCTOR: That's understandable, maximal medical therapy is hard to keep up. Let's see where the pressures are. Tech?\nTECH: Goldmann pressures today, right eye twenty-six, left eye twenty-four. Four months ago they were twenty-one and twenty. At diagnosis, thirty-four and thirty-two.\nDOCTOR: So despite three medications, the pressure is climbing again, right eye twenty-six. That's above our target of the mid-teens for someone with your degree of damage. Any new vision symptoms?\nPATIENT: My reading vision on the right seems a little more effort lately. Hard to say.\nDOCTOR: Let me examine you. Cup-to-disc zero point eight five on the right, and I think that's progressed from your prior zero point eight — the inferior rim looks thinner. Left is zero point eight, stable. No fresh disc hemorrhage today.\nPATIENT: The right is getting worse?\nDOCTOR: I'm concerned it is. Your Humphrey 24-2 field from today shows the superior defect in the right eye has deepened and expanded compared with your field four months ago — the mean deviation dropped further. The left field is stable. And the OCT of the retinal nerve fiber layer confirms progressive inferior RNFL thinning in the right eye.\nPATIENT: So the medications aren't enough anymore.\nDOCTOR: That's the situation — you're on maximal medical therapy, adherence is understandably imperfect, the right pressure is above target, and the right eye is progressing structurally and functionally. Adding a fourth drop won't help much. So I'm going to refer you to a glaucoma surgeon to discuss surgical options — likely a trabeculectomy or a drainage device to get durable pressure control on that right eye.\nPATIENT: Surgery. Okay.\nDOCTOR: I know it's a big step, but the right eye needs more than drops can give. In the meantime, keep taking all three medications as best you can — every bit of pressure lowering helps until surgery. I'll continue the latanoprost, timolol, and brimonidine unchanged for now. I'll call the surgeon's office today and want you seen within two weeks. We'll coordinate closely.\nPATIENT: Alright. I trust your judgment.\nDOCTOR: Thank you. The staff will arrange the surgical referral and get you the soonest appointment.\n",
+  "cost_records": [
+    {"ts": "2026-07-11T00:00:00.000Z", "day": "2026-07-11", "stage": "draft", "model": "claude-haiku-4-5", "input_tokens": 1200, "output_tokens": 700, "usd": 0.0047},
+    {"ts": "2026-07-11T00:00:01.000Z", "day": "2026-07-11", "stage": "judge_sample_0", "model": "claude-haiku-4-5", "input_tokens": 1500, "output_tokens": 300, "usd": 0.003},
+    {"ts": "2026-07-11T00:00:02.000Z", "day": "2026-07-11", "stage": "judge_sample_1", "model": "claude-haiku-4-5", "input_tokens": 1500, "output_tokens": 300, "usd": 0.003},
+    {"ts": "2026-07-11T00:00:03.000Z", "day": "2026-07-11", "stage": "judge_sample_2", "model": "claude-haiku-4-5", "input_tokens": 1500, "output_tokens": 300, "usd": 0.003}
+  ],
+  "cost_breakdown": {
+    "drafting": {"usd": 0.0047, "input_tokens": 1200, "output_tokens": 700},
+    "judging": {"usd": 0.009, "input_tokens": 4500, "output_tokens": 900},
+    "total_usd": 0.0137
+  },
+  "ts": "20260711T000000000000Z",
+  "_saved_path": null
+}

@@ -1,6 +1,6 @@
 # DEMO_SCRIPT.md — ScribeGate, 5-minute walkthrough
 
-**Audience:** Jeff (COO) and Andrea (ophthalmologist CEO).
+**Audience:** the COO and the clinician founder (ophthalmologist CEO).
 **Data:** 100% synthetic throughout. No PHI, no real patients, no live clinical APIs.
 
 ## Cold open (30s)
@@ -62,11 +62,11 @@ threshold. An **alert fires**; the gate **blocks the PR** in CI.
 > a clinician notices in the wild. The gate observes a new model before it enforces
 > against live notes — never flip a backend without shadow data."
 
-## Beat 5 — Analytics: the ROI model, the COO minute (30s, for Jeff)
+## Beat 5 — Analytics: the ROI model, the COO minute (30s, for the COO)
 
 **Click:** Analytics → scroll to the **ROI model** section.
 
-> "Jeff — the value isn't 'AI writes notes.' It's that a bounded fraction reaches a
+> "The value isn't 'AI writes notes.' It's that a bounded fraction reaches a
 > human at all: `auto_accept` above 0.85, `review` in the middle, `regenerate`
 > below 0.60. You're buying down reviewer minutes per note and audit risk per note,
 > both measured, not asserted."
@@ -107,9 +107,9 @@ a scored SOAP note with the same clickable span provenance from Beat 2.
 > "Same spine, whether the transcript came from a fixture file or that microphone
 > thirty seconds ago. The gate doesn't change shape when the input does."
 
-## Andrea hook
+## The clinician founder hook
 
-> "Andrea — the golden notes are the thing I most want wrong. Every rubric anchor
+> "The golden notes are the thing I most want wrong. Every rubric anchor
 > and reference note is a clinical judgment call, and I'd rather have your red pen
 > on my rubric than your compliments. Show me where the eval is too lenient and
 > I'll show you a better gate by Friday."

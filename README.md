@@ -38,6 +38,7 @@ Mock mode is deterministic by default. Claude API backends are never required an
 
 ## Feature Tour
 
+- **Start here:** Default landing page — a five-minute guided tour linking straight to each other page, plus a full glossary.
 - **Overview:** Dashboard landing page showing synthetic-data banner and key metrics.
 - **Analytics:** Per-visit-type benchmark summary, mean scores, and routing breakdown (auto_accept / review / regenerate).
 - **Drift:** Rolling-window quality regression detection and alert status.
@@ -46,6 +47,8 @@ Mock mode is deterministic by default. Claude API backends are never required an
 - **Review queue:** Generated notes routed to `review` (0.60–0.85 aggregate); click to view provenance and make line-level corrections.
 - **Provenance:** Click any SOAP line to highlight the exact transcript character spans it traces to (one or many spans stitched into a single line).
 - **Live encounter:** Browser mic input → speech-to-text → eval pipeline; **microphone disabled until provider and patient consent is both recorded to the audit log.**
+- **Live mode:** Budget-capped, passcode-gated page that calls the real Claude API end-to-end (draft → judge → route) instead of the offline mock, with a per-note cost breakdown.
+- **Economics:** Unit-economics engine — cheapest model tier clearing the quality floor, its margin vs. the premium tier, and a live-recomputing haiku/sonnet/opus comparison table.
 - **About:** Product story, synthetic-data notice, link to PRODUCTION_PATH.md.
 
 ## Quickstart
@@ -63,13 +66,13 @@ python -m scribegate.cli run --all
 # Aggregate per-visit-type benchmark report
 python -m scribegate.benchmark
 
-# Launch interactive dashboard (9-page demo app — see Feature Tour)
+# Launch interactive dashboard (12-page demo app — see Feature Tour)
 streamlit run app/streamlit_app.py
 
 # optional: mic capture with browser speech engine (streamlit-mic-recorder in requirements)
 # demo works fully via text entry without a mic; Chrome recommended if using mic
 
-# Run full test suite (291 tests)
+# Run full test suite (353 tests)
 python -m pytest -q
 ```
 
@@ -107,6 +110,9 @@ scribegate/
   audit.py                      # Dossier assembly: note + scores + corrections + hashes
   moat.py                       # Golden-set generations: promotion, re-benchmark, moat curve
   calibration.py                # Probabilistic-judge sampling, CI95, CI-aware routing
+  live.py                       # Live-mode orchestrator: real, budget-guarded Claude API calls
+  costs.py                      # Pricing table + append-only cost ledger for live.py
+  economics.py                  # Unit-economics engine: cost/margin per model tier
 
 specs/
   INTERFACES.md                 # Data shapes and module contracts (frozen)
@@ -114,6 +120,8 @@ specs/
   rubric.yaml                   # Judge scoring anchors and router thresholds
   baseline.json                 # CI eval gate floors per metric
   consent_copy.yaml             # UI strings for live-capture consent gate
+  pricing.yaml                  # Per-model-tier USD/MTok pricing (editable source of truth)
+  ui_copy.yaml                  # Plain-language page titles/copy for the Streamlit UI
 
 data/
   transcripts/                  # Synthetic clinic visit recordings (*.txt)
@@ -133,7 +141,7 @@ app/
 .streamlit/                     # Streamlit config (secrets, theme)
 
 tests/
-  test_*.py                     # 291 unit & integration tests (mock-only, no API calls)
+  test_*.py                     # 353 unit & integration tests (mock-only, no API calls)
 ```
 
 ## What This Is Not

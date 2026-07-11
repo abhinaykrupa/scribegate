@@ -11,7 +11,7 @@ from __future__ import annotations
 import pandas as pd
 import streamlit as st
 
-from app.common import SECTION_LABELS, SECTION_ORDER, append_decision, load_results
+from app.common import SECTION_LABELS, SECTION_ORDER, append_decision, jargon_label, load_results, page_header
 from scribegate import corrections
 
 
@@ -25,8 +25,8 @@ def _render_review_tab(tid: str, r: dict) -> None:
     cols = st.columns(4)
     dims = [
         ("Completeness", "completeness"),
-        ("Hallucination", "hallucination"),
-        ("Coding Plausibility", "coding_plausibility"),
+        (jargon_label("hallucination", fallback="Hallucination").capitalize(), "hallucination"),
+        (jargon_label("coding_plausibility", fallback="Coding Plausibility").capitalize(), "coding_plausibility"),
         ("Terminology", "terminology"),
     ]
     for col, (label, key) in zip(cols, dims):
@@ -171,7 +171,7 @@ def _render_candidate_golden_tab(tid: str) -> None:
 
 
 def render() -> None:
-    st.header("Review queue")
+    page_header("review_queue")
 
     results = load_results()
 

@@ -50,6 +50,7 @@ LIVE_RESULTS_DIR = os.path.join(RESULTS_DIR, "live")
 
 SPECS_DIR = os.path.join(REPO_ROOT, "specs")
 CONSENT_COPY_PATH = os.path.join(SPECS_DIR, "consent_copy.yaml")
+UI_COPY_PATH = os.path.join(SPECS_DIR, "ui_copy.yaml")
 
 SECTION_ORDER = ["S", "O", "A", "P"]
 SECTION_LABELS = {
@@ -323,6 +324,81 @@ def load_consent_copy() -> dict:
     for every string the consent gate + capture UI render)."""
     with open(CONSENT_COPY_PATH, "r", encoding="utf-8") as fh:
         return yaml.safe_load(fh) or {}
+
+
+@st.cache_data(ttl=5)
+def ui_copy() -> dict:
+    """Load and parse specs/ui_copy.yaml — the single source of truth for
+    every plain-language string this UI renders: plain_title/one_liner/
+    why_it_matters/reading_guide per page key, the glossary, the 5-minute
+    tour (tour_5min), jargon_swaps, and the live_mode/economics copy
+    blocks. Views must consume this loader rather than hardcoding copy —
+    W4's UI-overhaul rule (specs/ui_copy.yaml's own header comment)."""
+    with open(UI_COPY_PATH, "r", encoding="utf-8") as fh:
+        return yaml.safe_load(fh) or {}
+
+
+def jargon_label(technical: str, fallback: str | None = None) -> str:
+    """Return the dual "plain (technical)" form for `technical` per
+    ui_copy.yaml's jargon_swaps list (e.g. "aggregate" ->
+    "quality score (aggregate)"). Falls back to `fallback` (or `technical`
+    unchanged) if no swap is defined for that key. Intended as a
+    light-touch retrofit on existing metric/column labels inside a view —
+    never a rewrite of the view's internals."""
+    swaps = {
+        s.get("technical"): s.get("combined")
+        for s in (ui_copy().get("jargon_swaps") or [])
+        if isinstance(s, dict)
+    }
+    return swaps.get(technical) or (fallback if fallback is not None else technical)
+
+
+# ---------------------------------------------------------------------------
+# Shared page registry — populated once by app/streamlit_app.py with the
+# st.Page objects it constructs, so views (start_here.py's "5-minute tour")
+# can st.page_link to a sibling page without a circular import on
+# streamlit_app.py itself.
+# ---------------------------------------------------------------------------
+
+PAGE_REGISTRY: dict[str, object] = {}
+
+
+def register_pages(pages_by_key: dict) -> None:
+    """Populate the shared page registry (page_key -> st.Page object).
+    Called once by app/streamlit_app.py right after it constructs its
+    st.Page objects, before st.navigation(...) runs."""
+    PAGE_REGISTRY.clear()
+    PAGE_REGISTRY.update(pages_by_key)
+
+
+def page_header(page_key: str) -> None:
+    """Shared plain-language page header, consumed from ui_copy(): renders
+    `plain_title` as the page's st.header, `one_liner` as a caption
+    subtitle directly below it, and a single "Why this matters + how to
+    read this page" expander built from `why_it_matters` + `reading_guide`
+    for `page_key`. Every view calls this instead of its own bespoke
+    st.header/caption block; page-specific content renders below,
+    untouched."""
+    data = ui_copy()
+    page = (data.get("pages") or {}).get(page_key) or {}
+    plain_title = page.get("plain_title") or page_key.replace("_", " ").title()
+    one_liner = page.get("one_liner", "")
+    why_it_matters = page.get("why_it_matters", "")
+    reading_guide = page.get("reading_guide") or []
+
+    st.header(plain_title)
+    if one_liner:
+        st.caption(one_liner)
+
+    if why_it_matters or reading_guide:
+        with st.expander("Why this matters + how to read this page"):
+            if why_it_matters:
+                st.markdown("**Why this matters**")
+                st.markdown(why_it_matters)
+            if reading_guide:
+                st.markdown("**How to read this page**")
+                for item in reading_guide:
+                    st.markdown(f"- {item}")
 
 
 def render_banner() -> None:

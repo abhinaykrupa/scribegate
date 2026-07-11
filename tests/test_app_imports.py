@@ -22,12 +22,14 @@ import sys
 import time
 
 import pytest
+import yaml
 
 pytest.importorskip("streamlit")
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEMO_SCRIPT_PATH = os.path.join(REPO_ROOT, "DEMO_SCRIPT.md")
 GLAUCOMA_05_RESULT_PATH = os.path.join(REPO_ROOT, "data", "results", "glaucoma_05.json")
+UI_COPY_PATH = os.path.join(REPO_ROOT, "specs", "ui_copy.yaml")
 
 APP_MODULES = [
     "app.common",
@@ -35,11 +37,14 @@ APP_MODULES = [
     "app.views.analytics",
     "app.views.calibration",
     "app.views.drift",
+    "app.views.economics",
     "app.views.live_encounter",
+    "app.views.live_mode",
     "app.views.moat",
     "app.views.overview",
     "app.views.provenance",
     "app.views.review_queue",
+    "app.views.start_here",
 ]
 
 
@@ -106,6 +111,9 @@ VIEW_MODULES_FOR_RENDER_SWEEP = [
     "provenance",
     "live_encounter",
     "about",
+    "start_here",
+    "live_mode",
+    "economics",
 ]
 
 
@@ -233,3 +241,41 @@ def test_app_cold_start_self_seeds_via_apptest(tmp_path, monkeypatch):
     )
     for tid in expected_ids:
         assert tid in seeded_ids, f"AppTest cold start did not seed {tid}"
+
+
+# ---------------------------------------------------------------------------
+# W4 UI overhaul — copy-contract lock + live-mode no-key preview path
+# ---------------------------------------------------------------------------
+
+def test_ui_copy_every_page_has_required_fields():
+    """Copy-contract lock: every page key in specs/ui_copy.yaml's `pages`
+    block must carry plain_title, one_liner, and why_it_matters — the three
+    fields app.common.page_header() renders for every view. A page missing
+    one of these would silently fall back to a blank/placeholder header."""
+    with open(UI_COPY_PATH, "r", encoding="utf-8") as fh:
+        data = yaml.safe_load(fh) or {}
+
+    pages = data.get("pages") or {}
+    assert pages, "specs/ui_copy.yaml must define at least one page"
+
+    required_fields = ("plain_title", "one_liner", "why_it_matters")
+    for page_key, page in pages.items():
+        for field in required_fields:
+            value = (page or {}).get(field)
+            assert isinstance(value, str) and value.strip(), (
+                f"specs/ui_copy.yaml pages.{page_key}.{field} must be a non-empty string"
+            )
+
+
+def test_live_mode_renders_in_no_key_preview_mode(monkeypatch):
+    """CI path: with no ANTHROPIC_API_KEY configured (the default in CI),
+    app.views.live_mode.render() must fall into the "unavailable" branch
+    and render the bundled SAMPLE saved run without raising — never require
+    a real API key just to import/render the page."""
+    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+    monkeypatch.delenv("SCRIBEGATE_DEMO_PASSCODE", raising=False)
+
+    import app.views.live_mode as live_mode
+
+    importlib.reload(live_mode)
+    live_mode.render()  # must not raise

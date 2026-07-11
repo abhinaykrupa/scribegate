@@ -12,7 +12,13 @@ import tempfile
 
 import streamlit as st
 
-from app.common import _render_note_and_transcript, load_golden_note, load_results, load_transcript_text
+from app.common import (
+    _render_note_and_transcript,
+    load_golden_note,
+    load_results,
+    load_transcript_text,
+    page_header,
+)
 from scribegate import audit
 
 
@@ -49,11 +55,7 @@ def _render_export_dossier_button(transcript_id: str) -> None:
 
 
 def render() -> None:
-    st.header("Provenance note view")
-    st.caption(
-        "Click any note line to see exactly which part(s) of the transcript "
-        "support it, highlighted character-exact."
-    )
+    page_header("provenance")
 
     results = load_results()
     if not results:

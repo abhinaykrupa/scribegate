@@ -26,7 +26,7 @@ import os
 import pandas as pd
 import streamlit as st
 
-from app.common import RESULTS_DIR
+from app.common import RESULTS_DIR, page_header
 from scribegate import corrections
 from scribegate import moat as moat_module
 
@@ -216,7 +216,7 @@ def _ensure_moat_seed() -> None:
 
 
 def render() -> None:
-    st.header("Data moat")
+    page_header("moat")
     st.caption(
         "**Demo on synthetic data.** Every generation/correction below comes from the "
         "bundled synthetic fixtures — no PHI, no production customer data."

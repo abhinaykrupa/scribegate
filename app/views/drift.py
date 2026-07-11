@@ -14,7 +14,7 @@ import os
 import pandas as pd
 import streamlit as st
 
-from app.common import HISTORY_DEMO_PATH, HISTORY_PATH, REPO_ROOT
+from app.common import HISTORY_DEMO_PATH, HISTORY_PATH, REPO_ROOT, page_header
 from scribegate.drift import check_against_baseline, detect_regression, load_history, summarize_drift
 
 BASELINE_PATH = os.path.join(REPO_ROOT, "specs", "baseline.json")
@@ -42,7 +42,7 @@ def _load_history_with_fallback() -> tuple[list[dict], str]:
 
 
 def render() -> None:
-    st.header("Drift")
+    page_header("drift")
 
     history, source_path = _load_history_with_fallback()
 

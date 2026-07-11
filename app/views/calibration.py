@@ -29,7 +29,7 @@ import os
 import pandas as pd
 import streamlit as st
 
-from app.common import RESULTS_DIR
+from app.common import RESULTS_DIR, page_header
 
 CALIBRATION_REPORT_PATH = os.path.join(RESULTS_DIR, "calibration_report.json")
 
@@ -152,7 +152,7 @@ def _render_explainer() -> None:
 
 
 def render() -> None:
-    st.header("Judge calibration")
+    page_header("calibration")
     st.caption(
         "**Demo on synthetic data.** CI-aware routing instrumentation over the bundled "
         "20 synthetic transcripts — no PHI, no production customer data."

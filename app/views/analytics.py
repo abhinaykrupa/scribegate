@@ -12,7 +12,7 @@ from __future__ import annotations
 import pandas as pd
 import streamlit as st
 
-from app.common import GOLDEN_DIR, load_results
+from app.common import GOLDEN_DIR, load_results, page_header
 from scribegate import analytics
 from scribegate.analytics import RoiParams, dimension_matrix, failure_modes, roi_model, routing_summary
 
@@ -154,7 +154,7 @@ def _render_roi_section(results_list: list[dict]) -> None:
 
 
 def render() -> None:
-    st.header("Analytics")
+    page_header("analytics")
 
     results = load_results()
     if not results:

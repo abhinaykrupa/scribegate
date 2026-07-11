@@ -1,0 +1,220 @@
+# specs/ui_copy.yaml — plain-language copy for the ScribeGate demo (W3). Copy only, no code.
+# Consumed verbatim by the UI worker. Tone: plain, direct, numbers over adjectives, no hype.
+pages:
+  start_here:
+    plain_title: Start here
+    one_liner: A five-minute tour of what this tool does and why it matters.
+    why_it_matters: >-
+      Most note tools generate text and hope it is right. This one scores every
+      note, shows the evidence behind each line, and only keeps the ones that clear a set bar.
+    reading_guide:
+      - "New here: follow the six-stop tour below in order; each stop is one page."
+      - "The one number that runs everything is the quality score, 0 to 1."
+      - "Low scores on messy input are the point, not a bug."
+  overview:
+    plain_title: Overview
+    one_liner: Every note gets a single quality score from 0 to 1.
+    why_it_matters: >-
+      Shows how notes score across four eye-care visit types at a glance. Tells you
+      what share is safe to keep without a human reading it first.
+    reading_guide:
+      - "The number to look at is the quality score; higher is better, 0.85 clears the bar."
+      - "Auto-accept rate is the share of notes that needed no human read."
+      - "Contact-lens visits score lowest on purpose; that input is deliberately messy."
+  analytics:
+    plain_title: Analytics
+    one_liner: Where notes fall short, and what fixing it is worth in dollars.
+    why_it_matters: >-
+      Breaks quality down by visit type and failure type so you see the weak spots.
+      The ROI panel turns saved review minutes into a monthly dollar figure.
+    reading_guide:
+      - "Redder cells in the grid are weaker; greener is stronger, on a 1 to 5 scale."
+      - "The dollars-saved figure is driven by the sliders; every slider is an assumption."
+      - "Failure-mode tabs show the most common reasons notes get flagged."
+  drift:
+    plain_title: Drift
+    one_liner: Watches quality over time and flags when it slips.
+    why_it_matters: >-
+      A model or vendor can quietly get worse and no one notices for weeks. This
+      catches the slide early and blocks the bad change before it reaches a clinician.
+    reading_guide:
+      - "Green banner means steady; red banner means a drop crossed the line."
+      - "Watch the trend lines heading down, not any single point."
+      - "The floor baseline is the hard line a release must stay above to ship."
+  moat:
+    plain_title: Data moat
+    one_liner: Each reviewer fix makes the tool a little better, for good.
+    why_it_matters: >-
+      Every correction a clinician makes is folded into the reference set, so the bar
+      gets sharper over time. A competitor starting today starts from zero; the gap widens each month.
+    reading_guide:
+      - "The curve should climb left to right; that is quality compounding."
+      - "Corrections promoted is how many reviewer fixes are now baked in."
+      - "Benchmark lift since gen-0 is the total gain from the loop so far."
+  calibration:
+    plain_title: How sure the score is
+    one_liner: Shows the confidence behind each score, not just the score.
+    why_it_matters: >-
+      The same note judged twice can score slightly differently, so a single number
+      can over-trust a shaky note. This routes on the cautious read, so nothing borderline slips through.
+    reading_guide:
+      - "Wider bar means the score for that visit type is less settled."
+      - "Contact-lens visits are the widest, because that audio is the noisiest."
+      - "Routes changed shows how many notes the cautious read pulled back for a human."
+  review_queue:
+    plain_title: Review queue
+    one_liner: The notes a human should read, worst first.
+    why_it_matters: >-
+      Only the middling and failing notes reach a person, in priority order, so
+      review time goes where it counts. Fixes made here feed the data moat.
+    reading_guide:
+      - "Lowest quality score sits at the top; start there."
+      - "Edit a weak line to correct it, or approve/reject the whole note."
+      - "An edited line becomes a candidate reference for the next generation."
+  provenance:
+    plain_title: Receipts
+    one_liner: Click any line to see the exact words it came from.
+    why_it_matters: >-
+      Every clause in a note traces to a precise character range in the source
+      transcript. That is what a chart audit or malpractice inquiry actually asks for.
+    reading_guide:
+      - "Click a note line; the source words it came from light up in the transcript."
+      - "One line can stitch together several separate source segments."
+      - "Export audit dossier packages the note, scores, and receipts into one file."
+  live_encounter:
+    plain_title: Live encounter
+    one_liner: Record a visit and watch it become a scored note.
+    why_it_matters: >-
+      Shows the same pipeline running on a fresh conversation, not a saved fixture.
+      The microphone stays locked until both provider and patient consent is logged.
+    reading_guide:
+      - "Consent gate first; the record button will not arm until both boxes are checked."
+      - "Speaker labels come from the toggle, not the audio; that is stated plainly."
+      - "The captured visit flows through the same score-and-route steps as everything else."
+  about:
+    plain_title: About
+    one_liner: What this is, what it is not, and the code behind it.
+    why_it_matters: >-
+      Sets the honest frame: a quality gate in front of a scribe, not a scribe itself.
+      All data here is synthetic, with no real patients and no clinical clearance.
+    reading_guide:
+      - "The Why section is the one-paragraph pitch."
+      - "What This Is Not spells out the limits up front."
+      - "Links reach the source code and the production-hardening plan."
+  live_mode:
+    plain_title: Live mode
+    one_liner: Runs the real AI model on your words, with a hard spending cap.
+    why_it_matters: >-
+      Everything else runs on a free offline mock; this page calls a paid model for real.
+      The budget cap and automatic fallback are themselves the cost-discipline demo.
+    reading_guide:
+      - "The passcode gate exists because real model calls cost real money."
+      - "The budget banner shows what is left; at zero it falls back to the mock."
+      - "Real spans are re-derived and marked high or low confidence, honestly."
+  economics:
+    plain_title: Economics
+    one_liner: What one note costs to run, and where the margin comes from.
+    why_it_matters: >-
+      Turns the correction loop into a P&L story: a sharper bar lets a cheaper model
+      pass, and the gap between price and cost is the margin. Every input is an assumption you can change.
+    reading_guide:
+      - "Cost per note is the headline figure; lower is better."
+      - "Move a slider and watch margin move; nothing here is a fixed promise."
+      - "The loop is the lever: better reference set, cheaper model clears the bar."
+glossary:
+  quality score (aggregate): One number from 0 to 1 summarizing how good a note is; 0.85 or above is safe to keep.
+  golden note: The reference note a generated note is graded against, like an answer key written by a clinician.
+  generation: A dated version of the reference set; each new generation folds in the latest reviewer fixes.
+  auto-accept: A note scored high enough to keep with no human reading it.
+  regenerate: A note scored too low to trust; it is rejected and redone.
+  provenance: The receipt showing which exact source words a note line came from.
+  span: A precise character range in the transcript that a note line traces back to.
+  drift: Quality quietly getting worse over time, usually from a model or vendor change.
+  eval gate (CI gate): An automatic check that blocks a release if note quality drops below a set floor.
+  confidence interval (CI95): The range a repeated score would likely fall in; a wide range means less certainty.
+  hallucination: A note stating something the transcript never said; the score here penalizes made-up detail.
+  coding plausibility: Whether the note supports a billing code that would hold up, like the right glaucoma or cataract code.
+  correction loop: Reviewer fixes flowing back into the reference set so the tool keeps improving.
+  live mode: The one page that calls a paid AI model for real, under a hard budget cap.
+  cost per note: What it costs to generate and grade a single note, including the model call.
+tour_5min:
+  - page: overview
+    look_at: The four visit-type rows and their quality scores.
+    takeaway: Every note gets one measured quality score; nothing rides on a hunch.
+  - page: overview
+    look_at: The contact-lens row sitting lowest, near 0.78.
+    takeaway: Messy input scores low on purpose; that is the gate working, not breaking.
+  - page: provenance
+    look_at: A note line clicked, lighting up the source words behind it.
+    takeaway: Every line has receipts, traceable to the exact words in the transcript.
+  - page: moat
+    look_at: The curve climbing across generations.
+    takeaway: Reviewer corrections compound, so the tool gets better and harder to catch.
+  - page: calibration
+    look_at: The wide bar on the messy contact-lens visits.
+    takeaway: Uncertainty is measured too, so shaky notes get pulled back for a human.
+  - page: economics
+    look_at: The cost-per-note figure and the margin sliders.
+    takeaway: A sharper bar lets a cheaper model pass, and that is where margin comes from.
+jargon_swaps:
+  - technical: aggregate
+    plain: quality score (0-1)
+    combined: quality score (aggregate)
+  - technical: regenerate
+    plain: rejected, redo
+    combined: rejected and redone (regenerate)
+  - technical: auto_accept
+    plain: kept, no human needed
+    combined: auto-accepted (no review)
+  - technical: review
+    plain: sent to a human
+    combined: flagged for review
+  - technical: CI95 lower bound
+    plain: the cautious read
+    combined: the cautious read (CI95 lower bound)
+  - technical: golden generation
+    plain: reference set version
+    combined: reference set version (golden generation)
+  - technical: golden note
+    plain: answer-key note
+    combined: answer-key note (golden note)
+  - technical: provenance
+    plain: receipts
+    combined: receipts (provenance)
+  - technical: span
+    plain: source words
+    combined: source words (span)
+  - technical: drift
+    plain: quality slipping over time
+    combined: quality drift
+  - technical: eval gate
+    plain: the pass/fail check
+    combined: the quality gate (eval gate)
+  - technical: hallucination
+    plain: made-up detail
+    combined: made-up detail (hallucination)
+  - technical: coding plausibility
+    plain: billing holds up
+    combined: billing plausibility (coding)
+live_mode:
+  passcode_gate: >-
+    This page is passcode-gated on purpose. Every other page runs on a free offline mock,
+    but this one calls a paid AI model for real, so each run spends actual money. The cap
+    and fallback below are not a limitation to apologize for; they are the cost-discipline demo.
+  budget_banner_remaining: "Live budget: ${remaining} of ${total} left. Each run spends about ${per_run}."
+  budget_banner_exhausted: >-
+    Live budget spent. Further runs fall back to the free offline mock automatically, so the
+    demo keeps working and the spend stops. That automatic fallback is the point.
+  span_confidence_note: >-
+    With the real model, the receipts are re-derived from the model's own output and each
+    span is marked high or low confidence. A low-confidence span means the source match is
+    approximate, and we say so rather than pretend it is exact.
+economics:
+  framing: >-
+    The correction loop sharpens the bar, so a cheaper model can clear it. A cheaper model
+    that still passes drops the cost per note. The gap between what a note is worth and what
+    it costs to run is the margin, and the loop widens it over time.
+  assumption_honesty: >-
+    Every default here is industry-plausible, not measured from your clinic. Each slider is
+    an assumption you can change, and the numbers move when you do. Nothing on this page is a
+    promise; it is a model you can argue with.

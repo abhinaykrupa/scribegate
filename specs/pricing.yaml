@@ -1,0 +1,23 @@
+# specs/pricing.yaml — Anthropic API pricing table, USD per 1,000,000 tokens.
+#
+# VERIFY BEFORE DEMO: these rates are a snapshot at authoring time and WILL
+# drift. Confirm against https://www.anthropic.com/pricing before any live,
+# cost-metered, or public-facing demo run. Kept here (not hardcoded in
+# scribegate/costs.py) specifically so a rate change is a one-line edit, not
+# a code change/redeploy.
+#
+# Loaded by scribegate.costs.load_pricing(); scribegate/costs.py carries its
+# own hardcoded fallback table (identical values) so pricing/budget math
+# never crashes if this file is missing, malformed, or pyyaml isn't
+# importable — but THIS file is the editable source of truth.
+
+models:
+  claude-haiku-4-5:
+    input: 1.00
+    output: 5.00
+  claude-sonnet-4-5:
+    input: 3.00
+    output: 15.00
+  claude-opus-4-8:
+    input: 15.00
+    output: 75.00

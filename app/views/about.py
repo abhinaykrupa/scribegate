@@ -13,7 +13,7 @@ import re
 
 import streamlit as st
 
-from app.common import REPO_ROOT
+from app.common import REPO_ROOT, page_header
 
 README_PATH = os.path.join(REPO_ROOT, "README.md")
 PRODUCTION_PATH_MD = os.path.join(REPO_ROOT, "PRODUCTION_PATH.md")
@@ -43,7 +43,7 @@ def _extract_first_fenced_code_block(section_text: str) -> str:
 
 
 def render() -> None:
-    st.header("About")
+    page_header("about")
 
     readme_text = _read_file(README_PATH)
 

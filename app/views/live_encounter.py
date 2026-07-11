@@ -19,7 +19,14 @@ import uuid
 
 import streamlit as st
 
-from app.common import LIVE_RESULTS_DIR, _render_note_and_transcript, append_consent_event, load_consent_copy
+from app.common import (
+    LIVE_RESULTS_DIR,
+    _render_note_and_transcript,
+    append_consent_event,
+    jargon_label,
+    load_consent_copy,
+    page_header,
+)
 from scribegate import normalizer
 from scribegate.generator import generate_note
 from scribegate.judge import judge_note_reference_free
@@ -219,8 +226,8 @@ def _render_pipeline_step() -> None:
     cols = st.columns(4)
     dims = [
         ("Completeness", "completeness"),
-        ("Hallucination", "hallucination"),
-        ("Coding Plausibility", "coding_plausibility"),
+        (jargon_label("hallucination", fallback="Hallucination").capitalize(), "hallucination"),
+        (jargon_label("coding_plausibility", fallback="Coding Plausibility").capitalize(), "coding_plausibility"),
         ("Terminology", "terminology"),
     ]
     for col, (label, key) in zip(cols, dims):
@@ -252,7 +259,7 @@ def _render_pipeline_step() -> None:
 
 
 def render() -> None:
-    st.header("Live encounter capture")
+    page_header("live_encounter")
 
     _init_session_state()
 

@@ -14,7 +14,7 @@ import re
 import pandas as pd
 import streamlit as st
 
-from app.common import GOLDEN_DIR, load_benchmark_md, load_results
+from app.common import GOLDEN_DIR, jargon_label, load_benchmark_md, load_results, page_header
 from scribegate import corrections
 from scribegate.analytics import routing_summary
 
@@ -34,7 +34,7 @@ def _count_tests() -> int:
 
 
 def render() -> None:
-    st.header("Overview")
+    page_header("overview")
 
     results = load_results()
 
@@ -59,7 +59,7 @@ def render() -> None:
     m1, m2, m3, m4 = st.columns(4)
     with m1:
         st.metric(
-            "Overall aggregate",
+            f"Overall {jargon_label('aggregate')}",
             f"{overall_aggregate:.3f}" if overall_aggregate is not None else "—",
         )
     with m2:
@@ -117,7 +117,16 @@ def render() -> None:
     agg_df = agg_df.join(route_counts)
 
     st.subheader("Per visit type")
-    st.dataframe(agg_df, use_container_width=True)
+    st.dataframe(
+        agg_df.rename(
+            columns={
+                "auto_accept": jargon_label("auto_accept"),
+                "review": jargon_label("review"),
+                "regenerate": jargon_label("regenerate"),
+            }
+        ),
+        use_container_width=True,
+    )
 
     # Honest-framing callout
     st.info(
