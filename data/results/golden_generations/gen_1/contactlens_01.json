@@ -1,0 +1,206 @@
+{
+  "transcript_id": "contactlens_01",
+  "visit_type": "contact_lens_fitting",
+  "synthetic": true,
+  "soap": {
+    "S": [
+      {
+        "text": "Yeah, first time. I've worn glasses since, since I was twelve.",
+        "spans": [
+          [
+            194,
+            265
+          ]
+        ]
+      },
+      {
+        "text": "Is that a strong one?",
+        "spans": [
+          [
+            479,
+            514
+          ]
+        ]
+      },
+      {
+        "text": "It doesn't really feel anything's in there.",
+        "spans": [
+          [
+            1098,
+            1146
+          ]
+        ]
+      },
+      {
+        "text": "So the trial one's not quite right?",
+        "spans": [
+          [
+            1616,
+            1651
+          ]
+        ]
+      },
+      {
+        "text": "How long can I wear them a day?",
+        "spans": [
+          [
+            2183,
+            2214
+          ]
+        ]
+      },
+      {
+        "text": "Sounds good, thanks.",
+        "spans": [
+          [
+            2427,
+            2447
+          ]
+        ]
+      }
+    ],
+    "O": [
+      {
+        "text": "So your spectacle prescription, let me pull it up \u2014 right eye is -3.75, sorry, -3.50 sphere, with a -0.75 cylinder at axis 170.",
+        "spans": [
+          [
+            281,
+            469
+          ]
+        ]
+      },
+      {
+        "text": "Left eye is -4.25 sphere, no cylinder to speak of.",
+        "spans": [
+          [
+            557,
+            624
+          ]
+        ]
+      },
+      {
+        "text": "For a first fit I'm going to start with a standard soft lens, base curve 8.6, diameter fourteen0.2.",
+        "spans": [
+          [
+            625,
+            743
+          ]
+        ]
+      },
+      {
+        "text": "Trial lenses are in, doctor.",
+        "spans": [
+          [
+            750,
+            778
+          ]
+        ]
+      },
+      {
+        "text": "He's had them settling for about, ten minutes now.",
+        "spans": [
+          [
+            779,
+            833
+          ]
+        ]
+      },
+      {
+        "text": "Okay \u2014 centration is good on the right, the lens is covering the cornea fully, and I'm seeing about, 0.3 millimeters of movement on the blink.",
+        "spans": [
+          [
+            915,
+            1069
+          ]
+        ]
+      },
+      {
+        "text": "Left eye, same thing \u2014 well centered, good coverage, movement looks maybe a touch more, but within range.",
+        "spans": [
+          [
+            1176,
+            1281
+          ]
+        ]
+      },
+      {
+        "text": "Now let me do an over-refraction to check the power on the eye. chart is up. The trial is close; the over-refraction just tells me the final power. Over the left lens you're already 20/20, no over-refraction needed there. Base curve eight six, diameter fourteen two for both. I'll grab the practice lenses and the case.",
+        "spans": [
+          [
+            1282,
+            1345
+          ],
+          [
+            1352,
+            1376
+          ],
+          [
+            1660,
+            1730
+          ],
+          [
+            1731,
+            1812
+          ],
+          [
+            1956,
+            2009
+          ],
+          [
+            2130,
+            2173
+          ]
+        ]
+      }
+    ],
+    "A": [
+      {
+        "text": "Successful first soft contact lens fit OU; over-refraction refined OD power.",
+        "spans": [
+          [
+            274,
+            280
+          ]
+        ]
+      }
+    ],
+    "P": [
+      {
+        "text": "So final contact lens power: right eye -4.00\u2014 -4.00, left eye -4.25.",
+        "spans": [
+          [
+            1813,
+            1932
+          ]
+        ]
+      },
+      {
+        "text": "I'll have the tech teach you insertion and removal, and we'll do a one-week follow-up to check the fit with wear.",
+        "spans": [
+          [
+            2010,
+            2123
+          ]
+        ]
+      },
+      {
+        "text": "Start with, let's say, six to eight hours a day this first week, then we'll build up.",
+        "spans": [
+          [
+            2223,
+            2308
+          ]
+        ]
+      },
+      {
+        "text": "Come back in a week and we'll check the health of the eye and confirm the prescription.",
+        "spans": [
+          [
+            2330,
+            2417
+          ]
+        ]
+      }
+    ]
+  }
+}

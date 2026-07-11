@@ -18,6 +18,7 @@ import glob
 import importlib
 import json
 import os
+import shutil
 import sys
 import time
 
@@ -28,6 +29,7 @@ pytest.importorskip("streamlit")
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEMO_SCRIPT_PATH = os.path.join(REPO_ROOT, "DEMO_SCRIPT.md")
+REAL_RESULTS_DIR = os.path.join(REPO_ROOT, "data", "results")
 GLAUCOMA_05_RESULT_PATH = os.path.join(REPO_ROOT, "data", "results", "glaucoma_05.json")
 UI_COPY_PATH = os.path.join(REPO_ROOT, "specs", "ui_copy.yaml")
 
@@ -350,3 +352,156 @@ def test_live_mode_renders_in_no_key_preview_mode(monkeypatch):
 
     importlib.reload(live_mode)
     live_mode.render()  # must not raise
+
+
+# ---------------------------------------------------------------------------
+# Precomputed demo artifacts (moat + calibration) — hosted OOM/CPU-kill fix.
+#
+# data/results/golden_generations/, data/results/candidate_golden.jsonl, and
+# data/results/calibration_report.json are now tracked artifacts (see
+# .gitignore's exceptions), shipped so a fresh clone/deploy never needs to
+# run the heavy self-seed (pipeline run + benchmark re-runs for moat;
+# repeated re-judging for calibration) that was OOM/CPU-killing the process
+# on Streamlit Community Cloud's 1GB RAM. These tests simulate a fresh
+# clone/deploy by copying the tracked artifacts into a tmp results dir and
+# confirm (a) the pages render with NO self-seed call when the artifacts are
+# present, and (b) the SCRIBEGATE_DISABLE_HEAVY_SEED=1 belt-and-suspenders
+# guard skips seeding cleanly whether or not the artifact is present.
+# ---------------------------------------------------------------------------
+
+def _reload_app_common_and(view_module_name):
+    """Reload app.common (so its module-level RESULTS_DIR re-reads
+    SCRIBEGATE_RESULTS_DIR from the environment) then reload the given
+    app.views module (so its `from app.common import RESULTS_DIR` re-binds
+    to the fresh value) — both moat.py and calibration.py compute
+    path constants from RESULTS_DIR at import time, so the reload order
+    matters."""
+    import app.common as app_common
+
+    importlib.reload(app_common)
+    module = importlib.import_module(view_module_name)
+    importlib.reload(module)
+    return module
+
+
+def _seed_tracked_moat_artifacts(results_dir):
+    """Copy the real, tracked golden_generations/ tree + candidate_golden.jsonl
+    into results_dir, plus every real per-transcript result JSON (simulating
+    app.common.ensure_results() having already run at boot, same as the real
+    prod flow — ensure_results is proven OK on this host per the incident
+    report; it's the moat/calibration self-seeds that aren't)."""
+    for src in glob.glob(os.path.join(REAL_RESULTS_DIR, "*.json")):
+        shutil.copy(src, os.path.join(results_dir, os.path.basename(src)))
+    shutil.copytree(
+        os.path.join(REAL_RESULTS_DIR, "golden_generations"),
+        os.path.join(results_dir, "golden_generations"),
+    )
+    shutil.copy(
+        os.path.join(REAL_RESULTS_DIR, "candidate_golden.jsonl"),
+        os.path.join(results_dir, "candidate_golden.jsonl"),
+    )
+
+
+@pytest.mark.parametrize("heavy_seed_disabled", ["0", "1"])
+def test_moat_page_no_seed_when_tracked_artifacts_present(tmp_path, monkeypatch, heavy_seed_disabled):
+    """Fresh-clone simulation: tracked artifacts copied into a tmp results
+    dir must make the moat page's cold-start self-seed a strict no-op
+    (mtime-unchanged, simulate_moat_demo never called), regardless of the
+    SCRIBEGATE_DISABLE_HEAVY_SEED belt-and-suspenders flag — generations
+    already existing is checked first."""
+    results_dir = tmp_path / "results"
+    results_dir.mkdir()
+    _seed_tracked_moat_artifacts(str(results_dir))
+
+    monkeypatch.setenv("SCRIBEGATE_RESULTS_DIR", str(results_dir))
+    monkeypatch.setenv("SCRIBEGATE_DISABLE_HEAVY_SEED", heavy_seed_disabled)
+
+    moat_view = _reload_app_common_and("app.views.moat")
+
+    manifest_path = results_dir / "golden_generations" / "gen_1" / "generation.json"
+    candidate_path = results_dir / "candidate_golden.jsonl"
+    overlay_path = results_dir / "golden_generations" / "gen_1" / "contactlens_01.json"
+    mtimes_before = {
+        p: p.stat().st_mtime_ns for p in (manifest_path, candidate_path, overlay_path)
+    }
+
+    called = []
+    monkeypatch.setattr(moat_view.moat_module, "simulate_moat_demo", lambda *a, **kw: called.append(1))
+
+    moat_view.render()  # must not raise
+
+    assert called == [], "simulate_moat_demo must never be called when a generation already exists"
+    for p, before in mtimes_before.items():
+        assert p.stat().st_mtime_ns == before, f"{p} must not be touched by a no-op self-seed"
+
+
+def test_moat_page_heavy_seed_disabled_without_generations_renders_info(tmp_path, monkeypatch):
+    """No tracked artifacts present (simulating them somehow missing) +
+    SCRIBEGATE_DISABLE_HEAVY_SEED=1 must skip the heavy self-seed and render
+    an st.info fallback instead of ever calling simulate_moat_demo — the
+    belt-and-suspenders path for a memory-constrained host."""
+    results_dir = tmp_path / "results"
+    results_dir.mkdir()
+
+    monkeypatch.setenv("SCRIBEGATE_RESULTS_DIR", str(results_dir))
+    monkeypatch.setenv("SCRIBEGATE_DISABLE_HEAVY_SEED", "1")
+
+    moat_view = _reload_app_common_and("app.views.moat")
+
+    called = []
+    monkeypatch.setattr(moat_view.moat_module, "simulate_moat_demo", lambda *a, **kw: called.append(1))
+
+    moat_view.render()  # must not raise
+
+    assert called == []
+
+
+def test_calibration_page_heavy_seed_disabled_with_report_present(tmp_path, monkeypatch):
+    """Fresh-clone simulation: the tracked calibration_report.json copied into
+    a tmp results dir must be loaded as-is with SCRIBEGATE_DISABLE_HEAVY_SEED=1
+    set — the flag only matters when the file is missing, so its presence
+    must render cleanly without ever regenerating."""
+    results_dir = tmp_path / "results"
+    results_dir.mkdir()
+    shutil.copy(
+        os.path.join(REAL_RESULTS_DIR, "calibration_report.json"),
+        str(results_dir / "calibration_report.json"),
+    )
+
+    monkeypatch.setenv("SCRIBEGATE_RESULTS_DIR", str(results_dir))
+    monkeypatch.setenv("SCRIBEGATE_DISABLE_HEAVY_SEED", "1")
+
+    calibration_view = _reload_app_common_and("app.views.calibration")
+
+    called = []
+    monkeypatch.setattr(calibration_view, "_generate_calibration_report", lambda *a, **kw: called.append(1))
+
+    calibration_view.render()  # must not raise
+
+    assert called == []
+    report = calibration_view._ensure_calibration_report()
+    assert report is not None
+    assert "cases" in report
+
+
+def test_calibration_page_heavy_seed_disabled_without_report_renders_fallback(tmp_path, monkeypatch):
+    """No calibration_report.json present (simulating it somehow missing) +
+    SCRIBEGATE_DISABLE_HEAVY_SEED=1 must skip regeneration and render a
+    "run locally" fallback caption instead of ever calling
+    scribegate.calibration.calibration_report()."""
+    results_dir = tmp_path / "results"
+    results_dir.mkdir()
+
+    monkeypatch.setenv("SCRIBEGATE_RESULTS_DIR", str(results_dir))
+    monkeypatch.setenv("SCRIBEGATE_DISABLE_HEAVY_SEED", "1")
+
+    calibration_view = _reload_app_common_and("app.views.calibration")
+
+    called = []
+    monkeypatch.setattr(calibration_view, "_generate_calibration_report", lambda *a, **kw: called.append(1))
+
+    calibration_view.render()  # must not raise
+
+    assert called == []
+    report = calibration_view._ensure_calibration_report()
+    assert report is None

@@ -7,3 +7,9 @@ __pycache__
 data/results/*
 !data/results/benchmark.md
 !data/results/history_demo.jsonl
+# Precomputed demo artifacts (moat + calibration self-seeds are CPU/RAM-heavy
+# — shipping them means hosted deploys never trigger the heavy self-seed;
+# see scribegate.moat / scribegate.calibration --seed-demo docstrings).
+!data/results/golden_generations/
+!data/results/candidate_golden.jsonl
+!data/results/calibration_report.json

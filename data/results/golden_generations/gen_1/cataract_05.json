@@ -1,0 +1,211 @@
+{
+  "transcript_id": "cataract_05",
+  "visit_type": "cataract_postop",
+  "synthetic": true,
+  "soap": {
+    "S": [
+      {
+        "text": "It got clear fast, then this week it hasn't changed much.",
+        "spans": [
+          [
+            223,
+            280
+          ]
+        ]
+      },
+      {
+        "text": "Still a little hazy, looking through a smudged window.",
+        "spans": [
+          [
+            281,
+            340
+          ]
+        ]
+      },
+      {
+        "text": "Is something wrong?",
+        "spans": [
+          [
+            645,
+            664
+          ]
+        ]
+      },
+      {
+        "text": "Continue the ketorolac once daily; it's helping guard against swelling at the back of the eye that could also blur things.",
+        "spans": [
+          [
+            1617,
+            1739
+          ]
+        ]
+      },
+      {
+        "text": "Should I be worried the vision plateaued?",
+        "spans": [
+          [
+            1749,
+            1790
+          ]
+        ]
+      },
+      {
+        "text": "If it worsens or you get pain, call us. Thank you, Doctor.",
+        "spans": [
+          [
+            1961,
+            2000
+          ],
+          [
+            2248,
+            2266
+          ]
+        ]
+      }
+    ],
+    "O": [
+      {
+        "text": "Post-op week one, right eye.",
+        "spans": [
+          [
+            101,
+            129
+          ]
+        ]
+      },
+      {
+        "text": "He says the vision improved and then seemed to plateau.",
+        "spans": [
+          [
+            158,
+            213
+          ]
+        ]
+      },
+      {
+        "text": "Uncorrected distance vision is 20/40 in the right eye, and 20/25 in the left.",
+        "spans": [
+          [
+            363,
+            440
+          ]
+        ]
+      },
+      {
+        "text": "Slit lamp, please.",
+        "spans": [
+          [
+            689,
+            707
+          ]
+        ]
+      },
+      {
+        "text": "The cornea is mostly clear with just a trace of residual edema inferiorly \u2014 that will finish clearing.",
+        "spans": [
+          [
+            708,
+            810
+          ]
+        ]
+      },
+      {
+        "text": "Anterior chamber shows 1+ cell and trace flare, so a little inflammation is lingering, which can soften the vision.",
+        "spans": [
+          [
+            861,
+            976
+          ]
+        ]
+      },
+      {
+        "text": "Tono-Pen: IOP 19 mmHg OD, 17 mmHg OS.",
+        "spans": [
+          [
+            1191,
+            1228
+          ]
+        ]
+      },
+      {
+        "text": "Pressure is within normal range, 19 on the right. Given the lingering inflammation, rather than taper this week I want to keep the prednisolone acetate 1% at four times daily in the right eye for one more week to settle that anterior chamber down. The exam explains it \u2014 trace edema plus a bit of inflammation. We'll see you at post-op month one for your refraction, and I expect a much crisper right eye by then.",
+        "spans": [
+          [
+            1237,
+            1286
+          ],
+          [
+            1313,
+            1510
+          ],
+          [
+            1818,
+            1880
+          ],
+          [
+            2136,
+            2238
+          ]
+        ]
+      }
+    ],
+    "A": [
+      {
+        "text": "POD#8 s/p cataract extraction OD; VA plateau attributed to lingering anterior chamber inflammation plus trace residual corneal edema; posterior capsule clear; well-positioned IOL. (Note laterality: right eye is OD.)",
+        "spans": [
+          [
+            570,
+            615
+          ]
+        ]
+      }
+    ],
+    "P": [
+      {
+        "text": "Surgery was eight days ago.",
+        "spans": [
+          [
+            130,
+            157
+          ]
+        ]
+      },
+      {
+        "text": "And the other drops?",
+        "spans": [
+          [
+            1520,
+            1540
+          ]
+        ]
+      },
+      {
+        "text": "You can stop the moxifloxacin now \u2014 a week of antibiotic is enough.",
+        "spans": [
+          [
+            1549,
+            1616
+          ]
+        ]
+      },
+      {
+        "text": "Okay. Same shield routine?",
+        "spans": [
+          [
+            2010,
+            2036
+          ]
+        ]
+      },
+      {
+        "text": "You can stop the night shield now at week one.",
+        "spans": [
+          [
+            2045,
+            2091
+          ]
+        ]
+      }
+    ]
+  }
+}

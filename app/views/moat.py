@@ -208,8 +208,25 @@ def _ensure_moat_seed() -> None:
     """Self-seed the demo moat curve on cold start (hosted deploys have an
     empty gitignored results dir) — same pattern as ensure_results /
     calibration's report self-seed. simulate_moat_demo() is idempotent, so
-    this is a no-op once gen_1 exists."""
+    this is a no-op once gen_1 exists.
+
+    Belt-and-suspenders guard: the demo generations (gen_0/gen_1) are now
+    precomputed and shipped as tracked artifacts (see .gitignore's
+    `!data/results/golden_generations/` exception), so this should always
+    no-op on a fresh clone/deploy. On a memory-constrained host (e.g.
+    Streamlit Community Cloud's 1GB RAM) where the shipped artifacts are
+    somehow missing anyway, set SCRIBEGATE_DISABLE_HEAVY_SEED=1 to skip the
+    heavy self-seed (pipeline run + two full benchmark re-runs) entirely
+    instead of risking an OOM/CPU kill — the page renders with an st.info
+    pointing at `python -m scribegate.moat --seed-demo` to run locally."""
     if corrections.list_generations():
+        return
+    if os.environ.get("SCRIBEGATE_DISABLE_HEAVY_SEED") == "1":
+        st.info(
+            "Moat demo seeding is disabled on this host (SCRIBEGATE_DISABLE_HEAVY_SEED=1) "
+            "and no golden generations were found. Run `python -m scribegate.moat "
+            "--seed-demo` locally to produce them."
+        )
         return
     with st.spinner("First run — seeding the correction-loop demo..."):
         moat_module.simulate_moat_demo()

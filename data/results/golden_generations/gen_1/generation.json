@@ -1,0 +1,22 @@
+{
+  "gen": 1,
+  "ts": "2026-07-10T05:26:35Z",
+  "reviewer": "moat_demo_seed",
+  "note": "moat demo seed promotion",
+  "promoted": [
+    "cataract_05",
+    "contactlens_01",
+    "contactlens_04"
+  ],
+  "source_corrections": {
+    "cataract_05": [
+      "a923e3136f8e5933"
+    ],
+    "contactlens_01": [
+      "012cef6b82839ae0"
+    ],
+    "contactlens_04": [
+      "e33bd7f9d786de5f"
+    ]
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "overall_aggregate": 0.85,
+  "per_visit_type": {
+    "comprehensive_exam": 0.8625,
+    "glaucoma_followup": 0.8375,
+    "cataract_postop": 0.825,
+    "contact_lens_fitting": 0.875
+  },
+  "per_dimension": {
+    "completeness": 0.55,
+    "hallucination": 0.9624999999999999,
+    "coding_plausibility": 0.925,
+    "terminology": 0.9624999999999999
+  },
+  "n_notes": 20,
+  "auto_accept_rate": 0.55,
+  "generation": 1,
+  "n_rebenchmarked": 20
+}

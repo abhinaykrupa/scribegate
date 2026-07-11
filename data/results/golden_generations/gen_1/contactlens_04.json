@@ -1,0 +1,192 @@
+{
+  "transcript_id": "contactlens_04",
+  "visit_type": "contact_lens_fitting",
+  "synthetic": true,
+  "soap": {
+    "S": [
+      {
+        "text": "Today's a multifocal contact lens fitting \u2014 you mentioned trouble with reading up close now?",
+        "spans": [
+          [
+            94,
+            186
+          ]
+        ]
+      },
+      {
+        "text": "Right, I can see far fine with my contacts but I'm holding my phone at arm's length.",
+        "spans": [
+          [
+            196,
+            280
+          ]
+        ]
+      },
+      {
+        "text": "It's the, the age thing.",
+        "spans": [
+          [
+            281,
+            309
+          ]
+        ]
+      },
+      {
+        "text": "two point oh, okay.",
+        "spans": [
+          [
+            689,
+            722
+          ]
+        ]
+      },
+      {
+        "text": "The far vision seems good right off.",
+        "spans": [
+          [
+            1356,
+            1392
+          ]
+        ]
+      },
+      {
+        "text": "The 20/25 line is clear, the next one's soft. Yeah, that row's clear. The smallest one's a little blurry but I can read the one above it. Both the same now? How long to get used to them? Okay, I'll stick with it. Thanks, doc.",
+        "spans": [
+          [
+            1528,
+            1586
+          ],
+          [
+            1826,
+            1849
+          ],
+          [
+            1850,
+            1917
+          ],
+          [
+            2193,
+            2211
+          ],
+          [
+            2449,
+            2478
+          ],
+          [
+            2652,
+            2690
+          ]
+        ]
+      }
+    ],
+    "O": [
+      {
+        "text": "Right eye -1.00 sphere, left eye -1.25 sphere, minimal cylinder both eyes.",
+        "spans": [
+          [
+            453,
+            563
+          ]
+        ]
+      },
+      {
+        "text": "For a multifocal I'll set the trials at base curve 8.6, diameter fourteen0.3, with a low add profile to start\u2014 no, given your add is a full +2, I'll go with the medium add profile.",
+        "spans": [
+          [
+            731,
+            938
+          ]
+        ]
+      },
+      {
+        "text": "Base curve 8.6 mm, diameter 14.3 mm, medium add OU.",
+        "spans": [
+          [
+            945,
+            981
+          ]
+        ]
+      },
+      {
+        "text": "Okay, slit lamp.",
+        "spans": [
+          [
+            1097,
+            1121
+          ]
+        ]
+      },
+      {
+        "text": "Right eye centration good, coverage complete, movement0.3 millimeters, nicely centered which matters a lot for multifocals since decentration blurs both distance and near.",
+        "spans": [
+          [
+            1122,
+            1302
+          ]
+        ]
+      },
+      {
+        "text": "Left eye also well centered, good coverage.",
+        "spans": [
+          [
+            1303,
+            1346
+          ]
+        ]
+      },
+      {
+        "text": "Multifocal over-refraction is a balance \u2014 I check distance and near together.",
+        "spans": [
+          [
+            1407,
+            1484
+          ]
+        ]
+      },
+      {
+        "text": "That's a good near result for a first fit \u2014 near acuity roughly 20/25 equivalent, and it'll improve as you adapt. The over-refraction nudged the right from -1.00 to -1.25, so yes, both landed at -1.25 distance with a +2 add.",
+        "spans": [
+          [
+            1926,
+            2039
+          ],
+          [
+            2220,
+            2380
+          ]
+        ]
+      }
+    ],
+    "A": [
+      {
+        "text": "Presbyopia, yes, happens to all of us.",
+        "spans": [
+          [
+            318,
+            356
+          ]
+        ]
+      }
+    ],
+    "P": [
+      {
+        "text": "Give it one to two weeks of consistent wear.",
+        "spans": [
+          [
+            2487,
+            2531
+          ]
+        ]
+      },
+      {
+        "text": "Come back in a week; some people I fine-tune the add or balance the eyes.",
+        "spans": [
+          [
+            2532,
+            2605
+          ]
+        ]
+      }
+    ]
+  }
+}

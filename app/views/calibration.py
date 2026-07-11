@@ -50,8 +50,24 @@ def _load_calibration_report_cached(path: str) -> dict:
         return json.load(fh)
 
 
-def _ensure_calibration_report() -> dict:
+def _ensure_calibration_report() -> dict | None:
+    """Load data/results/calibration_report.json, regenerating it if missing.
+
+    Belt-and-suspenders guard: calibration_report.json is now precomputed and
+    shipped as a tracked artifact (see .gitignore's
+    `!data/results/calibration_report.json` exception), so this should
+    always find the file already present on a fresh clone/deploy. On a
+    memory-constrained host (e.g. Streamlit Community Cloud's 1GB RAM) where
+    the shipped artifact is somehow missing anyway, set
+    SCRIBEGATE_DISABLE_HEAVY_SEED=1 to skip the heavy self-seed
+    (scribegate.calibration.calibration_report(), which re-judges every
+    bundled transcript multiple times) instead of risking an OOM/CPU kill —
+    returns None so the caller can fall back to a "run locally" caption.
+    """
     if not os.path.exists(CALIBRATION_REPORT_PATH):
+        if os.environ.get("SCRIBEGATE_DISABLE_HEAVY_SEED") == "1":
+            return None
+
         ctx = None
         try:
             from streamlit.runtime.scriptrunner import get_script_run_ctx
@@ -159,6 +175,15 @@ def render() -> None:
     )
 
     report = _ensure_calibration_report()
+
+    if report is None:
+        st.caption(
+            "Calibration report not available on this host (heavy self-seed disabled "
+            "via SCRIBEGATE_DISABLE_HEAVY_SEED and no precomputed report present). Run "
+            "`python -m scribegate.calibration` locally to generate "
+            "data/results/calibration_report.json."
+        )
+        return
 
     _render_headline(report)
     st.divider()

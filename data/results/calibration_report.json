@@ -1,0 +1,751 @@
+{
+  "n": 7,
+  "seed": 42,
+  "cases": [
+    {
+      "transcript_id": "cataract_01",
+      "visit_type": "cataract_postop",
+      "difficulty": 0.050000000000000024,
+      "mean_scores": {
+        "completeness": 2.142857142857143,
+        "hallucination": 5.0,
+        "coding_plausibility": 4.285714285714286,
+        "terminology": 4.857142857142857
+      },
+      "std_scores": {
+        "completeness": 0.3779644730092273,
+        "hallucination": 0.0,
+        "coding_plausibility": 0.48795003647426655,
+        "terminology": 0.37796447300922725
+      },
+      "aggregate_mean": 0.7678571428571429,
+      "aggregate_std": 0.04724555912615341,
+      "ci95": [
+        0.7241607142857144,
+        0.8115535714285714
+      ],
+      "ci_width": 0.08739285714285705,
+      "point_route": "review",
+      "ci_route": "review",
+      "changed": false,
+      "explanation": "CI95 lower bound (0.724) agrees with the mean aggregate (0.768) on route 'review' \u2014 no change from point-estimate routing for this case.",
+      "agreement": {
+        "completeness": 1.0,
+        "hallucination": 1.0,
+        "coding_plausibility": 1.0,
+        "terminology": 1.0
+      },
+      "flags": []
+    },
+    {
+      "transcript_id": "cataract_02",
+      "visit_type": "cataract_postop",
+      "difficulty": 0.12499999999999997,
+      "mean_scores": {
+        "completeness": 3.2857142857142856,
+        "hallucination": 4.857142857142857,
+        "coding_plausibility": 4.285714285714286,
+        "terminology": 4.857142857142857
+      },
+      "std_scores": {
+        "completeness": 1.1126972805283737,
+        "hallucination": 0.37796447300922725,
+        "coding_plausibility": 1.1126972805283737,
+        "terminology": 0.37796447300922725
+      },
+      "aggregate_mean": 0.8303571428571429,
+      "aggregate_std": 0.10652101290579334,
+      "ci95": [
+        0.7318380879896641,
+        0.9288761977246217
+      ],
+      "ci_width": 0.1970381097349576,
+      "point_route": "review",
+      "ci_route": "review",
+      "changed": false,
+      "explanation": "CI95 lower bound (0.732) agrees with the mean aggregate (0.830) on route 'review' \u2014 no change from point-estimate routing for this case.",
+      "agreement": {
+        "completeness": 0.8571428571428571,
+        "hallucination": 1.0,
+        "coding_plausibility": 0.8571428571428571,
+        "terminology": 1.0
+      },
+      "flags": [
+        "HIGH_VARIANCE"
+      ]
+    },
+    {
+      "transcript_id": "cataract_03",
+      "visit_type": "cataract_postop",
+      "difficulty": 0.2125,
+      "mean_scores": {
+        "completeness": 2.2857142857142856,
+        "hallucination": 4.714285714285714,
+        "coding_plausibility": 4.571428571428571,
+        "terminology": 3.0
+      },
+      "std_scores": {
+        "completeness": 1.1126972805283737,
+        "hallucination": 0.48795003647426655,
+        "coding_plausibility": 0.7867957924694432,
+        "terminology": 1.1547005383792515
+      },
+      "aggregate_mean": 0.6607142857142857,
+      "aggregate_std": 0.1481533150554005,
+      "ci95": [
+        0.5236903861419973,
+        0.7977381852865741
+      ],
+      "ci_width": 0.2740477991445769,
+      "point_route": "regenerate",
+      "ci_route": "regenerate",
+      "changed": false,
+      "explanation": "CI95 lower bound (0.524) agrees with the mean aggregate (0.661) on route 'regenerate' \u2014 no change from point-estimate routing for this case.",
+      "agreement": {
+        "completeness": 0.8571428571428571,
+        "hallucination": 1.0,
+        "coding_plausibility": 0.8571428571428571,
+        "terminology": 0.8571428571428571
+      },
+      "flags": [
+        "HIGH_VARIANCE"
+      ]
+    },
+    {
+      "transcript_id": "cataract_04",
+      "visit_type": "cataract_postop",
+      "difficulty": 0.12499999999999997,
+      "mean_scores": {
+        "completeness": 3.0,
+        "hallucination": 4.571428571428571,
+        "coding_plausibility": 4.428571428571429,
+        "terminology": 4.571428571428571
+      },
+      "std_scores": {
+        "completeness": 1.1547005383792515,
+        "hallucination": 0.7867957924694431,
+        "coding_plausibility": 0.5345224838248488,
+        "terminology": 0.5345224838248488
+      },
+      "aggregate_mean": 0.7857142857142857,
+      "aggregate_std": 0.12425372467350063,
+      "ci95": [
+        0.6707946169591321,
+        0.9006339544694393
+      ],
+      "ci_width": 0.22983933751030716,
+      "point_route": "review",
+      "ci_route": "review",
+      "changed": false,
+      "explanation": "CI95 lower bound (0.671) agrees with the mean aggregate (0.786) on route 'review' \u2014 no change from point-estimate routing for this case.",
+      "agreement": {
+        "completeness": 0.8571428571428571,
+        "hallucination": 0.8571428571428571,
+        "coding_plausibility": 1.0,
+        "terminology": 1.0
+      },
+      "flags": [
+        "HIGH_VARIANCE"
+      ]
+    },
+    {
+      "transcript_id": "cataract_05",
+      "visit_type": "cataract_postop",
+      "difficulty": 0.15000000000000002,
+      "mean_scores": {
+        "completeness": 2.0,
+        "hallucination": 4.571428571428571,
+        "coding_plausibility": 4.428571428571429,
+        "terminology": 4.142857142857143
+      },
+      "std_scores": {
+        "completeness": 1.1547005383792515,
+        "hallucination": 0.7867957924694432,
+        "coding_plausibility": 0.9759000729485331,
+        "terminology": 0.6900655593423543
+      },
+      "aggregate_mean": 0.6964285714285714,
+      "aggregate_std": 0.0983494740586804,
+      "ci95": [
+        0.605467201773328,
+        0.7873899410838148
+      ],
+      "ci_width": 0.18192273931048675,
+      "point_route": "regenerate",
+      "ci_route": "regenerate",
+      "changed": false,
+      "explanation": "CI95 lower bound (0.605) agrees with the mean aggregate (0.696) on route 'regenerate' \u2014 no change from point-estimate routing for this case.",
+      "agreement": {
+        "completeness": 0.8571428571428571,
+        "hallucination": 0.8571428571428571,
+        "coding_plausibility": 0.7142857142857143,
+        "terminology": 1.0
+      },
+      "flags": []
+    },
+    {
+      "transcript_id": "comprehensive_01",
+      "visit_type": "comprehensive_exam",
+      "difficulty": 0.11250000000000002,
+      "mean_scores": {
+        "completeness": 3.142857142857143,
+        "hallucination": 4.714285714285714,
+        "coding_plausibility": 3.7142857142857144,
+        "terminology": 4.857142857142857
+      },
+      "std_scores": {
+        "completeness": 0.8997354108424372,
+        "hallucination": 0.48795003647426655,
+        "coding_plausibility": 0.7559289460184545,
+        "terminology": 0.37796447300922725
+      },
+      "aggregate_mean": 0.7767857142857143,
+      "aggregate_std": 0.06099375455928332,
+      "ci95": [
+        0.7203738675704193,
+        0.8331975610010093
+      ],
+      "ci_width": 0.11282369343058996,
+      "point_route": "review",
+      "ci_route": "review",
+      "changed": false,
+      "explanation": "CI95 lower bound (0.720) agrees with the mean aggregate (0.777) on route 'review' \u2014 no change from point-estimate routing for this case.",
+      "agreement": {
+        "completeness": 0.8571428571428571,
+        "hallucination": 1.0,
+        "coding_plausibility": 1.0,
+        "terminology": 1.0
+      },
+      "flags": []
+    },
+    {
+      "transcript_id": "comprehensive_02",
+      "visit_type": "comprehensive_exam",
+      "difficulty": 0.12499999999999997,
+      "mean_scores": {
+        "completeness": 2.7142857142857144,
+        "hallucination": 4.857142857142857,
+        "coding_plausibility": 4.857142857142857,
+        "terminology": 5.0
+      },
+      "std_scores": {
+        "completeness": 0.9511897312113419,
+        "hallucination": 0.37796447300922725,
+        "coding_plausibility": 0.37796447300922725,
+        "terminology": 0.0
+      },
+      "aggregate_mean": 0.8392857142857143,
+      "aggregate_std": 0.0708683386892301,
+      "ci95": [
+        0.7737410714285714,
+        0.9048303571428572
+      ],
+      "ci_width": 0.1310892857142858,
+      "point_route": "review",
+      "ci_route": "review",
+      "changed": false,
+      "explanation": "CI95 lower bound (0.774) agrees with the mean aggregate (0.839) on route 'review' \u2014 no change from point-estimate routing for this case.",
+      "agreement": {
+        "completeness": 0.7142857142857143,
+        "hallucination": 1.0,
+        "coding_plausibility": 1.0,
+        "terminology": 1.0
+      },
+      "flags": []
+    },
+    {
+      "transcript_id": "comprehensive_03",
+      "visit_type": "comprehensive_exam",
+      "difficulty": 0.12499999999999997,
+      "mean_scores": {
+        "completeness": 3.2857142857142856,
+        "hallucination": 4.857142857142857,
+        "coding_plausibility": 4.714285714285714,
+        "terminology": 4.857142857142857
+      },
+      "std_scores": {
+        "completeness": 0.7559289460184545,
+        "hallucination": 0.37796447300922725,
+        "coding_plausibility": 0.48795003647426655,
+        "terminology": 0.37796447300922725
+      },
+      "aggregate_mean": 0.8571428571428571,
+      "aggregate_std": 0.04724555912615341,
+      "ci95": [
+        0.8134464285714286,
+        0.9008392857142856
+      ],
+      "ci_width": 0.08739285714285705,
+      "point_route": "auto_accept",
+      "ci_route": "review",
+      "changed": true,
+      "explanation": "Point-estimate routing on the mean aggregate (0.857) would have routed 'auto_accept', but the CI95 lower bound (0.813) \u2014 the pessimistic read of what repeated probabilistic judging of this same note would produce \u2014 only supports 'review'. Production impact: under point-estimate routing this case would have been auto_acceptd without human review; CI-aware routing is strictly more conservative and sends it to 'review' instead.",
+      "agreement": {
+        "completeness": 1.0,
+        "hallucination": 1.0,
+        "coding_plausibility": 1.0,
+        "terminology": 1.0
+      },
+      "flags": []
+    },
+    {
+      "transcript_id": "comprehensive_04",
+      "visit_type": "comprehensive_exam",
+      "difficulty": 0.12499999999999997,
+      "mean_scores": {
+        "completeness": 3.0,
+        "hallucination": 5.0,
+        "coding_plausibility": 4.571428571428571,
+        "terminology": 4.571428571428571
+      },
+      "std_scores": {
+        "completeness": 0.816496580927726,
+        "hallucination": 0.0,
+        "coding_plausibility": 0.7867957924694431,
+        "terminology": 0.5345224838248488
+      },
+      "aggregate_mean": 0.8214285714285714,
+      "aggregate_std": 0.0668153104781061,
+      "ci95": [
+        0.7596324895155899,
+        0.8832246533415529
+      ],
+      "ci_width": 0.12359216382596294,
+      "point_route": "review",
+      "ci_route": "review",
+      "changed": false,
+      "explanation": "CI95 lower bound (0.760) agrees with the mean aggregate (0.821) on route 'review' \u2014 no change from point-estimate routing for this case.",
+      "agreement": {
+        "completeness": 1.0,
+        "hallucination": 1.0,
+        "coding_plausibility": 0.8571428571428571,
+        "terminology": 1.0
+      },
+      "flags": []
+    },
+    {
+      "transcript_id": "comprehensive_05",
+      "visit_type": "comprehensive_exam",
+      "difficulty": 0.12499999999999997,
+      "mean_scores": {
+        "completeness": 2.5714285714285716,
+        "hallucination": 4.571428571428571,
+        "coding_plausibility": 4.714285714285714,
+        "terminology": 4.857142857142857
+      },
+      "std_scores": {
+        "completeness": 0.9759000729485332,
+        "hallucination": 0.7867957924694432,
+        "coding_plausibility": 0.48795003647426655,
+        "terminology": 0.37796447300922725
+      },
+      "aggregate_mean": 0.7946428571428571,
+      "aggregate_std": 0.04724555912615341,
+      "ci95": [
+        0.7509464285714286,
+        0.8383392857142856
+      ],
+      "ci_width": 0.08739285714285705,
+      "point_route": "review",
+      "ci_route": "review",
+      "changed": false,
+      "explanation": "CI95 lower bound (0.751) agrees with the mean aggregate (0.795) on route 'review' \u2014 no change from point-estimate routing for this case.",
+      "agreement": {
+        "completeness": 0.8571428571428571,
+        "hallucination": 0.8571428571428571,
+        "coding_plausibility": 1.0,
+        "terminology": 1.0
+      },
+      "flags": []
+    },
+    {
+      "transcript_id": "contactlens_01",
+      "visit_type": "contact_lens_fitting",
+      "difficulty": 0.7000000000000001,
+      "mean_scores": {
+        "completeness": 3.7142857142857144,
+        "hallucination": 2.0,
+        "coding_plausibility": 3.5714285714285716,
+        "terminology": 2.7142857142857144
+      },
+      "std_scores": {
+        "completeness": 1.7043362064926935,
+        "hallucination": 1.0,
+        "coding_plausibility": 1.618347187425374,
+        "terminology": 1.7043362064926932
+      },
+      "aggregate_mean": 0.5,
+      "aggregate_std": 0.1875,
+      "ci95": [
+        0.3265851752274539,
+        0.6734148247725461
+      ],
+      "ci_width": 0.3468296495450922,
+      "point_route": "regenerate",
+      "ci_route": "regenerate",
+      "changed": false,
+      "explanation": "CI95 lower bound (0.327) agrees with the mean aggregate (0.500) on route 'regenerate' \u2014 no change from point-estimate routing for this case.",
+      "agreement": {
+        "completeness": 0.5714285714285714,
+        "hallucination": 0.8571428571428571,
+        "coding_plausibility": 0.7142857142857143,
+        "terminology": 0.42857142857142855
+      },
+      "flags": [
+        "HIGH_VARIANCE",
+        "LOW_AGREEMENT_completeness",
+        "LOW_AGREEMENT_terminology"
+      ]
+    },
+    {
+      "transcript_id": "contactlens_02",
+      "visit_type": "contact_lens_fitting",
+      "difficulty": 0.44999999999999996,
+      "mean_scores": {
+        "completeness": 2.857142857142857,
+        "hallucination": 4.428571428571429,
+        "coding_plausibility": 4.142857142857143,
+        "terminology": 4.142857142857143
+      },
+      "std_scores": {
+        "completeness": 1.5735915849388864,
+        "hallucination": 1.1338934190276817,
+        "coding_plausibility": 0.8997354108424372,
+        "terminology": 1.0690449676496974
+      },
+      "aggregate_mean": 0.7232142857142857,
+      "aggregate_std": 0.1834888409737899,
+      "ci95": [
+        0.5535092979532865,
+        0.8929192734752849
+      ],
+      "ci_width": 0.33940997552199836,
+      "point_route": "review",
+      "ci_route": "regenerate",
+      "changed": true,
+      "explanation": "Point-estimate routing on the mean aggregate (0.723) would have routed 'review', but the CI95 lower bound (0.554) \u2014 the pessimistic read of what repeated probabilistic judging of this same note would produce \u2014 only supports 'regenerate'. Production impact: under point-estimate routing this case would have been reviewd ; CI-aware routing is strictly more conservative and sends it to 'regenerate' instead.",
+      "agreement": {
+        "completeness": 0.7142857142857143,
+        "hallucination": 0.8571428571428571,
+        "coding_plausibility": 1.0,
+        "terminology": 0.5714285714285714
+      },
+      "flags": [
+        "HIGH_VARIANCE",
+        "LOW_AGREEMENT_terminology"
+      ]
+    },
+    {
+      "transcript_id": "contactlens_03",
+      "visit_type": "contact_lens_fitting",
+      "difficulty": 0.38749999999999996,
+      "mean_scores": {
+        "completeness": 3.4285714285714284,
+        "hallucination": 2.857142857142857,
+        "coding_plausibility": 4.142857142857143,
+        "terminology": 4.571428571428571
+      },
+      "std_scores": {
+        "completeness": 1.3972762620115438,
+        "hallucination": 1.2149857925879117,
+        "coding_plausibility": 1.2149857925879117,
+        "terminology": 0.7867957924694431
+      },
+      "aggregate_mean": 0.6875,
+      "aggregate_std": 0.10206207261596575,
+      "ci95": [
+        0.5931049256606903,
+        0.7818950743393097
+      ],
+      "ci_width": 0.18879014867861943,
+      "point_route": "review",
+      "ci_route": "regenerate",
+      "changed": true,
+      "explanation": "Point-estimate routing on the mean aggregate (0.688) would have routed 'review', but the CI95 lower bound (0.593) \u2014 the pessimistic read of what repeated probabilistic judging of this same note would produce \u2014 only supports 'regenerate'. Production impact: under point-estimate routing this case would have been reviewd ; CI-aware routing is strictly more conservative and sends it to 'regenerate' instead.",
+      "agreement": {
+        "completeness": 0.5714285714285714,
+        "hallucination": 0.8571428571428571,
+        "coding_plausibility": 0.7142857142857143,
+        "terminology": 0.8571428571428571
+      },
+      "flags": [
+        "HIGH_VARIANCE",
+        "LOW_AGREEMENT_completeness"
+      ]
+    },
+    {
+      "transcript_id": "contactlens_04",
+      "visit_type": "contact_lens_fitting",
+      "difficulty": 0.37500000000000006,
+      "mean_scores": {
+        "completeness": 3.142857142857143,
+        "hallucination": 3.0,
+        "coding_plausibility": 4.714285714285714,
+        "terminology": 3.7142857142857144
+      },
+      "std_scores": {
+        "completeness": 2.0354009783964297,
+        "hallucination": 1.5275252316519468,
+        "coding_plausibility": 0.48795003647426655,
+        "terminology": 0.9511897312113419
+      },
+      "aggregate_mean": 0.6607142857142857,
+      "aggregate_std": 0.17251638983558856,
+      "ci95": [
+        0.5011574883077212,
+        0.8202710831208502
+      ],
+      "ci_width": 0.31911359481312895,
+      "point_route": "review",
+      "ci_route": "regenerate",
+      "changed": true,
+      "explanation": "Point-estimate routing on the mean aggregate (0.661) would have routed 'review', but the CI95 lower bound (0.501) \u2014 the pessimistic read of what repeated probabilistic judging of this same note would produce \u2014 only supports 'regenerate'. Production impact: under point-estimate routing this case would have been reviewd ; CI-aware routing is strictly more conservative and sends it to 'regenerate' instead.",
+      "agreement": {
+        "completeness": 0.5714285714285714,
+        "hallucination": 0.5714285714285714,
+        "coding_plausibility": 1.0,
+        "terminology": 0.8571428571428571
+      },
+      "flags": [
+        "HIGH_VARIANCE",
+        "LOW_AGREEMENT_completeness",
+        "LOW_AGREEMENT_hallucination"
+      ]
+    },
+    {
+      "transcript_id": "contactlens_05",
+      "visit_type": "contact_lens_fitting",
+      "difficulty": 0.4375,
+      "mean_scores": {
+        "completeness": 1.8571428571428572,
+        "hallucination": 3.7142857142857144,
+        "coding_plausibility": 4.285714285714286,
+        "terminology": 4.285714285714286
+      },
+      "std_scores": {
+        "completeness": 1.0690449676496976,
+        "hallucination": 1.3801311186847085,
+        "coding_plausibility": 1.2535663410560174,
+        "terminology": 0.9511897312113419
+      },
+      "aggregate_mean": 0.6339285714285714,
+      "aggregate_std": 0.08407408864181866,
+      "ci95": [
+        0.5561702068966647,
+        0.711686935960478
+      ],
+      "ci_width": 0.1555167290638133,
+      "point_route": "review",
+      "ci_route": "regenerate",
+      "changed": true,
+      "explanation": "Point-estimate routing on the mean aggregate (0.634) would have routed 'review', but the CI95 lower bound (0.556) \u2014 the pessimistic read of what repeated probabilistic judging of this same note would produce \u2014 only supports 'regenerate'. Production impact: under point-estimate routing this case would have been reviewd ; CI-aware routing is strictly more conservative and sends it to 'regenerate' instead.",
+      "agreement": {
+        "completeness": 0.8571428571428571,
+        "hallucination": 0.7142857142857143,
+        "coding_plausibility": 0.7142857142857143,
+        "terminology": 0.7142857142857143
+      },
+      "flags": []
+    },
+    {
+      "transcript_id": "glaucoma_01",
+      "visit_type": "glaucoma_followup",
+      "difficulty": 0.11250000000000002,
+      "mean_scores": {
+        "completeness": 2.7142857142857144,
+        "hallucination": 4.857142857142857,
+        "coding_plausibility": 3.857142857142857,
+        "terminology": 4.857142857142857
+      },
+      "std_scores": {
+        "completeness": 0.9511897312113419,
+        "hallucination": 0.37796447300922725,
+        "coding_plausibility": 0.8997354108424372,
+        "terminology": 0.37796447300922725
+      },
+      "aggregate_mean": 0.7678571428571429,
+      "aggregate_std": 0.08625819491779428,
+      "ci95": [
+        0.6880787441538607,
+        0.8476355415604251
+      ],
+      "ci_width": 0.15955679740656437,
+      "point_route": "review",
+      "ci_route": "review",
+      "changed": false,
+      "explanation": "CI95 lower bound (0.688) agrees with the mean aggregate (0.768) on route 'review' \u2014 no change from point-estimate routing for this case.",
+      "agreement": {
+        "completeness": 0.8571428571428571,
+        "hallucination": 1.0,
+        "coding_plausibility": 1.0,
+        "terminology": 1.0
+      },
+      "flags": []
+    },
+    {
+      "transcript_id": "glaucoma_02",
+      "visit_type": "glaucoma_followup",
+      "difficulty": 0.12499999999999997,
+      "mean_scores": {
+        "completeness": 3.4285714285714284,
+        "hallucination": 4.571428571428571,
+        "coding_plausibility": 4.285714285714286,
+        "terminology": 4.571428571428571
+      },
+      "std_scores": {
+        "completeness": 0.5345224838248487,
+        "hallucination": 0.7867957924694431,
+        "coding_plausibility": 0.7559289460184545,
+        "terminology": 0.5345224838248488
+      },
+      "aggregate_mean": 0.8035714285714286,
+      "aggregate_std": 0.08407408864181867,
+      "ci95": [
+        0.725813064039522,
+        0.8813297931033353
+      ],
+      "ci_width": 0.1555167290638133,
+      "point_route": "review",
+      "ci_route": "review",
+      "changed": false,
+      "explanation": "CI95 lower bound (0.726) agrees with the mean aggregate (0.804) on route 'review' \u2014 no change from point-estimate routing for this case.",
+      "agreement": {
+        "completeness": 1.0,
+        "hallucination": 0.8571428571428571,
+        "coding_plausibility": 1.0,
+        "terminology": 1.0
+      },
+      "flags": []
+    },
+    {
+      "transcript_id": "glaucoma_03",
+      "visit_type": "glaucoma_followup",
+      "difficulty": 0.12499999999999997,
+      "mean_scores": {
+        "completeness": 3.7142857142857144,
+        "hallucination": 4.857142857142857,
+        "coding_plausibility": 3.7142857142857144,
+        "terminology": 4.857142857142857
+      },
+      "std_scores": {
+        "completeness": 0.4879500364742666,
+        "hallucination": 0.37796447300922725,
+        "coding_plausibility": 0.48795003647426655,
+        "terminology": 0.37796447300922725
+      },
+      "aggregate_mean": 0.8214285714285714,
+      "aggregate_std": 0.07593661203674448,
+      "ci95": [
+        0.7511963886543161,
+        0.8916607542028266
+      ],
+      "ci_width": 0.1404643655485105,
+      "point_route": "review",
+      "ci_route": "review",
+      "changed": false,
+      "explanation": "CI95 lower bound (0.751) agrees with the mean aggregate (0.821) on route 'review' \u2014 no change from point-estimate routing for this case.",
+      "agreement": {
+        "completeness": 1.0,
+        "hallucination": 1.0,
+        "coding_plausibility": 1.0,
+        "terminology": 1.0
+      },
+      "flags": []
+    },
+    {
+      "transcript_id": "glaucoma_04",
+      "visit_type": "glaucoma_followup",
+      "difficulty": 0.11250000000000002,
+      "mean_scores": {
+        "completeness": 3.0,
+        "hallucination": 4.857142857142857,
+        "coding_plausibility": 3.857142857142857,
+        "terminology": 4.571428571428571
+      },
+      "std_scores": {
+        "completeness": 1.0,
+        "hallucination": 0.37796447300922725,
+        "coding_plausibility": 0.8997354108424372,
+        "terminology": 0.7867957924694431
+      },
+      "aggregate_mean": 0.7678571428571429,
+      "aggregate_std": 0.14304303381783234,
+      "ci95": [
+        0.6355596354200614,
+        0.9001546502942244
+      ],
+      "ci_width": 0.2645950148741629,
+      "point_route": "review",
+      "ci_route": "review",
+      "changed": false,
+      "explanation": "CI95 lower bound (0.636) agrees with the mean aggregate (0.768) on route 'review' \u2014 no change from point-estimate routing for this case.",
+      "agreement": {
+        "completeness": 0.8571428571428571,
+        "hallucination": 1.0,
+        "coding_plausibility": 1.0,
+        "terminology": 0.8571428571428571
+      },
+      "flags": [
+        "HIGH_VARIANCE"
+      ]
+    },
+    {
+      "transcript_id": "glaucoma_05",
+      "visit_type": "glaucoma_followup",
+      "difficulty": 0.11250000000000002,
+      "mean_scores": {
+        "completeness": 2.7142857142857144,
+        "hallucination": 5.0,
+        "coding_plausibility": 4.428571428571429,
+        "terminology": 5.0
+      },
+      "std_scores": {
+        "completeness": 1.1126972805283737,
+        "hallucination": 0.0,
+        "coding_plausibility": 0.5345224838248488,
+        "terminology": 0.0
+      },
+      "aggregate_mean": 0.8214285714285714,
+      "aggregate_std": 0.07593661203674448,
+      "ci95": [
+        0.7511963886543161,
+        0.8916607542028266
+      ],
+      "ci_width": 0.1404643655485105,
+      "point_route": "review",
+      "ci_route": "review",
+      "changed": false,
+      "explanation": "CI95 lower bound (0.751) agrees with the mean aggregate (0.821) on route 'review' \u2014 no change from point-estimate routing for this case.",
+      "agreement": {
+        "completeness": 0.8571428571428571,
+        "hallucination": 1.0,
+        "coding_plausibility": 1.0,
+        "terminology": 1.0
+      },
+      "flags": []
+    }
+  ],
+  "summary": {
+    "n_cases": 20,
+    "mean_ci_width_by_visit_type": {
+      "comprehensive_exam": 0.10845817145131056,
+      "glaucoma_followup": 0.1721194544883123,
+      "cataract_postop": 0.1940481685686371,
+      "contact_lens_fitting": 0.26993201952453044
+    },
+    "n_routes_changed": 5,
+    "changed_transcript_ids": [
+      "comprehensive_03",
+      "contactlens_02",
+      "contactlens_03",
+      "contactlens_04",
+      "contactlens_05"
+    ],
+    "mean_agreement_by_dimension": {
+      "completeness": 0.8357142857142857,
+      "hallucination": 0.9142857142857144,
+      "coding_plausibility": 0.9214285714285714,
+      "terminology": 0.9071428571428571
+    }
+  }
+}
