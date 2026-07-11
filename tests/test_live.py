@@ -920,12 +920,25 @@ def test_provider_status_shape(monkeypatch):
     monkeypatch.setattr(live, "_openai_importable", lambda: True)
     config = live.LiveConfig(api_key="k", deepseek_api_key="dk")
     status = live.provider_status(config)
-    assert status == {"anthropic": {"key": True}, "deepseek": {"key": True, "sdk": True}}
+    assert status == {
+        "anthropic": {"key": True},
+        "deepseek": {"key": True, "sdk": True},
+        "order": ["deepseek", "anthropic"],
+        "primary_provider": "deepseek",
+    }
 
     config_no_keys = live.LiveConfig(api_key=None, deepseek_api_key=None)
     status_no_keys = live.provider_status(config_no_keys)
     assert status_no_keys["anthropic"]["key"] is False
     assert status_no_keys["deepseek"]["key"] is False
+
+
+def test_provider_status_order_reflects_anthropic_primary_override(monkeypatch):
+    monkeypatch.setattr(live, "_openai_importable", lambda: True)
+    config = live.LiveConfig(api_key="k", deepseek_api_key="dk", primary_provider="anthropic")
+    status = live.provider_status(config)
+    assert status["order"] == ["anthropic", "deepseek"]
+    assert status["primary_provider"] == "anthropic"
 
 
 # ---------------------------------------------------------------------------
@@ -969,14 +982,21 @@ def test_provider_status_reports_no_sdk_when_openai_missing():
 # ---------------------------------------------------------------------------
 
 def test_run_live_note_fails_over_full_run_populates_fallback_events(monkeypatch, tmp_path):
-    """End-to-end: Anthropic is configured but every call it receives fails
-    with an auth error; DeepSeek is configured and healthy and serves every
-    stage instead. The run completes normally (not partial, not
-    budget_exhausted) with fallback_events recorded for each of the 4
-    stages, and no key material anywhere in the saved artifact."""
+    """End-to-end with primary_provider explicitly set to "anthropic": every
+    call Anthropic receives fails with an auth error; DeepSeek is configured
+    and healthy and serves every stage instead as the fallback. The run
+    completes normally (not partial, not budget_exhausted) with
+    fallback_events recorded for each of the 4 stages, and no key material
+    anywhere in the saved artifact."""
     anthropic_secret = "sk-ant-MUST-NOT-LEAK"
     deepseek_secret = "sk-deepseek-MUST-NOT-LEAK"
-    config = _both_keys_config(tmp_path, api_key=anthropic_secret, deepseek_api_key=deepseek_secret, judge_samples=3)
+    config = _both_keys_config(
+        tmp_path,
+        api_key=anthropic_secret,
+        deepseek_api_key=deepseek_secret,
+        judge_samples=3,
+        primary_provider="anthropic",
+    )
     ledger = tmp_path / "ledger.jsonl"
     live_runs_dir = tmp_path / "live_runs"
 
@@ -1026,6 +1046,173 @@ def test_run_live_note_fails_over_full_run_populates_fallback_events(monkeypatch
     ledger_text = ledger.read_text()
     assert anthropic_secret not in ledger_text
     assert deepseek_secret not in ledger_text
+
+
+# ---------------------------------------------------------------------------
+# provider_chain — configurable primary/fallback order (default DeepSeek)
+# ---------------------------------------------------------------------------
+
+def test_live_config_default_primary_provider_is_deepseek():
+    """A bare `LiveConfig()` (as tests construct directly) and
+    `LiveConfig.from_env()` (as production code always uses) must both
+    default to "deepseek" as the primary provider — this demo ships with a
+    DeepSeek key in Streamlit secrets; Anthropic is optional/added later."""
+    assert live.LiveConfig().primary_provider == "deepseek"
+
+
+def test_live_config_from_env_default_primary_provider_deepseek(monkeypatch):
+    monkeypatch.delenv("SCRIBEGATE_PRIMARY_PROVIDER", raising=False)
+    config = live.LiveConfig.from_env()
+    assert config.primary_provider == "deepseek"
+
+
+def test_live_config_from_env_primary_provider_override_anthropic(monkeypatch):
+    monkeypatch.setenv("SCRIBEGATE_PRIMARY_PROVIDER", "anthropic")
+    config = live.LiveConfig.from_env()
+    assert config.primary_provider == "anthropic"
+
+
+def test_live_config_from_env_primary_provider_invalid_value_falls_back_to_deepseek(monkeypatch):
+    monkeypatch.setenv("SCRIBEGATE_PRIMARY_PROVIDER", "not-a-real-provider")
+    config = live.LiveConfig.from_env()
+    assert config.primary_provider == "deepseek"
+
+
+def test_provider_chain_default_order_deepseek_first(tmp_path):
+    config = _both_keys_config(tmp_path)
+    chain = live.provider_chain(config)
+    assert [p.name for p in chain] == ["deepseek", "anthropic"]
+
+
+def test_provider_chain_anthropic_primary_override_order(tmp_path):
+    config = _both_keys_config(tmp_path, primary_provider="anthropic")
+    chain = live.provider_chain(config)
+    assert [p.name for p in chain] == ["anthropic", "deepseek"]
+
+
+def test_failover_client_missing_primary_key_skips_to_secondary_cleanly(monkeypatch, tmp_path):
+    """Default order is deepseek-first, but with no DEEPSEEK_API_KEY
+    configured (Anthropic-only deployment), the chain must filter down to
+    just AnthropicProvider and succeed cleanly via Anthropic — no fallback
+    event logged (there was nothing to fail over FROM; DeepSeek was never
+    even attempted because it reported unavailable)."""
+    ledger = tmp_path / "ledger.jsonl"
+    config = live.LiveConfig(
+        api_key="k", deepseek_api_key=None, daily_budget_usd=5.0, primary_provider="deepseek"
+    )
+    _install_fake_client(monkeypatch, [_FakeResponse("served by anthropic", input_tokens=10, output_tokens=5)])
+
+    chain = live.provider_chain(config)
+    assert [p.name for p in chain] == ["deepseek", "anthropic"]
+
+    client = live.FailoverClient(config, chain, ledger_path=ledger)
+    result = client.create(
+        stage="draft", model="claude-haiku-4-5", max_tokens=10, messages=[{"role": "user", "content": "hi"}]
+    )
+
+    assert result["provider"] == "anthropic"
+    assert result["text"] == "served by anthropic"
+    assert client.fallback_events == []
+
+
+def test_run_live_note_default_chain_serves_via_deepseek_no_failover(monkeypatch, tmp_path):
+    """Integration: both keys configured, default primary_provider
+    ("deepseek"). DeepSeek serves every stage on the first attempt — no
+    fallback events, and Anthropic's fake client is never even invoked,
+    proving DeepSeek (not Anthropic) is tried first by default."""
+    ledger = tmp_path / "ledger.jsonl"
+    live_runs_dir = tmp_path / "live_runs"
+    config = _both_keys_config(tmp_path, judge_samples=1)
+
+    fake_anthropic = _install_fake_client(monkeypatch, [])  # must never be called
+    _install_fake_deepseek_client(
+        monkeypatch,
+        [
+            _FakeDeepSeekResponse(_draft_response_json(), prompt_tokens=500, completion_tokens=200),
+            _FakeDeepSeekResponse(_judge_response_json(), prompt_tokens=300, completion_tokens=100),
+        ],
+    )
+
+    result = live.run_live_note(
+        GLAUCOMA_05, config=config, ledger_path=ledger, live_runs_dir=live_runs_dir
+    )
+
+    assert result["fallback_events"] == []
+    assert result["cost_breakdown"]["drafting"]["providers"] == ["deepseek"]
+    assert result["cost_breakdown"]["judging"]["providers"] == ["deepseek"]
+    assert fake_anthropic.messages.calls == []
+
+
+def test_run_live_note_default_chain_falls_back_to_anthropic_when_deepseek_fails(monkeypatch, tmp_path):
+    """Integration: default order (deepseek primary), DeepSeek fails with a
+    transient error on every call, Anthropic (fallback) serves instead. This
+    is the mirror image of the legacy anthropic-primary failover test —
+    proof the failover direction generalizes both ways, not just the old
+    Anthropic-primary one."""
+    ledger = tmp_path / "ledger.jsonl"
+    live_runs_dir = tmp_path / "live_runs"
+    config = _both_keys_config(tmp_path, judge_samples=1)
+
+    _install_fake_deepseek_client(monkeypatch, [RateLimitError("rate limited")] * 2)
+    _install_fake_client(
+        monkeypatch,
+        [
+            _FakeResponse(_draft_response_json(), input_tokens=500, output_tokens=200),
+            _FakeResponse(_judge_response_json(), input_tokens=300, output_tokens=100),
+        ],
+    )
+
+    result = live.run_live_note(
+        GLAUCOMA_05, config=config, ledger_path=ledger, live_runs_dir=live_runs_dir
+    )
+
+    fallback_events = result["fallback_events"]
+    assert len(fallback_events) == 2
+    assert all(e["from_provider"] == "deepseek" and e["to_provider"] == "anthropic" for e in fallback_events)
+    assert all(e["reason_class"] == "rate_limit" for e in fallback_events)
+    assert result["cost_breakdown"]["drafting"]["providers"] == ["anthropic"]
+    assert result["cost_breakdown"]["judging"]["providers"] == ["anthropic"]
+
+
+# ---------------------------------------------------------------------------
+# Per-provider model routing — drafter/judge model must follow whichever
+# provider actually serves a given call, never the other provider's name.
+# ---------------------------------------------------------------------------
+
+def test_per_provider_model_routing_deepseek_call_gets_deepseek_chat_model(monkeypatch, tmp_path):
+    """When DeepSeek serves a call, the underlying SDK must receive
+    `config.deepseek_model` ("deepseek-chat" by default) — never the
+    Anthropic model name that was requested for the logical call."""
+    ledger = tmp_path / "ledger.jsonl"
+    config = _both_keys_config(tmp_path)
+    fake_deepseek = _install_fake_deepseek_client(monkeypatch, [_FakeDeepSeekResponse("hi from deepseek")])
+
+    client = live.FailoverClient(config, live.provider_chain(config), ledger_path=ledger)
+    result = client.create(
+        stage="draft", model="claude-haiku-4-5", max_tokens=10, messages=[{"role": "user", "content": "hi"}]
+    )
+
+    assert result["provider"] == "deepseek"
+    assert fake_deepseek.chat.completions.calls[0]["model"] == "deepseek-chat"
+    assert result["cost_record"]["model"] == "deepseek-chat"
+
+
+def test_per_provider_model_routing_anthropic_call_gets_requested_claude_model(monkeypatch, tmp_path):
+    """When DeepSeek is unavailable (no key) and Anthropic serves the call
+    instead, the underlying SDK must receive the ACTUAL requested Anthropic
+    model name unchanged — never DeepSeek's model string."""
+    ledger = tmp_path / "ledger.jsonl"
+    config = live.LiveConfig(api_key="k", deepseek_api_key=None, daily_budget_usd=5.0)
+    fake_anthropic = _install_fake_client(monkeypatch, [_FakeResponse("hi from anthropic")])
+
+    client = live.FailoverClient(config, live.provider_chain(config), ledger_path=ledger)
+    result = client.create(
+        stage="draft", model="claude-sonnet-4-5", max_tokens=10, messages=[{"role": "user", "content": "hi"}]
+    )
+
+    assert result["provider"] == "anthropic"
+    assert fake_anthropic.messages.calls[0]["model"] == "claude-sonnet-4-5"
+    assert result["cost_record"]["model"] == "claude-sonnet-4-5"
 
 
 def test_run_live_note_all_providers_fail_returns_clean_error(monkeypatch, tmp_path):

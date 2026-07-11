@@ -267,6 +267,76 @@ def test_ui_copy_every_page_has_required_fields():
             )
 
 
+def test_live_mode_fallback_banner_generalizes_both_directions(monkeypatch):
+    """The fallback banner text must read correctly regardless of which
+    provider was primary — it must never hardcode "fell back to Anthropic"
+    (or DeepSeek) as the only direction. Exercises app.views.live_mode's
+    real `_render_fallback_events`, capturing what it passes to `st.info`
+    (Streamlit widgets are safely callable outside a live script run, as
+    the existing render-sweep test above already relies on)."""
+    pytest.importorskip("streamlit")
+    import app.views.live_mode as live_mode
+
+    captured = []
+    monkeypatch.setattr(live_mode.st, "info", lambda msg: captured.append(msg))
+
+    # DeepSeek (primary, default) fails; Anthropic (fallback) serves.
+    result_deepseek_to_anthropic = {
+        "fallback_events": [
+            {"stage": "judge_sample_0", "from_provider": "deepseek", "to_provider": "anthropic", "reason_class": "rate_limit"}
+        ]
+    }
+    live_mode._render_fallback_events(result_deepseek_to_anthropic)
+    assert captured == ["Judging fell back to Anthropic (deepseek: rate_limit)."]
+
+    # Mirror direction: Anthropic (primary) fails; DeepSeek (fallback) serves.
+    captured.clear()
+    result_anthropic_to_deepseek = {
+        "fallback_events": [
+            {"stage": "draft", "from_provider": "anthropic", "to_provider": "deepseek", "reason_class": "auth_error"}
+        ]
+    }
+    live_mode._render_fallback_events(result_anthropic_to_deepseek)
+    assert captured == ["Drafting fell back to DeepSeek (anthropic: auth_error)."]
+
+
+def test_live_mode_provider_chain_badges_reflect_configured_order(monkeypatch):
+    """`_render_provider_chain_status` must label badges from the actual
+    configured chain order (`live.provider_status(config)["order"]`), not a
+    hardcoded Anthropic-first assumption. With DeepSeek primary configured
+    (has a key) and Anthropic as fallback with no key, the primary badge
+    must read "DeepSeek" and the fallback badge must say Anthropic is
+    skipped for lacking a key."""
+    pytest.importorskip("streamlit")
+    import app.views.live_mode as live_mode
+    from scribegate import live
+
+    captured = []
+    monkeypatch.setattr(live_mode.st, "badge", lambda label, color=None: captured.append((label, color)))
+    monkeypatch.setattr(live_mode.st, "columns", lambda n: [_NullColumn() for _ in range(n)])
+
+    config = live.LiveConfig(api_key=None, deepseek_api_key="dk", primary_provider="deepseek")
+    monkeypatch.setattr(live, "_openai_importable", lambda: True)
+
+    live_mode._render_provider_chain_status(config)
+
+    labels = [label for label, _color in captured]
+    assert labels[0] == "Primary: DeepSeek"
+    assert labels[1] == "Fallback: Anthropic (no key — skipped)"
+    assert labels[2] == "Final: Mock preview"
+
+
+class _NullColumn:
+    """Minimal `with st.columns(n)[i]:` stand-in for tests that don't need
+    real Streamlit layout, just the ability to enter/exit a `with` block."""
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc_info):
+        return False
+
+
 def test_live_mode_renders_in_no_key_preview_mode(monkeypatch):
     """CI path: with no ANTHROPIC_API_KEY configured (the default in CI),
     app.views.live_mode.render() must fall into the "unavailable" branch

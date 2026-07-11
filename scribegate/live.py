@@ -98,19 +98,33 @@ class LiveConfig:
     judge_samples: int = 3
     max_tokens_draft: int = 1024
     max_tokens_judge: int = 512
-    # DeepSeek is the automatic fallback provider (Anthropic -> DeepSeek ->
-    # mock). Either key alone is enough for live mode to be "available" —
-    # see `live_available()` — and both are optional independently of each
-    # other (a deployment can run Anthropic-only, DeepSeek-only, or both).
+    # DeepSeek and Anthropic are each other's automatic fallback provider.
+    # Either key alone is enough for live mode to be "available" — see
+    # `live_available()` — and both are optional independently of each other
+    # (a deployment can run Anthropic-only, DeepSeek-only, or both). Which
+    # one goes first in the failover chain is `primary_provider`, below.
     deepseek_api_key: str | None = None
     deepseek_model: str = "deepseek-chat"
+    # Provider-chain order: "deepseek" (the default — this demo ships with a
+    # DeepSeek key configured in Streamlit secrets, Anthropic optional/
+    # added-later) tries DeepSeek first and falls back to Anthropic;
+    # "anthropic" reverses that. Whichever provider has no key (or, for
+    # DeepSeek, no `openai` SDK installed) configured is simply skipped by
+    # `FailoverClient` at call time — a chain of one is fine, and neither
+    # configured falls back to the mock preview exactly as today. See
+    # `provider_chain()` below, which is the single place chain order is
+    # derived from this field.
+    primary_provider: str = "deepseek"
 
     @classmethod
     def from_env(cls) -> "LiveConfig":
         """Build config from st.secrets/env, never hardcoded. Malformed
         numeric overrides (bad SCRIBEGATE_DAILY_BUDGET_USD /
         SCRIBEGATE_JUDGE_SAMPLES) fall back to the documented defaults
-        rather than raising, since this runs on every app cold-start."""
+        rather than raising, since this runs on every app cold-start. An
+        unrecognized SCRIBEGATE_PRIMARY_PROVIDER value falls back to the
+        "deepseek" default the same way — never raises, never silently
+        picks an invalid provider name."""
         api_key = _get_secret("ANTHROPIC_API_KEY")
         demo_passcode = _get_secret("SCRIBEGATE_DEMO_PASSCODE")
         deepseek_api_key = _get_secret("DEEPSEEK_API_KEY")
@@ -124,6 +138,11 @@ class LiveConfig:
         drafter_model = _get_secret("SCRIBEGATE_DRAFTER_MODEL") or "claude-haiku-4-5"
         judge_model = _get_secret("SCRIBEGATE_JUDGE_MODEL") or "claude-haiku-4-5"
         deepseek_model = _get_secret("SCRIBEGATE_DEEPSEEK_MODEL") or "deepseek-chat"
+
+        primary_provider_raw = _get_secret("SCRIBEGATE_PRIMARY_PROVIDER")
+        primary_provider = (primary_provider_raw or "deepseek").strip().lower()
+        if primary_provider not in ("deepseek", "anthropic"):
+            primary_provider = "deepseek"
 
         samples_raw = _get_secret("SCRIBEGATE_JUDGE_SAMPLES")
         try:
@@ -140,6 +159,7 @@ class LiveConfig:
             judge_samples=judge_samples,
             deepseek_api_key=deepseek_api_key,
             deepseek_model=deepseek_model,
+            primary_provider=primary_provider,
         )
 
     def __repr__(self) -> str:  # never let the key leak into logs/tracebacks
@@ -150,7 +170,8 @@ class LiveConfig:
             f"demo_passcode={'<set>' if self.demo_passcode else None}, "
             f"daily_budget_usd={self.daily_budget_usd}, "
             f"drafter_model={self.drafter_model!r}, judge_model={self.judge_model!r}, "
-            f"deepseek_model={self.deepseek_model!r}, judge_samples={self.judge_samples})"
+            f"deepseek_model={self.deepseek_model!r}, judge_samples={self.judge_samples}, "
+            f"primary_provider={self.primary_provider!r})"
         )
 
     __str__ = __repr__
@@ -178,11 +199,17 @@ def live_available(config: LiveConfig | None = None, ledger_path=None) -> tuple[
 def provider_status(config: LiveConfig | None = None) -> dict:
     """Snapshot of provider-chain readiness for the UI's availability panel:
     which keys are configured and whether the optional DeepSeek SDK
-    (`openai`) is importable. Never reveals key values, only booleans."""
+    (`openai`) is importable. Never reveals key values, only booleans.
+    `order` is the configured failover order (primary first) per
+    `config.primary_provider`, e.g. `["deepseek", "anthropic"]` by
+    default — the UI's badges are driven by this, not a hardcoded
+    Anthropic-first assumption."""
     config = config or LiveConfig.from_env()
     return {
         "anthropic": {"key": bool(config.api_key)},
         "deepseek": {"key": bool(config.deepseek_api_key), "sdk": _openai_importable()},
+        "order": [p.name for p in provider_chain(config)],
+        "primary_provider": config.primary_provider,
     }
 
 
@@ -317,7 +344,9 @@ class AllProvidersFailedError(Exception):
 
 
 # ---------------------------------------------------------------------------
-# Provider abstraction: Anthropic (primary) and DeepSeek (automatic fallback)
+# Provider abstraction: Anthropic and DeepSeek, one primary / one automatic
+# fallback per `LiveConfig.primary_provider` (`provider_chain()` decides
+# the order — DeepSeek first by default).
 # ---------------------------------------------------------------------------
 
 class Provider:
@@ -335,10 +364,16 @@ class Provider:
 
     def resolve_model(self, requested_model: str) -> str:
         """What model string this provider should actually be called with,
-        given the model requested for the (Anthropic) primary call. The
-        default passes it through unchanged; DeepSeek overrides this since
-        an Anthropic model name (e.g. "claude-haiku-4-5") is meaningless on
-        DeepSeek's API."""
+        given the model requested for this logical call (e.g. `config.
+        drafter_model` / `config.judge_model`, both Anthropic model names).
+        The default passes it through unchanged — correct for
+        `AnthropicProvider`, whichever chain position it's in. DeepSeek
+        overrides this and always returns its OWN configured model
+        (`config.deepseek_model`) regardless of what was requested, since an
+        Anthropic model name (e.g. "claude-haiku-4-5") is meaningless on
+        DeepSeek's API — this is what keeps drafter/judge model selection
+        correctly per-provider no matter which provider ends up serving a
+        call."""
         return requested_model
 
     def complete(
@@ -348,7 +383,8 @@ class Provider:
 
 
 class AnthropicProvider(Provider):
-    """Primary provider — wraps `anthropic.Anthropic().messages.create`.
+    """Wraps `anthropic.Anthropic().messages.create`. Primary or fallback
+    depending on `LiveConfig.primary_provider` (see `provider_chain()`).
     Refactored out of the old `GuardedClient` so the same call path is
     reusable inside a `FailoverClient` chain."""
 
@@ -385,11 +421,14 @@ class AnthropicProvider(Provider):
 
 
 class DeepSeekProvider(Provider):
-    """Automatic fallback provider — DeepSeek's OpenAI-compatible chat
-    completions API (model "deepseek-chat" by default, `config.deepseek_model`).
-    Unavailable (not an error) whenever the `openai` package isn't installed
-    — it's an optional dependency purely for this fallback path — or when no
-    DEEPSEEK_API_KEY is configured."""
+    """DeepSeek's OpenAI-compatible chat completions API (model
+    "deepseek-chat" by default, `config.deepseek_model`) — primary or
+    fallback depending on `LiveConfig.primary_provider` (see
+    `provider_chain()`); it's the default primary since this demo ships
+    with a DeepSeek key in Streamlit secrets. Unavailable (not an error)
+    whenever the `openai` package isn't installed — it's an optional
+    dependency purely for this provider — or when no DEEPSEEK_API_KEY is
+    configured."""
 
     name = "deepseek"
 
@@ -430,10 +469,28 @@ class DeepSeekProvider(Provider):
         return text, input_tokens, output_tokens
 
 
+def provider_chain(config: LiveConfig) -> list[Provider]:
+    """Build the ordered failover provider chain (primary first, other
+    second) per `config.primary_provider` ("deepseek" default, "anthropic"
+    the only other valid value — `LiveConfig.from_env()` already normalizes
+    anything else back to "deepseek"). Returns BOTH providers regardless of
+    whether either actually has a key/SDK configured — availability
+    filtering happens at call time in `FailoverClient.create` (a chain of
+    one, or zero, is fine there). This is the single place chain order is
+    derived, reused by `run_live_note` (the real chain) and `provider_status`
+    (so the UI reports the same order that's actually used)."""
+    anthropic = AnthropicProvider(config.api_key)
+    deepseek = DeepSeekProvider(config.deepseek_api_key, config.deepseek_model)
+    if config.primary_provider == "anthropic":
+        return [anthropic, deepseek]
+    return [deepseek, anthropic]
+
+
 class FailoverClient:
-    """Wraps an ordered chain of `Provider`s (Anthropic primary, DeepSeek
-    fallback) with budget-before / usage-after accounting, exactly like the
-    old `GuardedClient` — except the budget guard sits OUTSIDE the provider
+    """Wraps an ordered chain of `Provider`s (order from `provider_chain()`,
+    DeepSeek primary / Anthropic fallback by default) with budget-before /
+    usage-after accounting, exactly like the old `GuardedClient` — except
+    the budget guard sits OUTSIDE the provider
     chain: it is checked ONCE per logical call, before the first provider is
     tried, so a same-call retry against the next provider never gets
     double-charged against the daily budget and a budget-exhausted call
@@ -509,7 +566,7 @@ class GuardedClient:
     equivalent to a `FailoverClient` constructed with only `AnthropicProvider`
     in its chain, so the budget-before/usage-after behavior is unchanged.
     New code (`run_live_note`) uses `FailoverClient` directly with the full
-    Anthropic -> DeepSeek provider chain instead.
+    two-provider chain from `provider_chain()` instead.
     """
 
     def __init__(self, config: LiveConfig, ledger_path=None):
@@ -702,8 +759,10 @@ def run_live_note(
     judge) -> cost record.
 
     Every single API call (the draft call and each judge sample) goes through
-    a `FailoverClient` wrapping the Anthropic -> DeepSeek provider chain,
-    which checks the remaining daily budget BEFORE the call (once per
+    a `FailoverClient` wrapping the `provider_chain(config)` failover chain
+    (DeepSeek primary / Anthropic fallback by default; reversed if
+    `config.primary_provider == "anthropic"`), which checks the remaining
+    daily budget BEFORE the call (once per
     logical call, shared across whichever provider ends up serving it) and
     records usage AFTER, tagged with the provider that actually served it.
     If an active provider fails with an auth/rate-limit/5xx/timeout/
@@ -727,10 +786,7 @@ def run_live_note(
     live_runs_dir = Path(live_runs_dir) if live_runs_dir else _DEFAULT_LIVE_RUNS_DIR
 
     ts = _iso_ts()
-    providers = [
-        AnthropicProvider(config.api_key),
-        DeepSeekProvider(config.deepseek_api_key, config.deepseek_model),
-    ]
+    providers = provider_chain(config)
     client = FailoverClient(config, providers, ledger_path=ledger_path)
 
     def _finalize(result: dict) -> dict:
@@ -763,7 +819,7 @@ def run_live_note(
     visit_type = visit_type_for(transcript_id)
     golden = corrections.load_golden_note(transcript_id) or {}
 
-    # --- Drafting: one real API call (Anthropic -> DeepSeek fallback) ----
+    # --- Drafting: one real API call (provider_chain failover) -----------
     drafter_prompt = _build_drafter_prompt(transcript_text, visit_type)
     try:
         draft_call = client.create(

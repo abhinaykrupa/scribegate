@@ -1,11 +1,13 @@
 """app/views/live_mode.py — Live mode page (v0.4).
 
-The one page in ScribeGate that calls a real, paid Claude model
+The one page in ScribeGate that calls a real, paid model
 (scribegate.live.run_live_note) instead of the free offline mock every
-other page runs on. Three states:
+other page runs on — DeepSeek by default (config.primary_provider), with
+Anthropic as the automatic fallback; either key alone is enough, and which
+one is primary is configurable (SCRIBEGATE_PRIMARY_PROVIDER). Three states:
 
-  1. Unavailable (no ANTHROPIC_API_KEY configured, or today's budget is
-     already exhausted) — an honest banner explains why, and the rest of
+  1. Unavailable (no ANTHROPIC_API_KEY or DEEPSEEK_API_KEY configured, or
+     today's budget is already exhausted) — an honest banner explains why, and the rest of
      the page renders a bundled SAMPLE saved run (data/live_demo_sample.json,
      a mock-generated example shaped exactly like run_live_note()'s real
      return value) in a disabled/preview state, so the page is never empty.
@@ -56,26 +58,43 @@ def _load_sample() -> dict:
         return json.load(fh)
 
 
+def _provider_availability(name: str, status: dict) -> tuple[bool, str | None]:
+    """(is_available, missing_reason) for a provider name given
+    `live.provider_status()`'s dict. `missing_reason` is None when available,
+    else a short phrase ("no key" / "sdk missing") for the badge caption."""
+    if name == "anthropic":
+        return status["anthropic"]["key"], None if status["anthropic"]["key"] else "no key"
+    has_key = status["deepseek"]["key"]
+    has_sdk = status["deepseek"]["sdk"]
+    if has_key and has_sdk:
+        return True, None
+    if has_key and not has_sdk:
+        return False, "sdk missing"
+    return False, "no key"
+
+
 def _render_provider_chain_status(config) -> None:
-    """Primary/fallback/mock badges for the provider chain — Anthropic
-    (primary) -> DeepSeek (automatic fallback) -> mock (final, always
-    available). Shown regardless of lock state so the chain's health is
-    visible even before a passcode is entered."""
+    """Primary/fallback/mock badges for the provider chain, in whatever
+    order `config.primary_provider` configures (DeepSeek primary by default
+    — see `live.provider_chain`) -> mock (final, always available). Shown
+    regardless of lock state so the chain's health is visible even before a
+    passcode is entered."""
     status = live.provider_status(config)
-    anthropic_ok = status["anthropic"]["key"]
-    deepseek_has_key = status["deepseek"]["key"]
-    deepseek_has_sdk = status["deepseek"]["sdk"]
+    order = status.get("order") or ["deepseek", "anthropic"]
+    slot_labels = ["Primary", "Fallback"]
 
     cols = st.columns(3)
-    with cols[0]:
-        st.badge("Primary: Anthropic", color="green" if anthropic_ok else "gray")
-    with cols[1]:
-        if deepseek_has_key and deepseek_has_sdk:
-            st.badge("Fallback: DeepSeek", color="green")
-        elif deepseek_has_key and not deepseek_has_sdk:
-            st.badge("Fallback: DeepSeek (sdk missing)", color="orange")
-        else:
-            st.badge("Fallback: DeepSeek (no key)", color="gray")
+    for slot, name in enumerate(order[:2]):
+        available, missing_reason = _provider_availability(name, status)
+        title = _provider_title(name)
+        label = slot_labels[slot]
+        with cols[slot]:
+            if available:
+                st.badge(f"{label}: {title}", color="green")
+            elif missing_reason == "sdk missing":
+                st.badge(f"{label}: {title} (sdk missing — skipped)", color="orange")
+            else:
+                st.badge(f"{label}: {title} (no key — skipped)", color="gray")
     with cols[2]:
         st.badge("Final: Mock preview", color="blue")
 
