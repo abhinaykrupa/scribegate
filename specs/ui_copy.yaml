@@ -201,6 +201,9 @@ live_mode:
     This page is passcode-gated on purpose. Every other page runs on a free offline mock,
     but this one calls a paid AI model for real, so each run spends actual money. The cap
     and fallback below are not a limitation to apologize for; they are the cost-discipline demo.
+    Drafting also fails over across vendors automatically — if the primary model has an
+    outage or an auth failure, a second vendor picks up the same call before the demo ever
+    drops to the mock.
   budget_banner_remaining: "Live budget: ${remaining} of ${total} left. Each run spends about ${per_run}."
   budget_banner_exhausted: >-
     Live budget spent. Further runs fall back to the free offline mock automatically, so the
@@ -209,6 +212,7 @@ live_mode:
     With the real model, the receipts are re-derived from the model's own output and each
     span is marked high or low confidence. A low-confidence span means the source match is
     approximate, and we say so rather than pretend it is exact.
+  fallback_banner: "{stage} fell back to {to_provider} ({from_provider}: {reason_class})."
 economics:
   framing: >-
     The correction loop sharpens the bar, so a cheaper model can clear it. A cheaper model

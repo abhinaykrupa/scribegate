@@ -98,6 +98,12 @@ class LiveConfig:
     judge_samples: int = 3
     max_tokens_draft: int = 1024
     max_tokens_judge: int = 512
+    # DeepSeek is the automatic fallback provider (Anthropic -> DeepSeek ->
+    # mock). Either key alone is enough for live mode to be "available" —
+    # see `live_available()` — and both are optional independently of each
+    # other (a deployment can run Anthropic-only, DeepSeek-only, or both).
+    deepseek_api_key: str | None = None
+    deepseek_model: str = "deepseek-chat"
 
     @classmethod
     def from_env(cls) -> "LiveConfig":
@@ -107,6 +113,7 @@ class LiveConfig:
         rather than raising, since this runs on every app cold-start."""
         api_key = _get_secret("ANTHROPIC_API_KEY")
         demo_passcode = _get_secret("SCRIBEGATE_DEMO_PASSCODE")
+        deepseek_api_key = _get_secret("DEEPSEEK_API_KEY")
 
         budget_raw = _get_secret("SCRIBEGATE_DAILY_BUDGET_USD")
         try:
@@ -116,6 +123,7 @@ class LiveConfig:
 
         drafter_model = _get_secret("SCRIBEGATE_DRAFTER_MODEL") or "claude-haiku-4-5"
         judge_model = _get_secret("SCRIBEGATE_JUDGE_MODEL") or "claude-haiku-4-5"
+        deepseek_model = _get_secret("SCRIBEGATE_DEEPSEEK_MODEL") or "deepseek-chat"
 
         samples_raw = _get_secret("SCRIBEGATE_JUDGE_SAMPLES")
         try:
@@ -130,29 +138,34 @@ class LiveConfig:
             drafter_model=drafter_model,
             judge_model=judge_model,
             judge_samples=judge_samples,
+            deepseek_api_key=deepseek_api_key,
+            deepseek_model=deepseek_model,
         )
 
     def __repr__(self) -> str:  # never let the key leak into logs/tracebacks
         return (
             "LiveConfig("
             f"api_key={'<set>' if self.api_key else None}, "
+            f"deepseek_api_key={'<set>' if self.deepseek_api_key else None}, "
             f"demo_passcode={'<set>' if self.demo_passcode else None}, "
             f"daily_budget_usd={self.daily_budget_usd}, "
             f"drafter_model={self.drafter_model!r}, judge_model={self.judge_model!r}, "
-            f"judge_samples={self.judge_samples})"
+            f"deepseek_model={self.deepseek_model!r}, judge_samples={self.judge_samples})"
         )
 
     __str__ = __repr__
 
 
 def live_available(config: LiveConfig | None = None, ledger_path=None) -> tuple[bool, str]:
-    """(available, reason). Checks: is an API key configured? Is there any
-    daily budget remaining? This is the "global kill switch" the UI (W4)
-    consults before ever offering live mode — if this returns False, the UI
-    falls back to mock."""
+    """(available, reason). Checks: is EITHER an Anthropic or a DeepSeek API
+    key configured? Is there any daily budget remaining? This is the "global
+    kill switch" the UI (W4) consults before ever offering live mode — if
+    this returns False, the UI falls back to mock. Having only one of the
+    two keys is fine (live mode just runs a shorter provider chain); having
+    neither is not."""
     config = config or LiveConfig.from_env()
-    if not config.api_key:
-        return False, "no ANTHROPIC_API_KEY configured"
+    if not config.api_key and not config.deepseek_api_key:
+        return False, "no ANTHROPIC_API_KEY or DEEPSEEK_API_KEY configured"
     remaining = costs.budget_remaining(config, ledger_path=ledger_path)
     if remaining <= 0:
         spent = costs.today_spend(ledger_path=ledger_path)
@@ -160,6 +173,17 @@ def live_available(config: LiveConfig | None = None, ledger_path=None) -> tuple[
             f"daily budget exhausted (${spent:.4f} spent of ${config.daily_budget_usd:.2f} today)"
         )
     return True, "live mode available"
+
+
+def provider_status(config: LiveConfig | None = None) -> dict:
+    """Snapshot of provider-chain readiness for the UI's availability panel:
+    which keys are configured and whether the optional DeepSeek SDK
+    (`openai`) is importable. Never reveals key values, only booleans."""
+    config = config or LiveConfig.from_env()
+    return {
+        "anthropic": {"key": bool(config.api_key)},
+        "deepseek": {"key": bool(config.deepseek_api_key), "sdk": _openai_importable()},
+    }
 
 
 def check_passcode(entered: str | None, config: LiveConfig | None = None) -> bool:
@@ -200,6 +224,39 @@ def _default_client_factory(api_key: str | None):
 _client_factory = _default_client_factory
 
 
+def _default_deepseek_client_factory(api_key: str | None):
+    """Real DeepSeek client construction — DeepSeek exposes an
+    OpenAI-compatible chat completions API, so this reuses the `openai`
+    package as a plain HTTP client pointed at DeepSeek's base URL. `openai`
+    is a fully OPTIONAL dependency (see requirements.txt) and is imported
+    lazily here, never at module load — importing scribegate.live never
+    requires it. Tests replace `_deepseek_client_factory` with a fake
+    factory so this function is never actually invoked in the test suite."""
+    import openai  # lazy import — optional dependency, DeepSeek fallback only
+
+    return openai.OpenAI(api_key=api_key, base_url="https://api.deepseek.com")
+
+
+# Module-level hook, mirroring `_client_factory` above, for the DeepSeek
+# fallback provider.
+_deepseek_client_factory = _default_deepseek_client_factory
+
+
+def _openai_importable() -> bool:
+    """Best-effort check for whether the optional `openai` package is
+    installed, WITHOUT constructing a client or touching the network. Used
+    by `DeepSeekProvider.available()` and `provider_status()` so a missing
+    package degrades to "DeepSeek unavailable", never an ImportError bubbling
+    up mid-run. Tests may monkeypatch this directly to simulate either state
+    without needing the real package installed."""
+    try:
+        import openai  # noqa: F401
+
+        return True
+    except ImportError:
+        return False
+
+
 def _response_text(response) -> str:
     """Extract concatenated text blocks from an Anthropic Messages response.
     Defensive against a response with no text blocks at all (empty string,
@@ -210,23 +267,194 @@ def _response_text(response) -> str:
     )
 
 
-class GuardedClient:
-    """Wraps `client.messages.create` with budget-before / usage-after
-    accounting. Every single call — drafting AND every judge sample — goes
-    through `create()`. Never logs or persists the API key: only
-    stage/model/token-count/usd ever appear in `cost_records` or the ledger.
-    """
+def _classify_exception(exc: Exception) -> str:
+    """Map a provider SDK exception to one of a small, fixed vocabulary of
+    reason classes, using only the exception's TYPE NAME and (if present) a
+    `status_code` attribute — never its message/body, which could embed
+    request details. This is deliberately duck-typed (no hard dependency on
+    importing `anthropic`/`openai` exception classes) so it works uniformly
+    across both SDKs and against plain test doubles."""
+    status = getattr(exc, "status_code", None)
+    type_name = type(exc).__name__.lower()
 
-    def __init__(self, config: LiveConfig, ledger_path=None):
-        self.config = config
-        self.ledger_path = ledger_path
-        self.cost_records: list[dict] = []
+    if status == 401 or "authenticationerror" in type_name or "permissiondenied" in type_name:
+        return "auth_error"
+    if status == 429 or "ratelimit" in type_name:
+        return "rate_limit"
+    if (isinstance(status, int) and 500 <= status < 600) or "internalservererror" in type_name or "overloaded" in type_name:
+        return "server_error"
+    if "timeout" in type_name:
+        return "timeout"
+    if "connection" in type_name:
+        return "connection_error"
+    return "unknown"
+
+
+class ProviderError(Exception):
+    """Raised by a `Provider.complete()` implementation when the underlying
+    SDK call fails. Carries only `provider` (name) and `reason_class` (one
+    of the fixed vocabulary from `_classify_exception`) — NEVER the original
+    exception's message/body, so this can never leak a raw error body or key
+    material into a fallback event or a saved run artifact."""
+
+    def __init__(self, provider: str, reason_class: str):
+        self.provider = provider
+        self.reason_class = reason_class
+        super().__init__(f"{provider} provider failed ({reason_class})")
+
+
+class NoProviderAvailableError(Exception):
+    """Raised when no provider in the configured chain even has a key (and,
+    for DeepSeek, the optional SDK) — distinct from `AllProvidersFailedError`,
+    which means every available provider was tried and failed."""
+
+
+class AllProvidersFailedError(Exception):
+    """Raised when every available provider in the chain was tried for a
+    call and failed (auth/rate-limit/5xx/timeout/connection). Callers
+    (`run_live_note`) treat this the same as the existing clean
+    live-unavailable path — the UI falls back to the bundled mock preview."""
+
+
+# ---------------------------------------------------------------------------
+# Provider abstraction: Anthropic (primary) and DeepSeek (automatic fallback)
+# ---------------------------------------------------------------------------
+
+class Provider:
+    """Common interface every provider in the failover chain implements.
+    `complete()` returns (text, input_tokens, output_tokens) or raises
+    `ProviderError` — never a raw SDK exception, never partial billing (a
+    raised ProviderError means this provider's call is NOT recorded to the
+    cost ledger; `FailoverClient` only records usage for whichever provider
+    actually succeeded)."""
+
+    name = "base"
+
+    def available(self) -> bool:
+        raise NotImplementedError
+
+    def resolve_model(self, requested_model: str) -> str:
+        """What model string this provider should actually be called with,
+        given the model requested for the (Anthropic) primary call. The
+        default passes it through unchanged; DeepSeek overrides this since
+        an Anthropic model name (e.g. "claude-haiku-4-5") is meaningless on
+        DeepSeek's API."""
+        return requested_model
+
+    def complete(
+        self, *, prompt: str, model: str, max_tokens: int, system: str | None = None
+    ) -> tuple[str, int, int]:
+        raise NotImplementedError
+
+
+class AnthropicProvider(Provider):
+    """Primary provider — wraps `anthropic.Anthropic().messages.create`.
+    Refactored out of the old `GuardedClient` so the same call path is
+    reusable inside a `FailoverClient` chain."""
+
+    name = "anthropic"
+
+    def __init__(self, api_key: str | None):
+        self.api_key = api_key
         self._client = None
+
+    def available(self) -> bool:
+        return bool(self.api_key)
 
     def _ensure_client(self):
         if self._client is None:
-            self._client = _client_factory(self.config.api_key)
+            self._client = _client_factory(self.api_key)
         return self._client
+
+    def complete(
+        self, *, prompt: str, model: str, max_tokens: int, system: str | None = None
+    ) -> tuple[str, int, int]:
+        client = self._ensure_client()
+        kwargs = {"model": model, "max_tokens": max_tokens, "messages": [{"role": "user", "content": prompt}]}
+        if system:
+            kwargs["system"] = system
+        try:
+            response = client.messages.create(**kwargs)
+        except Exception as exc:  # noqa: BLE001 — deliberately broad, reclassified below
+            raise ProviderError(self.name, _classify_exception(exc)) from None
+        text = _response_text(response)
+        usage = getattr(response, "usage", None)
+        input_tokens = getattr(usage, "input_tokens", 0) or 0
+        output_tokens = getattr(usage, "output_tokens", 0) or 0
+        return text, input_tokens, output_tokens
+
+
+class DeepSeekProvider(Provider):
+    """Automatic fallback provider — DeepSeek's OpenAI-compatible chat
+    completions API (model "deepseek-chat" by default, `config.deepseek_model`).
+    Unavailable (not an error) whenever the `openai` package isn't installed
+    — it's an optional dependency purely for this fallback path — or when no
+    DEEPSEEK_API_KEY is configured."""
+
+    name = "deepseek"
+
+    def __init__(self, api_key: str | None, model: str = "deepseek-chat"):
+        self.api_key = api_key
+        self.model = model
+        self._client = None
+
+    def available(self) -> bool:
+        return bool(self.api_key) and _openai_importable()
+
+    def resolve_model(self, requested_model: str) -> str:
+        return self.model
+
+    def _ensure_client(self):
+        if self._client is None:
+            self._client = _deepseek_client_factory(self.api_key)
+        return self._client
+
+    def complete(
+        self, *, prompt: str, model: str, max_tokens: int, system: str | None = None
+    ) -> tuple[str, int, int]:
+        client = self._ensure_client()
+        messages = []
+        if system:
+            messages.append({"role": "system", "content": system})
+        messages.append({"role": "user", "content": prompt})
+        try:
+            response = client.chat.completions.create(model=model, max_tokens=max_tokens, messages=messages)
+        except Exception as exc:  # noqa: BLE001 — deliberately broad, reclassified below
+            raise ProviderError(self.name, _classify_exception(exc)) from None
+        choice = (getattr(response, "choices", None) or [None])[0]
+        message = getattr(choice, "message", None) if choice is not None else None
+        text = (getattr(message, "content", "") or "") if message is not None else ""
+        usage = getattr(response, "usage", None)
+        input_tokens = getattr(usage, "prompt_tokens", 0) or 0
+        output_tokens = getattr(usage, "completion_tokens", 0) or 0
+        return text, input_tokens, output_tokens
+
+
+class FailoverClient:
+    """Wraps an ordered chain of `Provider`s (Anthropic primary, DeepSeek
+    fallback) with budget-before / usage-after accounting, exactly like the
+    old `GuardedClient` — except the budget guard sits OUTSIDE the provider
+    chain: it is checked ONCE per logical call, before the first provider is
+    tried, so a same-call retry against the next provider never gets
+    double-charged against the daily budget and a budget-exhausted call
+    never falls over to another provider (there's nothing to retry — the
+    call itself was never attempted).
+
+    On a `ProviderError` from the active provider, logs a `fallback_event`
+    ({stage, from_provider, to_provider, reason_class} — no raw error
+    bodies, no keys) and retries the SAME logical call on the next available
+    provider. If every available provider fails, raises
+    `AllProvidersFailedError`; if none are even configured/available, raises
+    `NoProviderAvailableError`. Both are the caller's cue to fall back to the
+    existing clean live-unavailable path.
+    """
+
+    def __init__(self, config: LiveConfig, providers: list[Provider], ledger_path=None):
+        self.config = config
+        self.providers = list(providers)
+        self.ledger_path = ledger_path
+        self.cost_records: list[dict] = []
+        self.fallback_events: list[dict] = []
 
     def create(self, *, stage: str, model: str, max_tokens: int, messages: list) -> dict:
         remaining = costs.budget_remaining(self.config, ledger_path=self.ledger_path)
@@ -234,16 +462,67 @@ class GuardedClient:
             raise BudgetExceededError(
                 f"daily budget exhausted before stage '{stage}' (remaining ${remaining:.4f})"
             )
-        client = self._ensure_client()
-        response = client.messages.create(model=model, max_tokens=max_tokens, messages=messages)
-        usage = getattr(response, "usage", None)
-        input_tokens = getattr(usage, "input_tokens", 0) or 0
-        output_tokens = getattr(usage, "output_tokens", 0) or 0
-        record = costs.record_usage(
-            stage, model, input_tokens, output_tokens, ledger_path=self.ledger_path
+
+        system = next((m.get("content") for m in messages if m.get("role") == "system"), None)
+        user_messages = [m for m in messages if m.get("role") != "system"]
+        prompt = user_messages[-1]["content"] if user_messages else ""
+
+        chain = [p for p in self.providers if p.available()]
+        if not chain:
+            raise NoProviderAvailableError(f"no API provider available for stage {stage!r}")
+
+        last_reason = "unknown"
+        for i, provider in enumerate(chain):
+            call_model = provider.resolve_model(model)
+            try:
+                text, input_tokens, output_tokens = provider.complete(
+                    prompt=prompt, model=call_model, max_tokens=max_tokens, system=system
+                )
+            except ProviderError as exc:
+                last_reason = exc.reason_class
+                if i + 1 < len(chain):
+                    self.fallback_events.append(
+                        {
+                            "stage": stage,
+                            "from_provider": provider.name,
+                            "to_provider": chain[i + 1].name,
+                            "reason_class": exc.reason_class,
+                        }
+                    )
+                continue
+
+            record = costs.record_usage(
+                stage, call_model, input_tokens, output_tokens,
+                ledger_path=self.ledger_path, provider=provider.name,
+            )
+            self.cost_records.append(record)
+            return {"text": text, "cost_record": record, "provider": provider.name}
+
+        raise AllProvidersFailedError(
+            f"all providers failed for stage {stage!r} (last reason: {last_reason})"
         )
-        self.cost_records.append(record)
-        return {"response": response, "cost_record": record}
+
+
+class GuardedClient:
+    """Legacy single-provider (Anthropic-only) guarded client. Kept for
+    backward compatibility with existing callers/tests — this is exactly
+    equivalent to a `FailoverClient` constructed with only `AnthropicProvider`
+    in its chain, so the budget-before/usage-after behavior is unchanged.
+    New code (`run_live_note`) uses `FailoverClient` directly with the full
+    Anthropic -> DeepSeek provider chain instead.
+    """
+
+    def __init__(self, config: LiveConfig, ledger_path=None):
+        self.config = config
+        self.ledger_path = ledger_path
+        self._failover = FailoverClient(config, [AnthropicProvider(config.api_key)], ledger_path=ledger_path)
+
+    @property
+    def cost_records(self) -> list[dict]:
+        return self._failover.cost_records
+
+    def create(self, *, stage: str, model: str, max_tokens: int, messages: list) -> dict:
+        return self._failover.create(stage=stage, model=model, max_tokens=max_tokens, messages=messages)
 
 
 # ---------------------------------------------------------------------------
@@ -423,15 +702,24 @@ def run_live_note(
     judge) -> cost record.
 
     Every single API call (the draft call and each judge sample) goes through
-    `GuardedClient`, which checks the remaining daily budget BEFORE the call
-    and records usage AFTER. If the budget runs out mid-run, this aborts
-    cleanly at the next call boundary and returns a partial result with
-    `"budget_exhausted": True` — never a raised exception, and never a
+    a `FailoverClient` wrapping the Anthropic -> DeepSeek provider chain,
+    which checks the remaining daily budget BEFORE the call (once per
+    logical call, shared across whichever provider ends up serving it) and
+    records usage AFTER, tagged with the provider that actually served it.
+    If an active provider fails with an auth/rate-limit/5xx/timeout/
+    connection error, the SAME call is retried on the next provider in the
+    chain and a fallback event is appended to the result's
+    `fallback_events` (stage/from_provider/to_provider/reason_class only —
+    never a raw error body or key material). If the budget runs out mid-run,
+    this aborts cleanly at the next call boundary and returns a partial
+    result with `"budget_exhausted": True`; if every configured provider
+    fails (or none is configured), this aborts just as cleanly with
+    `"provider_unavailable": True` — never a raised exception, and never a
     partially-billed call (the guard is pre-flight, not a rollback).
 
     Never raises on malformed model output (drafting/judging both fail
     closed — see `_parse_drafter_response` / `_parse_judge_response`), and
-    never includes the API key in the returned dict or the saved JSON file.
+    never includes any API key in the returned dict or the saved JSON file.
     """
     config = config or LiveConfig.from_env()
     model = drafter_model or config.drafter_model
@@ -439,11 +727,17 @@ def run_live_note(
     live_runs_dir = Path(live_runs_dir) if live_runs_dir else _DEFAULT_LIVE_RUNS_DIR
 
     ts = _iso_ts()
-    guarded = GuardedClient(config, ledger_path=ledger_path)
+    providers = [
+        AnthropicProvider(config.api_key),
+        DeepSeekProvider(config.deepseek_api_key, config.deepseek_model),
+    ]
+    client = FailoverClient(config, providers, ledger_path=ledger_path)
 
     def _finalize(result: dict) -> dict:
-        result.setdefault("cost_records", guarded.cost_records)
-        result.setdefault("cost_breakdown", costs.per_note_breakdown({"cost_records": guarded.cost_records}))
+        result.setdefault("cost_records", client.cost_records)
+        result.setdefault("cost_breakdown", costs.per_note_breakdown({"cost_records": client.cost_records}))
+        result.setdefault("fallback_events", client.fallback_events)
+        result.setdefault("provider_unavailable", False)
         result.setdefault("ts", ts)
         result.setdefault("transcript_id", transcript_id)
         live_runs_dir.mkdir(parents=True, exist_ok=True)
@@ -469,10 +763,10 @@ def run_live_note(
     visit_type = visit_type_for(transcript_id)
     golden = corrections.load_golden_note(transcript_id) or {}
 
-    # --- Drafting: one real API call -------------------------------------
+    # --- Drafting: one real API call (Anthropic -> DeepSeek fallback) ----
     drafter_prompt = _build_drafter_prompt(transcript_text, visit_type)
     try:
-        draft_call = guarded.create(
+        draft_call = client.create(
             stage="draft",
             model=model,
             max_tokens=config.max_tokens_draft,
@@ -491,8 +785,22 @@ def run_live_note(
                 "transcript_text": transcript_text,
             }
         )
+    except (NoProviderAvailableError, AllProvidersFailedError) as exc:
+        return _finalize(
+            {
+                "error": str(exc),
+                "generated_note": None,
+                "budget_exhausted": False,
+                "provider_unavailable": True,
+                "partial": True,
+                "drafter_model": model,
+                "judge_model": config.judge_model,
+                "visit_type": visit_type,
+                "transcript_text": transcript_text,
+            }
+        )
 
-    draft_text = _response_text(draft_call["response"])
+    draft_text = draft_call["text"]
     draft_lines = _parse_drafter_response(draft_text)
     soap = _attach_spans(draft_lines, transcript_text)
 
@@ -518,9 +826,10 @@ def run_live_note(
 
     samples: list[dict] = []
     budget_exhausted = False
+    provider_unavailable = False
     for i in range(config.judge_samples):
         try:
-            judge_call = guarded.create(
+            judge_call = client.create(
                 stage=f"judge_sample_{i}",
                 model=config.judge_model,
                 max_tokens=config.max_tokens_judge,
@@ -529,8 +838,10 @@ def run_live_note(
         except BudgetExceededError:
             budget_exhausted = True
             break
-        text = _response_text(judge_call["response"])
-        samples.append(_parse_judge_response(text))
+        except (NoProviderAvailableError, AllProvidersFailedError):
+            provider_unavailable = True
+            break
+        samples.append(_parse_judge_response(judge_call["text"]))
 
     if samples:
         sampled_result = calibration._aggregate_sampled_result(samples, len(samples))
@@ -539,12 +850,19 @@ def run_live_note(
     else:
         sampled_result = dict(_NO_SAMPLES_RESULT)
         decision = router.decide({"aggregate": 0.0}, violations)
+        no_samples_reason = (
+            "no judge samples collected (budget exhausted before first judge call)"
+            if budget_exhausted
+            else "no judge samples collected (no judge provider available before first judge call)"
+            if provider_unavailable
+            else "no judge samples collected"
+        )
         route_result = {
             "route": decision.route,
             "ci_lower": 0.0,
             "ci_upper": 0.0,
             "aggregate_mean": 0.0,
-            "reasons": decision.reasons + ["no judge samples collected (budget exhausted before first judge call)"],
+            "reasons": decision.reasons + [no_samples_reason],
             "routing_delta": {
                 "point_route": decision.route,
                 "ci_route": decision.route,
@@ -567,7 +885,8 @@ def run_live_note(
         "route_result": route_result,
         "route": route_result["route"],
         "budget_exhausted": budget_exhausted,
-        "partial": budget_exhausted,
+        "provider_unavailable": provider_unavailable,
+        "partial": budget_exhausted or provider_unavailable,
         "transcript_text": transcript_text,
     }
     return _finalize(result)

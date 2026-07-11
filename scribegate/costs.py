@@ -41,6 +41,8 @@ _FALLBACK_PRICING = {
     "claude-haiku-4-5": {"input": 1.00, "output": 5.00},
     "claude-sonnet-4-5": {"input": 3.00, "output": 15.00},
     "claude-opus-4-8": {"input": 15.00, "output": 75.00},
+    # DeepSeek fallback provider — verify before demo, cache-hit pricing differs.
+    "deepseek-chat": {"input": 0.27, "output": 1.10},
 }
 
 
@@ -102,10 +104,17 @@ def record_usage(
     output_tokens: int,
     ledger_path: str | Path | None = None,
     pricing: dict | None = None,
+    provider: str | None = None,
 ) -> dict:
     """Append one usage record to the cost ledger (append-only JSONL) and
     return the record written. Never accepts or persists API key material —
-    callers only ever pass stage/model/token counts here."""
+    callers only ever pass stage/model/token counts (+ provider name) here.
+
+    `provider` is backward-compatible: callers that don't pass it (every
+    call site that predates the DeepSeek fallback provider) get a record
+    with `"provider": "anthropic"` — the only provider that existed before
+    this field was added — so old ledger lines and any code reading this
+    field never see a missing/None value."""
     now = datetime.now(timezone.utc)
     usage = {
         "model": model,
@@ -121,6 +130,7 @@ def record_usage(
         "input_tokens": usage["input_tokens"],
         "output_tokens": usage["output_tokens"],
         "usd": usd,
+        "provider": provider or "anthropic",
     }
     path = _resolve_ledger_path(ledger_path)
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -198,18 +208,30 @@ def per_note_breakdown(run: dict) -> dict:
     `record_usage`'s return value) into drafting/judging/total USD + token
     buckets. Stage names are bucketed by prefix: anything starting with
     "draft" -> drafting, anything starting with "judge" -> judging; any
-    other stage name is still counted in `total_usd` but not double-bucketed."""
+    other stage name is still counted in `total_usd` but not double-bucketed.
+
+    Also carries provider info per stage (additive — old readers that only
+    look at the pre-existing "usd"/"input_tokens"/"output_tokens" keys are
+    unaffected): each bucket gets a "providers" list of the distinct
+    provider names that served calls in it, and the top-level
+    "stage_providers" dict maps each individual stage name (e.g.
+    "judge_sample_1") to the provider that served it. Records written before
+    the `provider` field existed are treated as "anthropic" (same default
+    `record_usage` applies)."""
     breakdown = {
-        "drafting": {"usd": 0.0, "input_tokens": 0, "output_tokens": 0},
-        "judging": {"usd": 0.0, "input_tokens": 0, "output_tokens": 0},
+        "drafting": {"usd": 0.0, "input_tokens": 0, "output_tokens": 0, "providers": []},
+        "judging": {"usd": 0.0, "input_tokens": 0, "output_tokens": 0, "providers": []},
         "total_usd": 0.0,
+        "stage_providers": {},
     }
     for rec in (run or {}).get("cost_records", []) or []:
         stage = str(rec.get("stage", ""))
         usd = float(rec.get("usd", 0.0))
         input_tokens = int(rec.get("input_tokens", 0) or 0)
         output_tokens = int(rec.get("output_tokens", 0) or 0)
+        provider = rec.get("provider") or "anthropic"
         breakdown["total_usd"] += usd
+        breakdown["stage_providers"][stage] = provider
         if stage.startswith("draft"):
             bucket = breakdown["drafting"]
         elif stage.startswith("judge"):
@@ -220,4 +242,6 @@ def per_note_breakdown(run: dict) -> dict:
             bucket["usd"] += usd
             bucket["input_tokens"] += input_tokens
             bucket["output_tokens"] += output_tokens
+            if provider not in bucket["providers"]:
+                bucket["providers"].append(provider)
     return breakdown

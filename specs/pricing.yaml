@@ -21,3 +21,8 @@ models:
   claude-opus-4-8:
     input: 15.00
     output: 75.00
+  # DeepSeek fallback provider (scribegate.live.DeepSeekProvider).
+  # verify before demo — cache-hit pricing differs
+  deepseek-chat:
+    input: 0.27
+    output: 1.10

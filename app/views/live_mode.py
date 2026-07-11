@@ -43,11 +43,61 @@ FAILED_PASSCODE_SLEEP_SECONDS = 1.0
 
 DRAFTER_MODEL_OPTIONS = ["claude-haiku-4-5", "claude-sonnet-4-5"]
 
+_PROVIDER_TITLES = {"anthropic": "Anthropic", "deepseek": "DeepSeek"}
+
+
+def _provider_title(name: str) -> str:
+    return _PROVIDER_TITLES.get(name, str(name).title() if name else "—")
+
 
 @st.cache_data(ttl=5)
 def _load_sample() -> dict:
     with open(SAMPLE_PATH, "r", encoding="utf-8") as fh:
         return json.load(fh)
+
+
+def _render_provider_chain_status(config) -> None:
+    """Primary/fallback/mock badges for the provider chain — Anthropic
+    (primary) -> DeepSeek (automatic fallback) -> mock (final, always
+    available). Shown regardless of lock state so the chain's health is
+    visible even before a passcode is entered."""
+    status = live.provider_status(config)
+    anthropic_ok = status["anthropic"]["key"]
+    deepseek_has_key = status["deepseek"]["key"]
+    deepseek_has_sdk = status["deepseek"]["sdk"]
+
+    cols = st.columns(3)
+    with cols[0]:
+        st.badge("Primary: Anthropic", color="green" if anthropic_ok else "gray")
+    with cols[1]:
+        if deepseek_has_key and deepseek_has_sdk:
+            st.badge("Fallback: DeepSeek", color="green")
+        elif deepseek_has_key and not deepseek_has_sdk:
+            st.badge("Fallback: DeepSeek (sdk missing)", color="orange")
+        else:
+            st.badge("Fallback: DeepSeek (no key)", color="gray")
+    with cols[2]:
+        st.badge("Final: Mock preview", color="blue")
+
+
+def _render_fallback_events(result: dict) -> None:
+    events = result.get("fallback_events") or []
+    if not events:
+        return
+    data = ui_copy()
+    template = (data.get("live_mode") or {}).get(
+        "fallback_banner", "{stage} fell back to {to_provider} ({from_provider}: {reason_class})."
+    )
+    for event in events:
+        stage = str(event.get("stage", ""))
+        stage_label = "Drafting" if stage.startswith("draft") else "Judging" if stage.startswith("judge") else stage.title()
+        message = template.format(
+            stage=stage_label,
+            to_provider=_provider_title(event.get("to_provider", "")),
+            from_provider=event.get("from_provider", ""),
+            reason_class=event.get("reason_class", ""),
+        )
+        st.info(message)
 
 
 def _render_passcode_gate(config) -> None:
@@ -155,12 +205,16 @@ def _render_cost_breakdown(result: dict) -> None:
     breakdown = result.get("cost_breakdown") or {}
     drafting = breakdown.get("drafting") or {}
     judging = breakdown.get("judging") or {}
+    drafting_providers = ", ".join(_provider_title(p) for p in drafting.get("providers", []) or []) or "—"
+    judging_providers = ", ".join(_provider_title(p) for p in judging.get("providers", []) or []) or "—"
 
     c1, c2, c3 = st.columns(3)
     with c1:
         st.metric("Drafting", f"${drafting.get('usd', 0.0):.4f}")
+        st.caption(drafting_providers)
     with c2:
         st.metric("Judging", f"${judging.get('usd', 0.0):.4f}")
+        st.caption(judging_providers)
     with c3:
         st.metric("Total per note", f"${breakdown.get('total_usd', 0.0):.4f}")
 
@@ -168,6 +222,8 @@ def _render_cost_breakdown(result: dict) -> None:
 def _render_run_result(result: dict, *, sample: bool) -> None:
     if sample:
         st.info(result.get("sample_note") or "Showing a bundled SAMPLE run (mock-generated).")
+
+    _render_fallback_events(result)
 
     if result.get("error"):
         st.error(result["error"])
@@ -239,6 +295,7 @@ def render() -> None:
         st.info(passcode_note)
 
     config = live.LiveConfig.from_env()
+    _render_provider_chain_status(config)
     available, reason = live.live_available(config)
 
     if not available:

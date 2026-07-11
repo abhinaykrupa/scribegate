@@ -274,6 +274,7 @@ def test_live_mode_renders_in_no_key_preview_mode(monkeypatch):
     a real API key just to import/render the page."""
     monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
     monkeypatch.delenv("SCRIBEGATE_DEMO_PASSCODE", raising=False)
+    monkeypatch.delenv("DEEPSEEK_API_KEY", raising=False)
 
     import app.views.live_mode as live_mode
 

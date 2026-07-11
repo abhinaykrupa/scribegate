@@ -42,7 +42,10 @@ class _FakeMessages:
         self.calls.append({"model": model, "max_tokens": max_tokens, "messages": messages})
         if not self._responses:
             raise AssertionError("FakeMessages: ran out of canned responses")
-        return self._responses.pop(0)
+        item = self._responses.pop(0)
+        if isinstance(item, BaseException):
+            raise item
+        return item
 
 
 class _FakeClient:
@@ -582,3 +585,466 @@ def test_live_config_from_env_never_leaks_key_via_str(monkeypatch):
     config = live.LiveConfig.from_env()
     assert "sk-ant-super-secret-env-value" not in str(config)
     assert "sk-ant-super-secret-env-value" not in repr(config)
+
+
+# ---------------------------------------------------------------------------
+# DeepSeek fallback provider — fake OpenAI-compatible client + test-double
+# provider SDK exceptions.
+#
+# These exception classes are plain `Exception` subclasses named to match
+# real anthropic/openai SDK exception class names (AuthenticationError,
+# RateLimitError, ...) — `scribegate.live._classify_exception` matches on
+# TYPE NAME only (never message/body), so these test doubles exercise the
+# exact same classification path a real SDK exception would, without this
+# suite ever needing the real `anthropic`/`openai` exception hierarchies.
+# ---------------------------------------------------------------------------
+
+class AuthenticationError(Exception):
+    status_code = 401
+
+
+class RateLimitError(Exception):
+    status_code = 429
+
+
+class InternalServerError(Exception):
+    status_code = 500
+
+
+class APITimeoutError(Exception):
+    pass
+
+
+class APIConnectionError(Exception):
+    pass
+
+
+class _FakeDeepSeekMessage:
+    def __init__(self, content):
+        self.content = content
+
+
+class _FakeDeepSeekChoice:
+    def __init__(self, content):
+        self.message = _FakeDeepSeekMessage(content)
+
+
+class _FakeDeepSeekUsage:
+    def __init__(self, prompt_tokens, completion_tokens):
+        self.prompt_tokens = prompt_tokens
+        self.completion_tokens = completion_tokens
+
+
+class _FakeDeepSeekResponse:
+    def __init__(self, text: str, prompt_tokens: int = 80, completion_tokens: int = 40):
+        self.choices = [_FakeDeepSeekChoice(text)]
+        self.usage = _FakeDeepSeekUsage(prompt_tokens, completion_tokens)
+
+
+class _FakeDeepSeekCompletions:
+    def __init__(self, responses):
+        self._responses = list(responses)
+        self.calls: list[dict] = []
+
+    def create(self, model, max_tokens, messages):
+        self.calls.append({"model": model, "max_tokens": max_tokens, "messages": messages})
+        if not self._responses:
+            raise AssertionError("FakeDeepSeekCompletions: ran out of canned responses")
+        item = self._responses.pop(0)
+        if isinstance(item, BaseException):
+            raise item
+        return item
+
+
+class _FakeDeepSeekChat:
+    def __init__(self, responses):
+        self.completions = _FakeDeepSeekCompletions(responses)
+
+
+class _FakeDeepSeekClient:
+    def __init__(self, responses):
+        self.chat = _FakeDeepSeekChat(responses)
+
+
+def _install_fake_deepseek_client(monkeypatch, responses):
+    """Installs a fake DeepSeek client AND pretends the optional `openai`
+    package is importable (it genuinely isn't in this environment — see
+    `test_deepseek_provider_unavailable_without_openai_package` below, which
+    exercises the real absence — but these failover tests need
+    `DeepSeekProvider.available()` to be True so the chain actually reaches
+    it)."""
+    fake_client = _FakeDeepSeekClient(responses)
+    monkeypatch.setattr(live, "_deepseek_client_factory", lambda api_key: fake_client)
+    monkeypatch.setattr(live, "_openai_importable", lambda: True)
+    return fake_client
+
+
+def _both_keys_config(tmp_path, **overrides) -> live.LiveConfig:
+    defaults = dict(deepseek_api_key="sk-deepseek-TESTKEY-should-never-be-saved", deepseek_model="deepseek-chat")
+    defaults.update(overrides)
+    return _make_config(tmp_path, **defaults)
+
+
+# ---------------------------------------------------------------------------
+# FailoverClient — failover triggers on transient provider errors
+# ---------------------------------------------------------------------------
+
+@pytest.mark.parametrize(
+    "exc_factory,expected_reason_class",
+    [
+        (lambda: AuthenticationError("unauthorized"), "auth_error"),
+        (lambda: RateLimitError("too many requests"), "rate_limit"),
+        (lambda: InternalServerError("server exploded"), "server_error"),
+        (lambda: APITimeoutError("timed out"), "timeout"),
+        (lambda: APIConnectionError("connection reset"), "connection_error"),
+    ],
+)
+def test_failover_client_falls_over_to_deepseek_on_transient_anthropic_errors(
+    monkeypatch, tmp_path, exc_factory, expected_reason_class
+):
+    ledger = tmp_path / "ledger.jsonl"
+    config = _both_keys_config(tmp_path)
+
+    _install_fake_client(monkeypatch, [exc_factory()])
+    _install_fake_deepseek_client(monkeypatch, [_FakeDeepSeekResponse("deepseek drafted text")])
+
+    client = live.FailoverClient(
+        config,
+        [live.AnthropicProvider(config.api_key), live.DeepSeekProvider(config.deepseek_api_key, config.deepseek_model)],
+        ledger_path=ledger,
+    )
+    result = client.create(
+        stage="draft", model="claude-haiku-4-5", max_tokens=100, messages=[{"role": "user", "content": "hi"}]
+    )
+
+    assert result["text"] == "deepseek drafted text"
+    assert result["provider"] == "deepseek"
+    assert len(client.fallback_events) == 1
+    event = client.fallback_events[0]
+    assert event == {
+        "stage": "draft",
+        "from_provider": "anthropic",
+        "to_provider": "deepseek",
+        "reason_class": expected_reason_class,
+    }
+    # The cost record for the call that actually succeeded is tagged with
+    # the provider that served it — used for correct per-provider pricing.
+    assert result["cost_record"]["provider"] == "deepseek"
+    assert result["cost_record"]["model"] == "deepseek-chat"
+
+
+def test_failover_client_no_failover_when_budget_exhausted_before_call(monkeypatch, tmp_path):
+    """Budget guard sits OUTSIDE the provider chain: when the budget is
+    already exhausted, BudgetExceededError is raised before any provider is
+    even touched — no fallback event, no client construction at all, for
+    either provider."""
+    ledger = tmp_path / "ledger.jsonl"
+    config = _both_keys_config(tmp_path, daily_budget_usd=1.0)
+    costs.record_usage("draft", "claude-opus-4-8", 1_000_000, 1_000_000, ledger_path=ledger)  # $90 > $1 budget
+
+    def _explode_anthropic(api_key):
+        raise AssertionError("anthropic client factory must not be called when budget is already exceeded")
+
+    def _explode_deepseek(api_key):
+        raise AssertionError("deepseek client factory must not be called when budget is already exceeded")
+
+    monkeypatch.setattr(live, "_client_factory", _explode_anthropic)
+    monkeypatch.setattr(live, "_deepseek_client_factory", _explode_deepseek)
+    monkeypatch.setattr(live, "_openai_importable", lambda: True)
+
+    client = live.FailoverClient(
+        config,
+        [live.AnthropicProvider(config.api_key), live.DeepSeekProvider(config.deepseek_api_key, config.deepseek_model)],
+        ledger_path=ledger,
+    )
+    with pytest.raises(live.BudgetExceededError):
+        client.create(stage="draft", model="claude-haiku-4-5", max_tokens=10, messages=[{"role": "user", "content": "hi"}])
+
+    assert client.fallback_events == []
+
+
+def test_failover_client_fallback_event_contains_no_key_material(monkeypatch, tmp_path):
+    ledger = tmp_path / "ledger.jsonl"
+    anthropic_secret = "sk-ant-THIS-MUST-NEVER-LEAK-abc123"
+    deepseek_secret = "sk-deepseek-THIS-MUST-NEVER-LEAK-xyz789"
+    config = _both_keys_config(tmp_path, api_key=anthropic_secret, deepseek_api_key=deepseek_secret)
+
+    _install_fake_client(monkeypatch, [AuthenticationError("unauthorized: key " + anthropic_secret)])
+    _install_fake_deepseek_client(monkeypatch, [_FakeDeepSeekResponse("ok")])
+
+    client = live.FailoverClient(
+        config,
+        [live.AnthropicProvider(config.api_key), live.DeepSeekProvider(config.deepseek_api_key, config.deepseek_model)],
+        ledger_path=ledger,
+    )
+    client.create(stage="draft", model="claude-haiku-4-5", max_tokens=10, messages=[{"role": "user", "content": "hi"}])
+
+    events_str = json.dumps(client.fallback_events)
+    assert anthropic_secret not in events_str
+    assert deepseek_secret not in events_str
+    assert "unauthorized" not in events_str  # no raw error body/message either
+    assert set(client.fallback_events[0].keys()) == {"stage", "from_provider", "to_provider", "reason_class"}
+
+    ledger_text = ledger.read_text()
+    assert anthropic_secret not in ledger_text
+    assert deepseek_secret not in ledger_text
+
+
+def test_failover_client_no_provider_available_when_neither_key_configured(tmp_path):
+    ledger = tmp_path / "ledger.jsonl"
+    config = live.LiveConfig(api_key=None, deepseek_api_key=None, daily_budget_usd=5.0)
+    client = live.FailoverClient(
+        config,
+        [live.AnthropicProvider(config.api_key), live.DeepSeekProvider(config.deepseek_api_key, config.deepseek_model)],
+        ledger_path=ledger,
+    )
+    with pytest.raises(live.NoProviderAvailableError):
+        client.create(stage="draft", model="claude-haiku-4-5", max_tokens=10, messages=[{"role": "user", "content": "hi"}])
+
+
+def test_failover_client_all_providers_fail_raises_all_providers_failed(monkeypatch, tmp_path):
+    ledger = tmp_path / "ledger.jsonl"
+    config = _both_keys_config(tmp_path)
+    _install_fake_client(monkeypatch, [AuthenticationError("nope")])
+    _install_fake_deepseek_client(monkeypatch, [RateLimitError("also nope")])
+
+    client = live.FailoverClient(
+        config,
+        [live.AnthropicProvider(config.api_key), live.DeepSeekProvider(config.deepseek_api_key, config.deepseek_model)],
+        ledger_path=ledger,
+    )
+    with pytest.raises(live.AllProvidersFailedError):
+        client.create(stage="draft", model="claude-haiku-4-5", max_tokens=10, messages=[{"role": "user", "content": "hi"}])
+    # A fallback event was still logged for the anthropic -> deepseek hop,
+    # even though deepseek itself then failed too.
+    assert len(client.fallback_events) == 1
+    assert client.fallback_events[0]["to_provider"] == "deepseek"
+
+
+# ---------------------------------------------------------------------------
+# costs.py: DeepSeek pricing + provider field
+# ---------------------------------------------------------------------------
+
+def test_pricing_yaml_loads_deepseek_chat():
+    pricing = costs.load_pricing()
+    assert pricing["deepseek-chat"] == {"input": 0.27, "output": 1.10}
+
+
+def test_cost_of_deepseek_chat_pricing_math():
+    usage = {"model": "deepseek-chat", "input_tokens": 1_000_000, "output_tokens": 1_000_000}
+    usd = costs.cost_of(usage)
+    assert usd == pytest.approx(0.27 + 1.10)
+
+
+def test_record_usage_provider_field_defaults_to_anthropic_when_omitted(tmp_path):
+    """Backward compatibility: every call site that predates the DeepSeek
+    fallback (and any external code calling record_usage the old way,
+    without `provider=`) must still get a record with `"provider":
+    "anthropic"` — never a missing/None value."""
+    ledger = tmp_path / "ledger.jsonl"
+    record = costs.record_usage("draft", "claude-haiku-4-5", 100, 50, ledger_path=ledger)
+    assert record["provider"] == "anthropic"
+
+    line = json.loads(ledger.read_text().strip())
+    assert line["provider"] == "anthropic"
+
+
+def test_record_usage_provider_field_recorded_when_given(tmp_path):
+    ledger = tmp_path / "ledger.jsonl"
+    record = costs.record_usage("draft", "deepseek-chat", 100, 50, ledger_path=ledger, provider="deepseek")
+    assert record["provider"] == "deepseek"
+
+    line = json.loads(ledger.read_text().strip())
+    assert line["provider"] == "deepseek"
+
+
+def test_per_note_breakdown_provider_per_stage():
+    run = {
+        "cost_records": [
+            {"stage": "draft", "model": "claude-haiku-4-5", "input_tokens": 100, "output_tokens": 50, "usd": 1.0, "provider": "anthropic"},
+            {"stage": "judge_sample_0", "model": "deepseek-chat", "input_tokens": 10, "output_tokens": 5, "usd": 0.5, "provider": "deepseek"},
+            {"stage": "judge_sample_1", "model": "claude-haiku-4-5", "input_tokens": 10, "output_tokens": 5, "usd": 0.5, "provider": "anthropic"},
+        ]
+    }
+    breakdown = costs.per_note_breakdown(run)
+    assert breakdown["drafting"]["providers"] == ["anthropic"]
+    assert sorted(breakdown["judging"]["providers"]) == ["anthropic", "deepseek"]
+    assert breakdown["stage_providers"] == {
+        "draft": "anthropic",
+        "judge_sample_0": "deepseek",
+        "judge_sample_1": "anthropic",
+    }
+    # Old top-level totals are unaffected by the new provider bookkeeping.
+    assert breakdown["total_usd"] == pytest.approx(2.0)
+
+
+def test_per_note_breakdown_old_records_without_provider_field_still_work():
+    """Run record shape stability for old consumers: cost_records written
+    before this feature existed (no "provider" key at all — e.g. a ledger
+    line from before this change, or a hand-built dict in an older test)
+    must not crash per_note_breakdown, and must be treated as anthropic
+    (the only provider that existed at the time)."""
+    run = {
+        "cost_records": [
+            {"stage": "draft", "model": "claude-haiku-4-5", "input_tokens": 100, "output_tokens": 50, "usd": 1.0},
+            {"stage": "judge_sample_0", "model": "claude-haiku-4-5", "input_tokens": 10, "output_tokens": 5, "usd": 0.5},
+        ]
+    }
+    breakdown = costs.per_note_breakdown(run)
+    assert breakdown["drafting"]["usd"] == pytest.approx(1.0)
+    assert breakdown["judging"]["usd"] == pytest.approx(0.5)
+    assert breakdown["drafting"]["providers"] == ["anthropic"]
+    assert breakdown["stage_providers"]["draft"] == "anthropic"
+
+
+# ---------------------------------------------------------------------------
+# live_available / provider_status — either-key availability
+# ---------------------------------------------------------------------------
+
+def test_live_available_true_with_only_deepseek_key(tmp_path):
+    config = live.LiveConfig(api_key=None, deepseek_api_key="sk-deepseek-k", daily_budget_usd=5.0)
+    available, reason = live.live_available(config, ledger_path=tmp_path / "ledger.jsonl")
+    assert available is True
+    assert reason
+
+
+def test_live_available_false_when_both_keys_explicitly_absent(tmp_path):
+    config = live.LiveConfig(api_key=None, deepseek_api_key=None, daily_budget_usd=5.0)
+    available, reason = live.live_available(config, ledger_path=tmp_path / "ledger.jsonl")
+    assert available is False
+    assert "ANTHROPIC_API_KEY" in reason
+    assert "DEEPSEEK_API_KEY" in reason
+
+
+def test_provider_status_shape(monkeypatch):
+    monkeypatch.setattr(live, "_openai_importable", lambda: True)
+    config = live.LiveConfig(api_key="k", deepseek_api_key="dk")
+    status = live.provider_status(config)
+    assert status == {"anthropic": {"key": True}, "deepseek": {"key": True, "sdk": True}}
+
+    config_no_keys = live.LiveConfig(api_key=None, deepseek_api_key=None)
+    status_no_keys = live.provider_status(config_no_keys)
+    assert status_no_keys["anthropic"]["key"] is False
+    assert status_no_keys["deepseek"]["key"] is False
+
+
+# ---------------------------------------------------------------------------
+# openai package missing -> DeepSeek unavailable, Anthropic unaffected
+# ---------------------------------------------------------------------------
+
+def test_deepseek_provider_unavailable_without_openai_package():
+    """The `openai` package is NOT installed in this test environment (it's
+    an optional dependency purely for the DeepSeek fallback) — so this
+    exercises the real absence, not a monkeypatched simulation of it."""
+    provider = live.DeepSeekProvider(api_key="sk-deepseek-k", model="deepseek-chat")
+    assert provider.available() is False
+
+
+def test_anthropic_provider_unaffected_by_missing_openai_package(monkeypatch, tmp_path):
+    """A missing `openai` package must never affect the Anthropic path —
+    DeepSeekProvider simply reports unavailable and is skipped by
+    FailoverClient, Anthropic-only calls proceed exactly as before."""
+    ledger = tmp_path / "ledger.jsonl"
+    config = _make_config(tmp_path)  # deepseek_api_key defaults to None anyway
+    _install_fake_client(monkeypatch, [_FakeResponse("hello", input_tokens=10, output_tokens=5)])
+
+    client = live.FailoverClient(
+        config,
+        [live.AnthropicProvider(config.api_key), live.DeepSeekProvider(config.deepseek_api_key, config.deepseek_model)],
+        ledger_path=ledger,
+    )
+    result = client.create(stage="draft", model="claude-haiku-4-5", max_tokens=10, messages=[{"role": "user", "content": "hi"}])
+    assert result["provider"] == "anthropic"
+    assert result["text"] == "hello"
+    assert client.fallback_events == []
+
+
+def test_provider_status_reports_no_sdk_when_openai_missing():
+    status = live.provider_status(live.LiveConfig(api_key="k", deepseek_api_key="dk"))
+    assert status["deepseek"]["sdk"] is False
+
+
+# ---------------------------------------------------------------------------
+# run_live_note — full-run failover integration
+# ---------------------------------------------------------------------------
+
+def test_run_live_note_fails_over_full_run_populates_fallback_events(monkeypatch, tmp_path):
+    """End-to-end: Anthropic is configured but every call it receives fails
+    with an auth error; DeepSeek is configured and healthy and serves every
+    stage instead. The run completes normally (not partial, not
+    budget_exhausted) with fallback_events recorded for each of the 4
+    stages, and no key material anywhere in the saved artifact."""
+    anthropic_secret = "sk-ant-MUST-NOT-LEAK"
+    deepseek_secret = "sk-deepseek-MUST-NOT-LEAK"
+    config = _both_keys_config(tmp_path, api_key=anthropic_secret, deepseek_api_key=deepseek_secret, judge_samples=3)
+    ledger = tmp_path / "ledger.jsonl"
+    live_runs_dir = tmp_path / "live_runs"
+
+    _install_fake_client(
+        monkeypatch,
+        [AuthenticationError("nope")] * 4,  # 1 draft + 3 judge calls, all fail
+    )
+    _install_fake_deepseek_client(
+        monkeypatch,
+        [
+            _FakeDeepSeekResponse(_draft_response_json(), prompt_tokens=500, completion_tokens=200),
+            _FakeDeepSeekResponse(_judge_response_json(), prompt_tokens=300, completion_tokens=100),
+            _FakeDeepSeekResponse(_judge_response_json(), prompt_tokens=300, completion_tokens=100),
+            _FakeDeepSeekResponse(_judge_response_json(), prompt_tokens=300, completion_tokens=100),
+        ],
+    )
+
+    result = live.run_live_note(
+        GLAUCOMA_05, config=config, ledger_path=ledger, live_runs_dir=live_runs_dir
+    )
+
+    assert result["budget_exhausted"] is False
+    assert result["provider_unavailable"] is False
+    assert result["partial"] is False
+    assert result["generated_note"] is not None
+    assert result["judge_samples_collected"] == 3
+
+    fallback_events = result["fallback_events"]
+    assert len(fallback_events) == 4
+    assert {e["stage"] for e in fallback_events} == {"draft", "judge_sample_0", "judge_sample_1", "judge_sample_2"}
+    assert all(e["from_provider"] == "anthropic" and e["to_provider"] == "deepseek" for e in fallback_events)
+    assert all(e["reason_class"] == "auth_error" for e in fallback_events)
+
+    breakdown = result["cost_breakdown"]
+    assert breakdown["drafting"]["providers"] == ["deepseek"]
+    assert breakdown["judging"]["providers"] == ["deepseek"]
+
+    result_str = json.dumps(result)
+    assert anthropic_secret not in result_str
+    assert deepseek_secret not in result_str
+
+    saved_files = list(live_runs_dir.glob(f"*_{GLAUCOMA_05}.json"))
+    assert len(saved_files) == 1
+    saved_text = saved_files[0].read_text()
+    assert anthropic_secret not in saved_text
+    assert deepseek_secret not in saved_text
+    ledger_text = ledger.read_text()
+    assert anthropic_secret not in ledger_text
+    assert deepseek_secret not in ledger_text
+
+
+def test_run_live_note_all_providers_fail_returns_clean_error(monkeypatch, tmp_path):
+    """When the only configured provider (Anthropic; no DEEPSEEK_API_KEY set)
+    fails outright, run_live_note must fail closed exactly like the existing
+    "no bundled transcript" / budget-exhausted paths: a clean result dict
+    with an `error`, `generated_note: None`, `partial: True` — never a
+    raised exception bubbling into the caller (the UI)."""
+    config = _make_config(tmp_path)  # anthropic-only; no deepseek key
+    ledger = tmp_path / "ledger.jsonl"
+    _install_fake_client(monkeypatch, [AuthenticationError("nope")])
+
+    result = live.run_live_note(
+        GLAUCOMA_05, config=config, ledger_path=ledger, live_runs_dir=tmp_path / "live_runs"
+    )
+
+    assert result["generated_note"] is None
+    assert result["provider_unavailable"] is True
+    assert result["budget_exhausted"] is False
+    assert result["partial"] is True
+    assert "error" in result
+    assert "nope" not in result["error"]  # no raw error body/message leaked
