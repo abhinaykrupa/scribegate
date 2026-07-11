@@ -74,13 +74,22 @@ def load_results() -> dict:
     running app without a full restart, while still avoiding a disk re-scan
     on every single widget interaction/rerun."""
     results = {}
+    # Non-result artifacts also live in RESULTS_DIR as *.json (shipped
+    # precomputed for hosted stability) — never treat them as transcripts.
+    reserved = {"calibration_report", "econ_matrix", "benchmark_summary"}
     for path in sorted(glob.glob(os.path.join(RESULTS_DIR, "*.json"))):
+        stem = os.path.splitext(os.path.basename(path))[0]
+        if stem in reserved:
+            continue
         try:
             with open(path, "r", encoding="utf-8") as fh:
                 data = json.load(fh)
         except (OSError, ValueError):
             continue
-        tid = data.get("transcript_id") or os.path.splitext(os.path.basename(path))[0]
+        # A real per-transcript result always carries a transcript_id.
+        tid = data.get("transcript_id")
+        if not tid:
+            continue
         results[tid] = data
     return results
 
