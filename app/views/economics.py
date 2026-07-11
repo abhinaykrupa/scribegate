@@ -24,10 +24,12 @@ spec calls for.
 
 from __future__ import annotations
 
+import os
+
 import pandas as pd
 import streamlit as st
 
-from app.common import page_header, ui_copy
+from app.common import RESULTS_DIR, page_header, ui_copy
 from scribegate.economics import (
     NoteEconParams,
     econ_summary,
@@ -147,17 +149,35 @@ def render() -> None:
 
     params = _render_sliders()
 
-    matrix = model_generation_matrix()
+    # model_generation_matrix() recomputes multiple full benchmark runs when
+    # its cache (data/results/econ_matrix.json) is absent — heavy enough to
+    # kill a memory-constrained host mid-render (same class as the moat/
+    # calibration self-seeds). The cache ships precomputed in the repo; if
+    # it's missing AND heavy recompute is disabled, degrade gracefully.
+    matrix_cache = os.path.join(RESULTS_DIR, "econ_matrix.json")
+    if os.path.exists(matrix_cache) or os.environ.get("SCRIBEGATE_DISABLE_HEAVY_SEED") != "1":
+        matrix = model_generation_matrix()
+    else:
+        # NOTE: econ_summary(matrix=None) would recompute the matrix itself —
+        # the exact heavy path we're avoiding — so skip matrix-dependent
+        # sections entirely in this degraded mode.
+        matrix = None
+        st.info(
+            "Model×generation matrix cache not found and heavy recompute is disabled "
+            "on this host. Run locally: python -m scribegate.economics"
+        )
     comparison = tier_comparison(params)
-    summary = econ_summary(params, matrix=matrix)
 
-    with headline_placeholder:
-        _render_headline(summary)
+    if matrix is not None:
+        summary = econ_summary(params, matrix=matrix)
+        with headline_placeholder:
+            _render_headline(summary)
     with tier_table_placeholder:
         _render_tier_table(comparison)
 
-    st.divider()
-    _render_matrix(matrix)
+    if matrix is not None:
+        st.divider()
+        _render_matrix(matrix)
 
     assumption_honesty = econ_copy.get("assumption_honesty", "")
     if assumption_honesty:

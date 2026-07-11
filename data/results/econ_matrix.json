@@ -1,0 +1,379 @@
+{
+  "signature": {
+    "models": [
+      "baseline",
+      "degraded"
+    ],
+    "generations": [
+      0,
+      1
+    ],
+    "subset": null,
+    "transcript_ids": [
+      "cataract_01",
+      "cataract_02",
+      "cataract_03",
+      "cataract_04",
+      "cataract_05",
+      "comprehensive_01",
+      "comprehensive_02",
+      "comprehensive_03",
+      "comprehensive_04",
+      "comprehensive_05",
+      "contactlens_01",
+      "contactlens_02",
+      "contactlens_03",
+      "contactlens_04",
+      "contactlens_05",
+      "glaucoma_01",
+      "glaucoma_02",
+      "glaucoma_03",
+      "glaucoma_04",
+      "glaucoma_05"
+    ],
+    "golden_signature": [
+      [
+        0,
+        [
+          [
+            "cataract_01",
+            "/sessions/funny-beautiful-fermi/mnt/IrisMD/scribegate/data/golden_notes/cataract_01.json",
+            1782985436.0613074
+          ],
+          [
+            "cataract_02",
+            "/sessions/funny-beautiful-fermi/mnt/IrisMD/scribegate/data/golden_notes/cataract_02.json",
+            1782985436.0642638
+          ],
+          [
+            "cataract_03",
+            "/sessions/funny-beautiful-fermi/mnt/IrisMD/scribegate/data/golden_notes/cataract_03.json",
+            1782985436.0655189
+          ],
+          [
+            "cataract_04",
+            "/sessions/funny-beautiful-fermi/mnt/IrisMD/scribegate/data/golden_notes/cataract_04.json",
+            1782985436.066725
+          ],
+          [
+            "cataract_05",
+            "/sessions/funny-beautiful-fermi/mnt/IrisMD/scribegate/data/golden_notes/cataract_05.json",
+            1782985436.0691583
+          ],
+          [
+            "comprehensive_01",
+            "/sessions/funny-beautiful-fermi/mnt/IrisMD/scribegate/data/golden_notes/comprehensive_01.json",
+            1782985521.5183468
+          ],
+          [
+            "comprehensive_02",
+            "/sessions/funny-beautiful-fermi/mnt/IrisMD/scribegate/data/golden_notes/comprehensive_02.json",
+            1782985521.5199068
+          ],
+          [
+            "comprehensive_03",
+            "/sessions/funny-beautiful-fermi/mnt/IrisMD/scribegate/data/golden_notes/comprehensive_03.json",
+            1783003692.320425
+          ],
+          [
+            "comprehensive_04",
+            "/sessions/funny-beautiful-fermi/mnt/IrisMD/scribegate/data/golden_notes/comprehensive_04.json",
+            1782985521.5216913
+          ],
+          [
+            "comprehensive_05",
+            "/sessions/funny-beautiful-fermi/mnt/IrisMD/scribegate/data/golden_notes/comprehensive_05.json",
+            1782985521.5224876
+          ],
+          [
+            "contactlens_01",
+            "/sessions/funny-beautiful-fermi/mnt/IrisMD/scribegate/data/golden_notes/contactlens_01.json",
+            1782985436.0720358
+          ],
+          [
+            "contactlens_02",
+            "/sessions/funny-beautiful-fermi/mnt/IrisMD/scribegate/data/golden_notes/contactlens_02.json",
+            1782985436.0738509
+          ],
+          [
+            "contactlens_03",
+            "/sessions/funny-beautiful-fermi/mnt/IrisMD/scribegate/data/golden_notes/contactlens_03.json",
+            1782985436.0800588
+          ],
+          [
+            "contactlens_04",
+            "/sessions/funny-beautiful-fermi/mnt/IrisMD/scribegate/data/golden_notes/contactlens_04.json",
+            1782985436.0818331
+          ],
+          [
+            "contactlens_05",
+            "/sessions/funny-beautiful-fermi/mnt/IrisMD/scribegate/data/golden_notes/contactlens_05.json",
+            1782985436.0835977
+          ],
+          [
+            "glaucoma_01",
+            "/sessions/funny-beautiful-fermi/mnt/IrisMD/scribegate/data/golden_notes/glaucoma_01.json",
+            1782985521.5233908
+          ],
+          [
+            "glaucoma_02",
+            "/sessions/funny-beautiful-fermi/mnt/IrisMD/scribegate/data/golden_notes/glaucoma_02.json",
+            1782985521.5242937
+          ],
+          [
+            "glaucoma_03",
+            "/sessions/funny-beautiful-fermi/mnt/IrisMD/scribegate/data/golden_notes/glaucoma_03.json",
+            1782985521.5253344
+          ],
+          [
+            "glaucoma_04",
+            "/sessions/funny-beautiful-fermi/mnt/IrisMD/scribegate/data/golden_notes/glaucoma_04.json",
+            1782985521.5334845
+          ],
+          [
+            "glaucoma_05",
+            "/sessions/funny-beautiful-fermi/mnt/IrisMD/scribegate/data/golden_notes/glaucoma_05.json",
+            1782985521.5362601
+          ]
+        ]
+      ],
+      [
+        1,
+        [
+          [
+            "cataract_01",
+            "/sessions/funny-beautiful-fermi/mnt/IrisMD/scribegate/data/golden_notes/cataract_01.json",
+            1782985436.0613074
+          ],
+          [
+            "cataract_02",
+            "/sessions/funny-beautiful-fermi/mnt/IrisMD/scribegate/data/golden_notes/cataract_02.json",
+            1782985436.0642638
+          ],
+          [
+            "cataract_03",
+            "/sessions/funny-beautiful-fermi/mnt/IrisMD/scribegate/data/golden_notes/cataract_03.json",
+            1782985436.0655189
+          ],
+          [
+            "cataract_04",
+            "/sessions/funny-beautiful-fermi/mnt/IrisMD/scribegate/data/golden_notes/cataract_04.json",
+            1782985436.066725
+          ],
+          [
+            "cataract_05",
+            "/sessions/funny-beautiful-fermi/mnt/IrisMD/scribegate/data/results/golden_generations/gen_1/cataract_05.json",
+            1783661195.7944958
+          ],
+          [
+            "comprehensive_01",
+            "/sessions/funny-beautiful-fermi/mnt/IrisMD/scribegate/data/golden_notes/comprehensive_01.json",
+            1782985521.5183468
+          ],
+          [
+            "comprehensive_02",
+            "/sessions/funny-beautiful-fermi/mnt/IrisMD/scribegate/data/golden_notes/comprehensive_02.json",
+            1782985521.5199068
+          ],
+          [
+            "comprehensive_03",
+            "/sessions/funny-beautiful-fermi/mnt/IrisMD/scribegate/data/golden_notes/comprehensive_03.json",
+            1783003692.320425
+          ],
+          [
+            "comprehensive_04",
+            "/sessions/funny-beautiful-fermi/mnt/IrisMD/scribegate/data/golden_notes/comprehensive_04.json",
+            1782985521.5216913
+          ],
+          [
+            "comprehensive_05",
+            "/sessions/funny-beautiful-fermi/mnt/IrisMD/scribegate/data/golden_notes/comprehensive_05.json",
+            1782985521.5224876
+          ],
+          [
+            "contactlens_01",
+            "/sessions/funny-beautiful-fermi/mnt/IrisMD/scribegate/data/results/golden_generations/gen_1/contactlens_01.json",
+            1783661195.7951703
+          ],
+          [
+            "contactlens_02",
+            "/sessions/funny-beautiful-fermi/mnt/IrisMD/scribegate/data/golden_notes/contactlens_02.json",
+            1782985436.0738509
+          ],
+          [
+            "contactlens_03",
+            "/sessions/funny-beautiful-fermi/mnt/IrisMD/scribegate/data/golden_notes/contactlens_03.json",
+            1782985436.0800588
+          ],
+          [
+            "contactlens_04",
+            "/sessions/funny-beautiful-fermi/mnt/IrisMD/scribegate/data/results/golden_generations/gen_1/contactlens_04.json",
+            1783661195.7958515
+          ],
+          [
+            "contactlens_05",
+            "/sessions/funny-beautiful-fermi/mnt/IrisMD/scribegate/data/golden_notes/contactlens_05.json",
+            1782985436.0835977
+          ],
+          [
+            "glaucoma_01",
+            "/sessions/funny-beautiful-fermi/mnt/IrisMD/scribegate/data/golden_notes/glaucoma_01.json",
+            1782985521.5233908
+          ],
+          [
+            "glaucoma_02",
+            "/sessions/funny-beautiful-fermi/mnt/IrisMD/scribegate/data/golden_notes/glaucoma_02.json",
+            1782985521.5242937
+          ],
+          [
+            "glaucoma_03",
+            "/sessions/funny-beautiful-fermi/mnt/IrisMD/scribegate/data/golden_notes/glaucoma_03.json",
+            1782985521.5253344
+          ],
+          [
+            "glaucoma_04",
+            "/sessions/funny-beautiful-fermi/mnt/IrisMD/scribegate/data/golden_notes/glaucoma_04.json",
+            1782985521.5334845
+          ],
+          [
+            "glaucoma_05",
+            "/sessions/funny-beautiful-fermi/mnt/IrisMD/scribegate/data/golden_notes/glaucoma_05.json",
+            1782985521.5362601
+          ]
+        ]
+      ]
+    ]
+  },
+  "cells": [
+    {
+      "model_quality_proxy": "baseline",
+      "generation": "gen_0",
+      "n": 20,
+      "mean_aggregate": 0.815625,
+      "meets_floor": true,
+      "transcript_ids": [
+        "cataract_01",
+        "cataract_02",
+        "cataract_03",
+        "cataract_04",
+        "cataract_05",
+        "comprehensive_01",
+        "comprehensive_02",
+        "comprehensive_03",
+        "comprehensive_04",
+        "comprehensive_05",
+        "contactlens_01",
+        "contactlens_02",
+        "contactlens_03",
+        "contactlens_04",
+        "contactlens_05",
+        "glaucoma_01",
+        "glaucoma_02",
+        "glaucoma_03",
+        "glaucoma_04",
+        "glaucoma_05"
+      ]
+    },
+    {
+      "model_quality_proxy": "baseline",
+      "generation": "gen_1",
+      "n": 20,
+      "mean_aggregate": 0.85,
+      "meets_floor": true,
+      "transcript_ids": [
+        "cataract_01",
+        "cataract_02",
+        "cataract_03",
+        "cataract_04",
+        "cataract_05",
+        "comprehensive_01",
+        "comprehensive_02",
+        "comprehensive_03",
+        "comprehensive_04",
+        "comprehensive_05",
+        "contactlens_01",
+        "contactlens_02",
+        "contactlens_03",
+        "contactlens_04",
+        "contactlens_05",
+        "glaucoma_01",
+        "glaucoma_02",
+        "glaucoma_03",
+        "glaucoma_04",
+        "glaucoma_05"
+      ]
+    },
+    {
+      "model_quality_proxy": "degraded",
+      "generation": "gen_0",
+      "n": 20,
+      "mean_aggregate": 0.709375,
+      "meets_floor": false,
+      "transcript_ids": [
+        "cataract_01",
+        "cataract_02",
+        "cataract_03",
+        "cataract_04",
+        "cataract_05",
+        "comprehensive_01",
+        "comprehensive_02",
+        "comprehensive_03",
+        "comprehensive_04",
+        "comprehensive_05",
+        "contactlens_01",
+        "contactlens_02",
+        "contactlens_03",
+        "contactlens_04",
+        "contactlens_05",
+        "glaucoma_01",
+        "glaucoma_02",
+        "glaucoma_03",
+        "glaucoma_04",
+        "glaucoma_05"
+      ]
+    },
+    {
+      "model_quality_proxy": "degraded",
+      "generation": "gen_1",
+      "n": 20,
+      "mean_aggregate": 0.725,
+      "meets_floor": false,
+      "transcript_ids": [
+        "cataract_01",
+        "cataract_02",
+        "cataract_03",
+        "cataract_04",
+        "cataract_05",
+        "comprehensive_01",
+        "comprehensive_02",
+        "comprehensive_03",
+        "comprehensive_04",
+        "comprehensive_05",
+        "contactlens_01",
+        "contactlens_02",
+        "contactlens_03",
+        "contactlens_04",
+        "contactlens_05",
+        "glaucoma_01",
+        "glaucoma_02",
+        "glaucoma_03",
+        "glaucoma_04",
+        "glaucoma_05"
+      ]
+    }
+  ],
+  "story": {
+    "applicable": true,
+    "earliest_generation": "gen_0",
+    "latest_generation": "gen_1",
+    "degraded_earliest_mean_aggregate": 0.709375,
+    "degraded_latest_mean_aggregate": 0.725,
+    "delta": 0.015625,
+    "effect_present": true,
+    "clears_quality_floor_only_at_latest_generation": false,
+    "narrative": "Cheap-proxy (degraded) mean aggregate moved from 0.7094 (vs gen_0 goldens) to 0.7250 (vs gen_1 goldens), a delta of +0.0156. This IS the moat->margin effect on these real numbers: the golden-set corrections captured in the newer generation let the cheap-proxy model clear a higher bar, which is exactly the mechanism that would let a cheaper model tier become viable over time as the golden set compounds."
+  },
+  "quality_floor": 0.8,
+  "label_note": "model_quality_proxy values ('baseline'/'degraded') are the bundled MOCK generator's quality knob, used as a stand-in for strong-model/cheap-model output quality because live API runs are gated in this repo \u2014 these are REAL computed benchmark numbers from the deterministic mock pipeline, not live-API measurements. See QUALITY_PROXY_BY_TIER for how this maps onto the haiku/sonnet/opus pricing tiers used elsewhere in this module.",
+  "cache_hit": false
+}

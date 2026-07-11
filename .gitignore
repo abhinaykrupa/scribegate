@@ -13,3 +13,4 @@ data/results/*
 !data/results/golden_generations/
 !data/results/candidate_golden.jsonl
 !data/results/calibration_report.json
+!data/results/econ_matrix.json
